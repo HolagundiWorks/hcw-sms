@@ -1,0 +1,63 @@
+<?php
+// HCW-SMS API v1 — JSON front controller (wrapper over openSIS / MariaDB).
+// Routes (all JSON):
+//   GET  /api/v1/                 health
+//   POST /api/v1/auth/login       { username, password } -> { token, user }
+//   GET  /api/v1/auth/me          (Bearer) -> { user }
+//   GET  /api/v1/dashboard/summary(Bearer) -> { summary }
+
+require __DIR__ . '/lib/http.php';
+require __DIR__ . '/lib/db.php';
+require __DIR__ . '/lib/jwt.php';
+require __DIR__ . '/lib/auth.php';
+
+cors();
+
+$uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+$route = trim((string) preg_replace('#^.*/api/v1#', '', $uri), '/');
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+switch ("$method $route") {
+    case 'GET ':
+    case 'GET health':
+        json_out(['ok' => true, 'service' => 'hcw-sms-api', 'version' => 'v1']);
+
+    case 'POST auth/login':
+        $b = body_json();
+        $username = trim((string) ($b['username'] ?? ''));
+        $password = (string) ($b['password'] ?? '');
+        if ($username === '' || $password === '') {
+            fail('username and password required', 422);
+        }
+        $user = login_user($username, $password);
+        if (!$user) {
+            fail('invalid credentials', 401);
+        }
+        json_out(['token' => issue_token($user), 'user' => $user]);
+
+    case 'GET auth/me':
+        $p = require_user();
+        json_out(['user' => [
+            'id' => $p['sub'] ?? null,
+            'username' => $p['username'] ?? null,
+            'profile' => $p['profile'] ?? null,
+            'name' => $p['name'] ?? null,
+        ]]);
+
+    case 'GET dashboard/summary':
+        require_user();
+        json_out(['summary' => dashboard_summary()]);
+
+    default:
+        fail('not found: ' . $method . ' ' . $route, 404);
+}
+
+function dashboard_summary(): array
+{
+    return [
+        'students' => (int) db_scalar('SELECT COUNT(DISTINCT STUDENT_ID) FROM students'),
+        'staff'    => (int) db_scalar('SELECT COUNT(DISTINCT STAFF_ID) FROM staff'),
+        'schools'  => (int) db_scalar('SELECT COUNT(*) FROM schools'),
+        'courses'  => (int) db_scalar('SELECT COUNT(DISTINCT COURSE_ID) FROM courses'),
+    ];
+}
