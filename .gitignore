@@ -1,6 +1,11 @@
-# openSIS DB connection config written by the installer — contains credentials.
+# HCW-SMS DB connection config written by the installer — contains credentials.
 # Keep it out of version control; the installer regenerates it.
 /Data.php
+
+# HCW-SMS React/Mantine UI — deps and build artifacts (run `npm run build`).
+/frontend/node_modules/
+/frontend/dist/
+/assets/hcw-ui/
 
 # OS / editor noise
 Thumbs.db
