@@ -1,12 +1,8 @@
-import type { ComponentType } from 'react';
+import type { ForwardRefExoticComponent, RefAttributes } from 'react';
+import type { IconProps } from '@tabler/icons-react';
 
-/**
- * Minimal structural type for a Tabler icon component. Tabler icons accept many
- * more (all-optional) props; this captures just what we use, and every Tabler
- * icon is assignable to it.
- */
-export type IconComponent = ComponentType<{
-  size?: number | string;
-  stroke?: number;
-  className?: string;
-}>;
+/** The exact type of a @tabler/icons-react icon component, so every icon
+ *  (IconUsers, IconCalendarEvent, …) is assignable to it. */
+export type IconComponent = ForwardRefExoticComponent<
+  IconProps & RefAttributes<SVGSVGElement>
+>;

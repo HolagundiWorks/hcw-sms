@@ -14,10 +14,11 @@ export default defineConfig(({ command }) => ({
   base: command === 'build' ? '/assets/hcw-ui/' : '/',
   plugins: [react()],
   server: {
-    port: 5173,
+    host: true,
+    port: 5174,
     strictPort: true,
     cors: true,
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:5174',
   },
   build: {
     outDir: '../assets/hcw-ui',

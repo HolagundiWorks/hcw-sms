@@ -4,14 +4,17 @@ import './theme.css';
 
 import type { ReactNode } from 'react';
 import { MantineProvider } from '@mantine/core';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { theme } from './theme';
+import { queryClient } from './lib/queryClient';
 
-/** Single source of truth for the Mantine theme / CSS, used by every island
- *  and by the standalone playground. */
+/** App-wide providers: TanStack Query (server state) + Mantine theme/CSS. */
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <MantineProvider theme={theme} defaultColorScheme="light">
-      {children}
-    </MantineProvider>
+    <QueryClientProvider client={queryClient}>
+      <MantineProvider theme={theme} defaultColorScheme="light">
+        {children}
+      </MantineProvider>
+    </QueryClientProvider>
   );
 }

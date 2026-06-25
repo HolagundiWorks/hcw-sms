@@ -1,13 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Playground } from './Playground';
+import { Providers } from './Providers';
+import { App } from './App';
 
-// Standalone dev playground entry (index.html). Not part of the embedded build.
 const host = document.getElementById('hcw-playground');
 if (host) {
   createRoot(host).render(
     <StrictMode>
-      <Playground />
+      <Providers>
+        <App />
+      </Providers>
     </StrictMode>,
   );
 }

@@ -2,6 +2,7 @@ import { Avatar, Box, Group, Menu, Text, UnstyledButton, rem } from '@mantine/co
 import { IconChevronDown, IconLogout, IconUserCircle } from '@tabler/icons-react';
 import { roles } from '../roles';
 import { initials, type SessionUser } from '../types';
+import { useAuth } from '../stores/auth';
 
 interface UserButtonProps {
   user: SessionUser;
@@ -10,6 +11,7 @@ interface UserButtonProps {
 /** Avatar-based account control shown in the header. */
 export function UserButton({ user }: UserButtonProps) {
   const role = roles[user.role];
+  const signOut = useAuth((s) => s.signOut);
 
   return (
     <Menu position="bottom-end" width={200} radius="lg" shadow="md">
@@ -42,7 +44,11 @@ export function UserButton({ user }: UserButtonProps) {
           My profile
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item color="rose" leftSection={<IconLogout size={16} stroke={1.5} />}>
+        <Menu.Item
+          color="rose"
+          onClick={signOut}
+          leftSection={<IconLogout size={16} stroke={1.5} />}
+        >
           Sign out
         </Menu.Item>
       </Menu.Dropdown>

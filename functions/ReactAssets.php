@@ -25,7 +25,7 @@ if (!function_exists('hcw_ui_is_dev')) {
     function hcw_ui_dev_server(): string
     {
         $url = getenv('HCW_UI_DEV_SERVER');
-        return rtrim($url !== false && $url !== '' ? $url : 'http://localhost:5173', '/');
+        return rtrim($url !== false && $url !== '' ? $url : 'http://localhost:5174', '/');
     }
 
     /** Public base URL the built assets are served from. */

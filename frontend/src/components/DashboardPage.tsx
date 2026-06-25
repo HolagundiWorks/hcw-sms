@@ -7,6 +7,7 @@ import {
   Grid,
   Group,
   SimpleGrid,
+  Skeleton,
   Stack,
   Text,
   ThemeIcon,
@@ -15,29 +16,23 @@ import {
 import { Calendar } from '@mantine/dates';
 import {
   IconBook2,
-  IconClipboardCheck,
-  IconMessages,
+  IconId,
+  IconSchool,
   IconUsers,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import type { IconComponent } from '../icons';
 import type { AccentColor } from '../theme';
 import type { SessionUser } from '../types';
+import { useDashboardSummary } from '../hooks/useDashboardSummary';
 import { AppShellLayout } from './AppShellLayout';
 
 interface Stat {
   label: string;
-  value: string;
+  value: number | undefined;
   icon: IconComponent;
   color: AccentColor;
 }
-
-const stats: Stat[] = [
-  { label: 'Students', value: '482', icon: IconUsers, color: 'brand' },
-  { label: 'Attendance today', value: '96%', icon: IconClipboardCheck, color: 'mint' },
-  { label: 'Classes today', value: '6', icon: IconBook2, color: 'peach' },
-  { label: 'Unread messages', value: '3', icon: IconMessages, color: 'lavender' },
-];
 
 interface AgendaItem {
   time: string;
@@ -46,6 +41,7 @@ interface AgendaItem {
   color: AccentColor;
 }
 
+// Schedule is still sample data until a /dashboard/agenda endpoint exists.
 const agenda: AgendaItem[] = [
   { time: '08:30', title: 'Grade 9 — Mathematics', who: 'Ms. Anika Rao', color: 'brand' },
   { time: '10:00', title: 'Grade 10 — Biology', who: 'Mr. David Lee', color: 'mint' },
@@ -53,7 +49,7 @@ const agenda: AgendaItem[] = [
   { time: '14:00', title: 'Parent meeting — Sharma', who: 'Office 2', color: 'lavender' },
 ];
 
-function StatCard({ stat }: { stat: Stat }) {
+function StatCard({ stat, loading }: { stat: Stat; loading: boolean }) {
   const Icon = stat.icon;
   return (
     <Card>
@@ -62,9 +58,13 @@ function StatCard({ stat }: { stat: Stat }) {
           <Text size="xs" c="dimmed" fw={600} tt="uppercase">
             {stat.label}
           </Text>
-          <Text fz={28} fw={700} lh={1.2}>
-            {stat.value}
-          </Text>
+          {loading ? (
+            <Skeleton height={30} width={56} mt={6} radius="sm" />
+          ) : (
+            <Text fz={28} fw={700} lh={1.2}>
+              {stat.value ?? 0}
+            </Text>
+          )}
         </div>
         <ThemeIcon size={48} radius="lg" variant="light" color={stat.color}>
           <Icon size={26} stroke={1.6} />
@@ -104,9 +104,17 @@ function AgendaRow({ item }: { item: AgendaItem }) {
   );
 }
 
-/** Calendar-first dashboard — the default landing screen for every role. */
+/** Calendar-first dashboard. Stat cards are live from /api/v1/dashboard/summary. */
 export function DashboardPage({ user }: { user: SessionUser }) {
   const [selected, setSelected] = useState<Date>(new Date());
+  const { data, isLoading } = useDashboardSummary();
+
+  const stats: Stat[] = [
+    { label: 'Students', value: data?.students, icon: IconUsers, color: 'brand' },
+    { label: 'Staff', value: data?.staff, icon: IconId, color: 'mint' },
+    { label: 'Schools', value: data?.schools, icon: IconSchool, color: 'lavender' },
+    { label: 'Courses', value: data?.courses, icon: IconBook2, color: 'peach' },
+  ];
 
   return (
     <AppShellLayout user={user}>
@@ -121,7 +129,7 @@ export function DashboardPage({ user }: { user: SessionUser }) {
 
           <SimpleGrid cols={{ base: 1, xs: 2, md: 4 }} spacing="md">
             {stats.map((s) => (
-              <StatCard key={s.label} stat={s} />
+              <StatCard key={s.label} stat={s} loading={isLoading} />
             ))}
           </SimpleGrid>
 
