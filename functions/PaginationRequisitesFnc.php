@@ -72,7 +72,7 @@ function setPaginationRequisites($modname, $searchModfunc, $nextModname, $column
         if($ProgramTitle != '') {
         	$_SESSION['PROGRAM_TITLE'] = $ProgramTitle;
         } else {
-        	$_SESSION['PROGRAM_TITLE'] = 'openSIS';
+        	$_SESSION['PROGRAM_TITLE'] = 'HCW-SMS';
         }
 	}
 }

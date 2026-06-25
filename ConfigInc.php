@@ -32,9 +32,9 @@ if (!defined('CONFIG_INC')) {
     // IgnoreFiles should contain any names of files or folders
     // which should be ignored by the function inclusion system.
     $IgnoreFiles = array('.DS_Store', 'CVS', '.svn');
-    $openSISPath = dirname(__FILE__) . '/';
-    if (file_exists($openSISPath . "Data.php")) {
-        include($openSISPath . "Data.php");
+    $hcwsmsPath = dirname(__FILE__) . '/';
+    if (file_exists($hcwsmsPath . "Data.php")) {
+        include($hcwsmsPath . "Data.php");
     }
     include("DatabaseInc.php");
     include("UpgradeInc.php");
@@ -48,7 +48,7 @@ if (!defined('CONFIG_INC')) {
     $version_sql = "select value from app where name='version'";
     $version_res = DBQuery($version_sql);
     $version_row = DBGet($version_res);
-    $openSISVersion = $version_row[1]['VALUE'];
+    $hcwsmsVersion = $version_row[1]['VALUE'];
     $builddate = $b_date_row[1]['VALUE'];
     $htmldocPath = "";
     $OutputType = "HTML"; //options are HTML or PDF
@@ -56,12 +56,12 @@ if (!defined('CONFIG_INC')) {
     $htmldocAssetsPath = '';        // way htmldoc accesses the assets/ directory, possibly different than user - empty string means no translation
     //    $StudentPicturesPath = 'assets/studentphotos/';
     //    $UserPicturesPath = 'assets/userphotos/';
-    $openSISTitle = "openSIS Student Information System";
-    $openSISAdmins = '1';            // can be list such as '1,23,50' - note, these should be id's in the DefaultSyear, otherwise they can't login anyway
-    $openSISNotifyAddress = '';
+    $hcwsmsTitle = "HCW-SMS Student Information System";
+    $hcwsmsAdmins = '1';            // can be list such as '1,23,50' - note, these should be id's in the DefaultSyear, otherwise they can't login anyway
+    $hcwsmsNotifyAddress = '';
     $msgFlag = '';
 
-    $openSISModules = array(
+    $hcwsmsModules = array(
         'schoolsetup' => true,
         'students' => true,
         'users' => true,

@@ -31,7 +31,7 @@ function TextAreaInputOrg($value, $name, $title = '', $options = '', $div = true
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
 
         if (strpos($options, 'cols') === false)
@@ -129,7 +129,7 @@ function Prompt_Calender($title = 'Confirm', $question = '', $message = '', $pdf
     
     unset($tmp_REQUEST['delete_ok']);
     if ($pdf == true)
-        $tmp_REQUEST['_openSIS_PDF'] = true;
+        $tmp_REQUEST['_hcwsms_PDF'] = true;
 
     $PHP_tmp_SELF = PreparePHP_SELF($tmp_REQUEST);
 
@@ -147,7 +147,7 @@ function Prompt_Copy_School($title = 'Confirm', $question = '', $message = '', $
     $tmp_REQUEST = $_REQUEST;
     unset($tmp_REQUEST['delete_ok']);
     if ($pdf == true)
-        $tmp_REQUEST['_openSIS_PDF'] = true;
+        $tmp_REQUEST['_hcwsms_PDF'] = true;
 
     $PHP_tmp_SELF = PreparePHP_SELF($tmp_REQUEST);
 
@@ -165,7 +165,7 @@ function Prompt_rollover($title = 'Confirm', $question = '', $message = '', $pdf
     $tmp_REQUEST = $_REQUEST;
     unset($tmp_REQUEST['delete_ok']);
     if ($pdf == true)
-        $tmp_REQUEST['_openSIS_PDF'] = true;
+        $tmp_REQUEST['_hcwsms_PDF'] = true;
 
     $PHP_tmp_SELF = PreparePHP_SELF($tmp_REQUEST);
 
@@ -360,7 +360,7 @@ function Prompt_rollover_back($title = _rollover, $question = '', $pdf = '') {
     $tmp_REQUEST = $_REQUEST;
     unset($tmp_REQUEST['delete_ok']);
     if ($pdf == true)
-        $tmp_REQUEST['_openSIS_PDF'] = true;
+        $tmp_REQUEST['_hcwsms_PDF'] = true;
 
     $PHP_tmp_SELF = PreparePHP_SELF($tmp_REQUEST);
 
@@ -379,7 +379,7 @@ function Prompt_Runschedule($title = 'Confirm', $question = '', $message = '', $
     $tmp_REQUEST = $_REQUEST;
     unset($tmp_REQUEST['delete_ok']);
     if ($pdf == true)
-        $tmp_REQUEST['_openSIS_PDF'] = true;
+        $tmp_REQUEST['_hcwsms_PDF'] = true;
 
     $PHP_tmp_SELF = PreparePHP_SELF($tmp_REQUEST);
 
@@ -394,7 +394,7 @@ function Prompt_Runschedule($title = 'Confirm', $question = '', $message = '', $
 }
 
 function PrepareDateSchedule($date = '', $title = '', $allow_na = true, $options = '') {
-    global $_openSIS;
+    global $_hcwsms;
     static $counter = 0;
     if ($options == '')
         $options = array();
@@ -414,7 +414,7 @@ function PrepareDateSchedule($date = '', $title = '', $allow_na = true, $options
     }
 
     if ($options['C'])
-        $_openSIS['PrepareDate'] ++;
+        $_hcwsms['PrepareDate'] ++;
 
     if ($options['C']) {
 
@@ -424,7 +424,7 @@ function PrepareDateSchedule($date = '', $title = '', $allow_na = true, $options
         $counter++;
     }
 
-    if ($_REQUEST['_openSIS_PDF'])
+    if ($_REQUEST['_hcwsms_PDF'])
         $return = ProperDateAY($date);
     return $return;
 }
@@ -435,7 +435,7 @@ function PromptCourseWarning($title = 'Confirm', $question = '', $message = '', 
     $tmp_REQUEST = $_REQUEST;
     unset($tmp_REQUEST['delete_ok']);
     if ($pdf == true)
-        $tmp_REQUEST['_openSIS_PDF'] = true;
+        $tmp_REQUEST['_hcwsms_PDF'] = true;
 
     $PHP_tmp_SELF = PreparePHP_SELF($tmp_REQUEST);
 
@@ -501,7 +501,7 @@ function SelectInput_Disonclick($value, $name, $title, $options, $allow_na = 'N/
 ###########################################################################
 
 function GetStuListAttn(& $extra) {
-    global $contacts_RET, $view_other_RET, $_openSIS;
+    global $contacts_RET, $view_other_RET, $_hcwsms;
 
     if ((!$extra['SELECT_ONLY'] || strpos($extra['SELECT_ONLY'], 'GRADE_ID') !== false) && !$extra['functions']['GRADE_ID'])
         $functions = array('GRADE_ID' => 'GetGrade');
@@ -558,7 +558,7 @@ function GetStuListAttn(& $extra) {
 
 
             // EXPANDED VIEW AND ADDR BREAKS THIS QUERY ... SO, TURN 'EM OFF
-            if (!$_REQUEST['_openSIS_PDF']) {
+            if (!$_REQUEST['_hcwsms_PDF']) {
                 $expanded_view = $_REQUEST['expanded_view'];
                 $_REQUEST['expanded_view'] = false;
                 $addr = $_REQUEST['addr'];
@@ -570,7 +570,7 @@ function GetStuListAttn(& $extra) {
                 unset($extra2['columns_after']['CONTACT_INFO']);
         }
         else {
-            if ($view_other_RET['CONTACT_INFO'][1]['VALUE'] == 'Y' && !$_REQUEST['_openSIS_PDF']) {
+            if ($view_other_RET['CONTACT_INFO'][1]['VALUE'] == 'Y' && !$_REQUEST['_hcwsms_PDF']) {
                 $select .= ',NULL AS CONTACT_INFO ';
                 $extra['columns_after']['CONTACT_INFO'] = '<IMG SRC=assets/down_phone_button.gif border=0>';
                 $functions['CONTACT_INFO'] = 'makeContactInfo';

@@ -87,7 +87,7 @@ if ($_REQUEST['modfunc'] == 'save') {
 
             foreach ($RET_stu as $student_id => $courses) {
                 echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-                echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">Student Daily Schedule</div></td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\"> Schedule for: " . $row_mp_detail[1]['TITLE'] . " : " . cov_date($row_mp_detail[1]['START_DATE']) . " - " . cov_date($row_mp_detail[1]['END_DATE']) . "</td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />Powered by openSIS</td></tr><tr><td colspan=4 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+                echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">Student Daily Schedule</div></td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\"> Schedule for: " . $row_mp_detail[1]['TITLE'] . " : " . cov_date($row_mp_detail[1]['START_DATE']) . " - " . cov_date($row_mp_detail[1]['END_DATE']) . "</td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />Powered by HCW-SMS</td></tr><tr><td colspan=4 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
 
 
                 # --------------------------------------- Start Change ------------------------------------------- #
@@ -95,7 +95,7 @@ if ($_REQUEST['modfunc'] == 'save') {
 
                 $st_data = DBGet(DBQuery("SELECT * FROM students WHERE student_id = " . $courses[1]['STUDENT_ID']));
 
-                unset($_openSIS['DrawHeader']);
+                unset($_hcwsms['DrawHeader']);
                 echo '<br>';
                 echo '<table  border=0>';
 
@@ -521,7 +521,7 @@ if (!$_REQUEST['modfunc']) {
     }
 #############################################################################################
     echo "</FORM>";
-    $footer_options  = "<FORM name=sch class=\"no-padding no-margin\" id=sch action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname]). "&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_openSIS_PDF=true") . " method=POST target=_blank>";
+    $footer_options  = "<FORM name=sch class=\"no-padding no-margin\" id=sch action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname]). "&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_hcwsms_PDF=true") . " method=POST target=_blank>";
     $footer_options .= "<input type=hidden name=sel_mp value=$sel_mp>";
     $footer_options .= '<button type=submit class="btn btn-success btn-labeled pull-right" value="Print"><b><i class="icon-printer4"></i></b>'._print.'</button>';
     $footer_options .= "</FORM>";

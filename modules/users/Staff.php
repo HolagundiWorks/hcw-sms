@@ -198,7 +198,7 @@ if (User('PROFILE') != 'admin') {
             $can_edit_RET = DBGet(DBQuery("SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID='" . $profile_id_mod . "' AND MODNAME='users/User.php&category_id=$_REQUEST[category_id]' AND CAN_EDIT='Y'"), array(), array('MODNAME'));
     }
     if ($can_edit_RET)
-        $_openSIS['allow_edit'] = true;
+        $_hcwsms['allow_edit'] = true;
 }
 
 unset($schools);
@@ -649,7 +649,7 @@ if (clean_param($_REQUEST['modfunc'], PARAM_ALPHAMOD) == 'update') {
 
 
     if (User('STAFF_ID') == $_REQUEST['staff_id']) {
-        unset($_openSIS['User']);
+        unset($_hcwsms['User']);
         //        echo '<script language=JavaScript>parent.side.location="' . $_SESSION['Side_PHP_SELF'] . '?modcat="+parent.side.document.forms[0].modcat.value;</script>';
     }
 }
@@ -807,9 +807,9 @@ if ((UserStaffID() || $_REQUEST['staff_id'] == 'new') && ((basename($_SERVER['PH
         unset($td);
 
         $swap_tabs = 'n';
-        $_openSIS['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&include=$_REQUEST[include]&custom=staff";
+        $_hcwsms['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&include=$_REQUEST[include]&custom=staff";
         if ($_REQUEST['category_id'])
-            $_openSIS['selected_tab'] .= '&category_id=' . $_REQUEST['category_id'];
+            $_hcwsms['selected_tab'] .= '&category_id=' . $_REQUEST['category_id'];
 
 
         //echo '<div class="panel panel-default">';

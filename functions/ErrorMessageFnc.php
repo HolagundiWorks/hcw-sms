@@ -99,7 +99,7 @@ function ErrorMessage($errors, $code = 'error', $options = '') {
             }
             if ($isajax == "")
                 echo $return;
-            if (!$_REQUEST['_openSIS_PDF'])
+            if (!$_REQUEST['_hcwsms_PDF'])
                 Warehouse('footer');
             exit;
         }
@@ -159,7 +159,7 @@ function ErrorMessage1($errors, $code = 'error') {
             $return .= '</body>';
             $return .= '</html>';
             if ($isajax == "")
-                if (!$_REQUEST['_openSIS_PDF'])
+                if (!$_REQUEST['_hcwsms_PDF'])
                     Warehouse('footer');
             exit;
         }

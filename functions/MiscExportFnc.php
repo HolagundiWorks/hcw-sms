@@ -26,7 +26,7 @@
 #
 #***************************************************************************************
 function _makeNextSchool($value,$column)
-{	global $THIS_RET,$_openSIS;
+{	global $THIS_RET,$_hcwsms;
 	if($value=='0')
 		return 'Retain';
 	elseif($value=='-1')
@@ -37,7 +37,7 @@ function _makeNextSchool($value,$column)
 		return GetSchool($value);
 }
 function _makeCalendar($value,$column)
-{	global $THIS_RET,$_openSIS,$calendars_RET;
+{	global $THIS_RET,$_hcwsms,$calendars_RET;
 
 	if(!$calendars_RET)
 		$calendars_RET = DBGet(DBQuery('SELECT CALENDAR_ID,DEFAULT_CALENDAR,TITLE FROM school_calendars WHERE SYEAR=\''.UserSyear().'\''),array(),array('CALENDAR_ID'));

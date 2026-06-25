@@ -291,9 +291,9 @@ if (count($grades_RET)) {
         $options[$value['ID']] = $value['TITLE'];
 }
 if ($_REQUEST['student_id'] != 'new' && $student['SCHOOL_ID'] != UserSchool()) {
-    $allow_edit = $_openSIS['allow_edit'];
-    $AllowEdit = $_openSIS['AllowEdit'][$_REQUEST['modname']];
-    $_openSIS['AllowEdit'][$_REQUEST['modname']] = $_openSIS['allow_edit'] = false;
+    $allow_edit = $_hcwsms['allow_edit'];
+    $AllowEdit = $_hcwsms['AllowEdit'][$_REQUEST['modname']];
+    $_hcwsms['AllowEdit'][$_REQUEST['modname']] = $_hcwsms['allow_edit'] = false;
 }
 
 if ($_REQUEST['student_id'] == 'new')
@@ -324,9 +324,9 @@ if (count($sec_RET)) {
         $options[$value['ID']] = $value['NAME'];
 }
 if ($_REQUEST['student_id'] != 'new' && $student['SCHOOL_ID'] != UserSchool()) {
-    $allow_edit = $_openSIS['allow_edit'];
-    $AllowEdit = $_openSIS['AllowEdit'][$_REQUEST['modname']];
-    $_openSIS['AllowEdit'][$_REQUEST['modname']] = $_openSIS['allow_edit'] = false;
+    $allow_edit = $_hcwsms['allow_edit'];
+    $AllowEdit = $_hcwsms['AllowEdit'][$_REQUEST['modname']];
+    $_hcwsms['AllowEdit'][$_REQUEST['modname']] = $_hcwsms['allow_edit'] = false;
 }
 
 if ($_REQUEST['student_id'] == 'new')

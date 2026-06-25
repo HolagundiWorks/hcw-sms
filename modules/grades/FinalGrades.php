@@ -301,7 +301,7 @@ if (!$_REQUEST['modfunc']) {
     DrawBC(""._gradebook." > " . ProgramTitle());
 
     if ($_REQUEST['search_modfunc'] == 'list') {
-        $_openSIS['allow_edit'] = true;
+        $_hcwsms['allow_edit'] = true;
 
         echo "<FORM action=Modules.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . " method=POST>";
 

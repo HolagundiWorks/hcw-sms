@@ -33,9 +33,9 @@ include_once 'functions/MakeLetterGradeFnc.php';
 include_once 'functions/MakePercentGradeFnc.php';
 
 $max_allowed = Preferences('ANOMALOUS_MAX', 'Gradebook') / 100;
-// if running as a teacher program then openSIS[allow_edit] will already be set according to admin permissions
-if (!isset($_openSIS['allow_edit']))
-    $_openSIS['allow_edit'] = true;
+// if running as a teacher program then HCW-SMS[allow_edit] will already be set according to admin permissions
+if (!isset($_hcwsms['allow_edit']))
+    $_hcwsms['allow_edit'] = true;
 
 $config_RET = DBGet(DBQuery('SELECT TITLE,VALUE FROM program_user_config WHERE USER_ID=\'' . User('STAFF_ID') . '\' AND PROGRAM=\'Gradebook\' AND VALUE LIKE \'%_' . UserCoursePeriod() . '\''), array(), array('TITLE'));
 if (is_countable($config_RET) && count($config_RET))

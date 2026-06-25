@@ -67,7 +67,7 @@ if (!$_REQUEST['modfunc']) {
 
         for($i=0; $i<$no_of_files; $i++) {
             if ($_FILES['uploadfile']['name'][$i]) {
-                $_FILES['uploadfile']['name'][$i] = str_replace(" ", "opensis_space_here", $_FILES['uploadfile']['name'][$i]);
+                $_FILES['uploadfile']['name'][$i] = str_replace(" ", "hcwsms_space_here", $_FILES['uploadfile']['name'][$i]);
                 
                 $target_path = $dir . '/' . UserStudentID() . '-' . $_FILES['uploadfile']['name'][$i];
                 
@@ -250,12 +250,12 @@ if (!$_REQUEST['modfunc']) {
 
                     echo '<tr class="' . $gridClass . '">';
                     echo '<td style="vertical-align: middle;">';
-                    echo '<a href="DownloadWindow.php?down_id=' . $file_val['DOWNLOAD_ID'] . '&studentfile=Y">' . $fileIcon . ' &nbsp; '. str_replace("opensis_space_here", " ", str_replace(UserStudentID()."-","",$file_display)) . '</a>';
+                    echo '<a href="DownloadWindow.php?down_id=' . $file_val['DOWNLOAD_ID'] . '&studentfile=Y">' . $fileIcon . ' &nbsp; '. str_replace("hcwsms_space_here", " ", str_replace(UserStudentID()."-","",$file_display)) . '</a>';
                     echo '</td>';
 
                     if (AllowEdit()) {
                         echo '<td width="80"><input type="hidden" name="del" value="' . $file_val['ID'] . '"/>';
-                        echo '<a href=Modules.php?modname=' . $_REQUEST[modname] . '&removefile=' . base64_encode($file_val['NAME']) . '&title=' . base64_encode(str_replace("opensis_space_here", " ", str_replace(UserStudentID()."-","",$file_val['NAME']))) . '&include=' . $_REQUEST['include'] . '&modfunc=delete&del=' . $file_val['ID'] . ' class="btn btn-danger btn-icon btn-xs" title="'._delete.'"><i class="icon-cross2"></i></a>
+                        echo '<a href=Modules.php?modname=' . $_REQUEST[modname] . '&removefile=' . base64_encode($file_val['NAME']) . '&title=' . base64_encode(str_replace("hcwsms_space_here", " ", str_replace(UserStudentID()."-","",$file_val['NAME']))) . '&include=' . $_REQUEST['include'] . '&modfunc=delete&del=' . $file_val['ID'] . ' class="btn btn-danger btn-icon btn-xs" title="'._delete.'"><i class="icon-cross2"></i></a>
                               </td>';
                     }
 

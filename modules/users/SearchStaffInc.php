@@ -142,7 +142,7 @@ if (User('PROFILE') == 'admin') {
         if (!$_REQUEST['next_modname'])
             $_REQUEST['next_modname'] = 'users/Staff.php';
 
-        if (!isset($_openSIS['DrawHeader']))
+        if (!isset($_hcwsms['DrawHeader']))
             DrawHeader(_pleaseSelectAStaff);
         if ($_REQUEST['_search_all_schools'] == 'Y')
             $extra['GROUP'] = ' s.STAFF_ID ';

@@ -27,7 +27,7 @@
 #
 #***************************************************************************************
 include('../../RedirectModulesInc.php');
-if ($_openSIS['modules_search'] && $extra['force_search'])
+if ($_hcwsms['modules_search'] && $extra['force_search'])
     $_REQUEST['search_modfunc'] = '';
 
 if (Preferences('SEARCH') != 'Y' && !$extra['force_search'])
@@ -319,10 +319,10 @@ else if($_REQUEST['search_modfunc'] == 'search_mod')
 
         if ($_REQUEST['expanded_view'] != 'true' && UserStudentID() && count($students_RET) != 0) {
             DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=true><i class=\"icon-square-down-right\"></i> "._expandedView."</A>", $extra['header_right']);
-            DrawHeader(str_replace('<BR>', '', substr($_openSIS['SearchTerms'], 0, -4)));
+            DrawHeader(str_replace('<BR>', '', substr($_hcwsms['SearchTerms'], 0, -4)));
         } elseif (UserStudentID() && count($students_RET) != 0) {
             DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=false><i class=\"icon-square-up-left\"></i> "._originalView."</A>", $extra['header_right']);
-            DrawHeader(str_replace('<BR>', '', substr($_openSIS['Search'], 0, -4)));
+            DrawHeader(str_replace('<BR>', '', substr($_hcwsms['Search'], 0, -4)));
         }
         DrawHeader($extra['extra_header_left'], $extra['extra_header_right']);
         if ($_REQUEST['LO_save'] != '1' && !$extra['suppress_save']) {
@@ -478,10 +478,10 @@ else {
             $extra['FROM'] .= ',schedule_requests sch_r';
             $extra['WHERE'] = ' AND sch_r.STUDENT_ID=s.STUDENT_ID AND sch_r.SYEAR=ssm.SYEAR AND sch_r.SCHOOL_ID=ssm.SCHOOL_ID AND sch_r.COURSE_ID=\'' . $_REQUEST['request_course_id'] . '\'';
 
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>'._request.': </b></font>' . $course[1]['TITLE'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>'._request.': </b></font>' . $course[1]['TITLE'] . '<BR>';
         } else {
             $extra['WHERE'] .= ' AND NOT EXISTS (SELECT \'\' FROM schedule_requests sch_r WHERE sch_r.STUDENT_ID=ssm.STUDENT_ID AND sch_r.SYEAR=ssm.SYEAR AND sch_r.COURSE_ID=\'' . $_REQUEST['request_course_id'] . '\') ';
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>'._missingRequest.': </b></font>' . $course[1]['TITLE'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>'._missingRequest.': </b></font>' . $course[1]['TITLE'] . '<BR>';
         }
     }
 
@@ -573,10 +573,10 @@ else {
         unset($tmp_REQUEST['expanded_view']);
         if ($_REQUEST['expanded_view'] != 'true' && !UserStudentID() && (is_countable($students_RET) && count($students_RET) != 0)) {
             DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=true><i class=\"icon-square-down-right\"></i> "._expandedView."</A>", $extra['header_right']);
-            DrawHeader(str_replace('<BR>', '', substr($_openSIS['SearchTerms'], 0, -4)));
+            DrawHeader(str_replace('<BR>', '', substr($_hcwsms['SearchTerms'], 0, -4)));
         } elseif (!UserStudentID() && (is_countable($students_RET) && count($students_RET) != 0)) {
             DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=false><i class=\"icon-square-up-left\"></i> "._originalView."</A>", $extra['header_right']);
-            DrawHeader(str_replace('<BR>', '', substr($_openSIS['Search'], 0, -4)));
+            DrawHeader(str_replace('<BR>', '', substr($_hcwsms['Search'], 0, -4)));
         }
         DrawHeader($extra['extra_header_left'], $extra['extra_header_right']);
         if ($_REQUEST['LO_save'] != '1' && !$extra['suppress_save']) {

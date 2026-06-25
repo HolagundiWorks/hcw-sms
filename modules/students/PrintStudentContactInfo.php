@@ -83,7 +83,7 @@ if (!$_REQUEST['modfunc']) {
 	DrawBC("" . _students . " > " . ProgramTitle());
 
 	if ($_REQUEST['search_modfunc'] == 'list') {
-		echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_openSIS_PDF=true target=_blank method=POST>";
+		echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_hcwsms_PDF=true target=_blank method=POST>";
 	}
 
 	$extra['link'] = array('FULL_NAME' => false);

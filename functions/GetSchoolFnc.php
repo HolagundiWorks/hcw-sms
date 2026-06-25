@@ -27,15 +27,15 @@
 #***************************************************************************************
 function GetSchool($sch)
 {	
-	global $_openSIS;
-	if(empty($_openSIS['GetSchool']))
+	global $_hcwsms;
+	if(empty($_hcwsms['GetSchool']))
 	{
 		$QI = DBQuery('SELECT ID,TITLE FROM schools');
-		$_openSIS['GetSchool'] = DBGet($QI, array(), array('ID'));
+		$_hcwsms['GetSchool'] = DBGet($QI, array(), array('ID'));
 	}
 
-	if(!empty($_openSIS['GetSchool'][$sch]))
-		return $_openSIS['GetSchool'][$sch][1]['TITLE'];
+	if(!empty($_hcwsms['GetSchool'][$sch]))
+		return $_hcwsms['GetSchool'][$sch][1]['TITLE'];
 	else
 		return $sch;
 }
@@ -71,14 +71,14 @@ function GetUserSchools($staff_id, $str = false)
 
 function GetSchoolInfo($sch)
 {	
-	global $_openSIS;
-	if(empty($_openSIS['GetSchoolInfo']))
+	global $_hcwsms;
+	if(empty($_hcwsms['GetSchoolInfo']))
 	{
 		$QI = DBQuery('SELECT * FROM schools');
-		$_openSIS['GetSchoolInfo'] = DBGet($QI, array(), array('ID'));
+		$_hcwsms['GetSchoolInfo'] = DBGet($QI, array(), array('ID'));
 	}
-	if(!empty($_openSIS['GetSchoolInfo'][$sch]))
-		return 'Address :' . $_openSIS['GetSchoolInfo'][$sch][1]['ADDRESS'] . ',' . $_openSIS['GetSchoolInfo'][$sch][1]['CITY'] . ',' . $_openSIS['GetSchoolInfo'][$sch][1]['STATE'] . ',' . $_openSIS['GetSchoolInfo'][$sch][1]['ZIPCODE'] . ($_openSIS['GetSchoolInfo'][$sch][1]['PHONE'] != null ? ' <p> Phone :' . $_openSIS['GetSchoolInfo'][$sch][1]['PHONE'] . '</p>' : '');
+	if(!empty($_hcwsms['GetSchoolInfo'][$sch]))
+		return 'Address :' . $_hcwsms['GetSchoolInfo'][$sch][1]['ADDRESS'] . ',' . $_hcwsms['GetSchoolInfo'][$sch][1]['CITY'] . ',' . $_hcwsms['GetSchoolInfo'][$sch][1]['STATE'] . ',' . $_hcwsms['GetSchoolInfo'][$sch][1]['ZIPCODE'] . ($_hcwsms['GetSchoolInfo'][$sch][1]['PHONE'] != null ? ' <p> Phone :' . $_hcwsms['GetSchoolInfo'][$sch][1]['PHONE'] . '</p>' : '');
                  
 	else
 		return $sch;

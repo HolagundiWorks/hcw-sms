@@ -35,17 +35,17 @@ $userName = User('USERNAME');
 $group_modfunc = isset($_REQUEST['modfunc']) ? $_REQUEST['modfunc'] : '';
 
 if (($group_modfunc == 'delete' || $group_modfunc == 'groupmember') && isset($_REQUEST['group_id'])) {
-    $owned_group = OpenSISRequireOwnedMailGroup($_REQUEST['group_id']);
+    $owned_group = HcwsmsRequireOwnedMailGroup($_REQUEST['group_id']);
     $_REQUEST['group_id'] = $owned_group['GROUP_ID'];
 }
 
 if (($group_modfunc == 'exist_group' || $group_modfunc == 'add_group_member' || $group_modfunc == 'member_insert') && isset($_REQUEST['grp_id'])) {
-    $owned_group = OpenSISRequireOwnedMailGroup($_REQUEST['grp_id']);
+    $owned_group = HcwsmsRequireOwnedMailGroup($_REQUEST['grp_id']);
     $_REQUEST['grp_id'] = $owned_group['GROUP_ID'];
 }
 
 if ($group_modfunc == 'members' && isset($_REQUEST['groupid'])) {
-    $owned_group = OpenSISRequireOwnedMailGroup($_REQUEST['groupid']);
+    $owned_group = HcwsmsRequireOwnedMailGroup($_REQUEST['groupid']);
     $_REQUEST['groupid'] = $owned_group['GROUP_ID'];
 }
 

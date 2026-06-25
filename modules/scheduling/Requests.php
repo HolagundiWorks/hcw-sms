@@ -147,7 +147,7 @@ if (!$_REQUEST['modfunc'] && UserStudentID()) {
         else
             $can_edit_RET = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=3 AND MODNAME=\'Scheduling/Requests.php\' AND CAN_EDIT=\'Y\''));
         if ($can_edit_RET)
-            $_openSIS['allow_edit'] = true;
+            $_hcwsms['allow_edit'] = true;
     }
 
     $functions = array('COURSE' => '_makeCourse', 'WITH_TEACHER_ID' => '_makeTeacher', 'WITH_PERIOD_ID' => '_makePeriod');
@@ -195,7 +195,7 @@ if (!$_REQUEST['modfunc'] && UserStudentID()) {
         echo '</div>';
         echo '</FORM>';
     }
-    $_openSIS['allow_edit'] = false;
+    $_hcwsms['allow_edit'] = false;
 }
 
 

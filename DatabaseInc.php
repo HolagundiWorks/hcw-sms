@@ -103,7 +103,7 @@ if (!empty($DatabaseServer) && !empty($DatabaseUsername) && !empty($DatabaseName
 //        ie, $processable_results = DBQuery("select * from students");
 function DBQuery($sql)
 {
-    global $DatabaseType, $_openSIS, $connection;
+    global $DatabaseType, $_hcwsms, $connection;
 
     // $connection = db_start();
 
@@ -173,7 +173,7 @@ function DBQuery($sql)
 }
 function DBQuery_assignment($sql)
 {
-    global $DatabaseType, $_openSIS, $connection;
+    global $DatabaseType, $_hcwsms, $connection;
 
     $connection = db_start();
 
@@ -223,7 +223,7 @@ function DBQuery_assignment($sql)
 }
 function DBQueryMod($sql)
 {
-    global $DatabaseType, $_openSIS, $connection;
+    global $DatabaseType, $_hcwsms, $connection;
 
     $connection = db_start();
 
@@ -374,7 +374,7 @@ function db_properties($table)
 
 function db_show_error($sql, $failnote, $additional = '')
 {
-    global $openSISTitle, $openSISVersion, $openSISNotifyAddress;
+    global $hcwsmsTitle, $hcwsmsVersion, $hcwsmsNotifyAddress;
 
     PopTable('header', _error);
     $tb = debug_backtrace();
@@ -405,7 +405,7 @@ function db_show_error($sql, $failnote, $additional = '')
 			<TD><pre>" . date("m/d/Y h:i:s") . "</pre></TD>
 		</TR><TR>
 			<TD align=right></TD>
-			<TD>" . _openSisHasEncounteredAnErrorThatCouldHaveResultedFromAnyOfTheFollowing . ":
+			<TD>" . _hcwsmsHasEncounteredAnErrorThatCouldHaveResultedFromAnyOfTheFollowing . ":
 			<br/>
 			<ul>
 			<li>" . _invalidDataInput . "</li>
@@ -413,7 +413,7 @@ function db_show_error($sql, $failnote, $additional = '')
 			<li>" . _programError . "</li>
 			</ul>
 
-			" . _pleaseTakeThisScreenShotAndSendItToYourOpenSisRepresentativeForDebuggingAndResolution . ".
+			" . _pleaseTakeThisScreenShotAndSendItToYourHcwsmsRepresentativeForDebuggingAndResolution . ".
 			</TD>
 		</TR>
 
@@ -422,8 +422,8 @@ function db_show_error($sql, $failnote, $additional = '')
     PopTable('footer');
     echo "<!-- " . _sqlStatement . ": \n\n $sql \n\n -->";
 
-    if ($openSISNotifyAddress) {
-        $message = "System : " . $openSISTitle . " \n";
+    if ($hcwsmsNotifyAddress) {
+        $message = "System : " . $hcwsmsTitle . " \n";
         $message .= "" . _date . ": " . date("m/d/Y h:i:s") . "\n";
         $message .= " Page : " . $_SERVER['PHP_SELF'] . ' ' . ProgramTitle() . " \n\n";
         $message .= "" . _failureNotice . ":  $failnote \n";
@@ -431,7 +431,7 @@ function db_show_error($sql, $failnote, $additional = '')
         $message .= "\n $sql \n";
         $message .= "" . _requestArray . ": \n" . ShowVar($_REQUEST, 'Y', 'N');
         $message .= "\n\n" . _sessionArray . ": \n" . ShowVar($_SESSION, 'Y', 'N');
-        mail($openSISNotifyAddress, _openSisDatabaseError, $message);
+        mail($hcwsmsNotifyAddress, _hcwsmsDatabaseError, $message);
     }
 
     die();

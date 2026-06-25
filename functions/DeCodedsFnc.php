@@ -26,9 +26,9 @@
 #
 #***************************************************************************************
 function DeCodeds($value,$column)
-{	global $_openSIS;
+{	global $_hcwsms;
 	$field = substr($column,7);
-	if(!$_openSIS['DeCodeds'][$field])
+	if(!$_hcwsms['DeCodeds'][$field])
 	{
 		$select_options = DBGet(DBQuery('SELECT SELECT_OPTIONS FROM custom_fields WHERE ID=\''.$field.'\''));
 		$select_options = str_replace("\n","\r",str_replace("\r\n","\r",$select_options[1]['SELECT_OPTIONS']));
@@ -40,14 +40,14 @@ function DeCodeds($value,$column)
 				$options[$option[0]] = $option[1];
 		}
 		if(count($options))
-			$_openSIS['DeCodeds'][$field] = $options;
+			$_hcwsms['DeCodeds'][$field] = $options;
 		else
-			$_openSIS['DeCodeds'][$field] = true;
+			$_hcwsms['DeCodeds'][$field] = true;
 	}
 
 	if($value!='')
-		if($_openSIS['DeCodeds'][$field][$value]!='')
-			return $_openSIS['DeCodeds'][$field][$value];
+		if($_hcwsms['DeCodeds'][$field][$value]!='')
+			return $_hcwsms['DeCodeds'][$field][$value];
 		else
 			return "<FONT color=red>$value</FONT>";
 	else

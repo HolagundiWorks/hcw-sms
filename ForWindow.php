@@ -59,7 +59,7 @@ echo "<script src='js/Ajaxload.js'></script>";
 echo '<script type="text/javascript" src="assets/js/core/libraries/jquery.min.js"></script>';
 echo '<script type="text/javascript" src="assets/js/plugins/forms/styling/switchery.min.js"></script>';
 echo '<script type="text/javascript" src="assets/js/pages/form_checkboxes_radios.js"></script>';
-if (!isset($_REQUEST['_openSIS_PDF'])) {
+if (!isset($_REQUEST['_hcwsms_PDF'])) {
     Warehouse('header');
     if (strpos(optional_param('modname', '', PARAM_NOTAGS), 'miscellaneous/') === false)
         echo '<DIV id="Migoicons" style="visibility:hidden;position:absolute;z-index:1000;top:-100"></DIV>';
@@ -68,7 +68,7 @@ if (!isset($_REQUEST['_openSIS_PDF'])) {
 }
 
 if (clean_param($_REQUEST['modname'], PARAM_NOTAGS)) {
-    if ($_REQUEST['_openSIS_PDF'] == 'true') {
+    if ($_REQUEST['_hcwsms_PDF'] == 'true') {
         ob_start();
     }
 
@@ -87,12 +87,12 @@ if (clean_param($_REQUEST['modname'], PARAM_NOTAGS)) {
         $modname = optional_param('modname', '', PARAM_NOTAGS);
 
 
-    if (optional_param('LO_save', '', PARAM_INT) != '1' && !isset($_REQUEST['_openSIS_PDF']) && (strpos(optional_param($modname, '', PARAM_NOTAGS), 'miscellaneous/') === false || $modname == 'miscellaneous/Registration.php' || $modname == 'miscellaneous/Export.php' || $modname == 'miscellaneous/Portal.php'))
+    if (optional_param('LO_save', '', PARAM_INT) != '1' && !isset($_REQUEST['_hcwsms_PDF']) && (strpos(optional_param($modname, '', PARAM_NOTAGS), 'miscellaneous/') === false || $modname == 'miscellaneous/Registration.php' || $modname == 'miscellaneous/Export.php' || $modname == 'miscellaneous/Portal.php'))
         $_SESSION['_REQUEST_vars'] = $_REQUEST;
 
     $allowed = false;
     include 'Menu.php';
-    foreach ($_openSIS['Menu'] as $modcat => $programs) {
+    foreach ($_hcwsms['Menu'] as $modcat => $programs) {
 
         if (optional_param('modname', '', PARAM_NOTAGS) == $modcat . '/Search.php') {
             $allowed = true;
@@ -131,10 +131,10 @@ if (clean_param($_REQUEST['modname'], PARAM_NOTAGS)) {
 
             echo ""._youReNotAllowedToUseThisProgram."! "._thisAttemptedViolationHasBeenLoggedAndYourIpAddressWasCaptured.".";
 
-            DBQuery("INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$openSISVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','" . optional_param('modname', '', PARAM_NOTAGS) . "','" . User('USERNAME') . "')");
+            DBQuery("INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$hcwsmsVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','" . optional_param('modname', '', PARAM_NOTAGS) . "','" . User('USERNAME') . "')");
             Warehouse('footer');
-            if ($openSISNotifyAddress)
-                mail($openSISNotifyAddress, 'HACKING ATTEMPT', "INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$openSISVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','" . optional_param('modname', '', PARAM_NOTAGS) . "','" . User('USERNAME') . "')");
+            if ($hcwsmsNotifyAddress)
+                mail($hcwsmsNotifyAddress, 'HACKING ATTEMPT', "INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$hcwsmsVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','" . optional_param('modname', '', PARAM_NOTAGS) . "','" . User('USERNAME') . "')");
         }
         exit;
     }
@@ -146,10 +146,10 @@ if (clean_param($_REQUEST['modname'], PARAM_NOTAGS)) {
 }
 
 
-if (!isset($_REQUEST['_openSIS_PDF'])) {
+if (!isset($_REQUEST['_hcwsms_PDF'])) {
     PopTable('footer');
     //echo '</TD></TR></TABLE>';
-    for ($i = 1; $i <= $_openSIS['PrepareDate']; $i++) {
+    for ($i = 1; $i <= $_hcwsms['PrepareDate']; $i++) {
         echo '<script type="text/javascript">
     Calendar.setup({
         monthField     :    "monthSelect' . $i . '",

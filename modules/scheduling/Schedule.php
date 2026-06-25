@@ -956,7 +956,7 @@ if ($_REQUEST['del'] == 'true') {
 
         $QI = DBQuery($sql);
 
-        if ($_REQUEST['_openSIS_PDF'] == true) {
+        if ($_REQUEST['_hcwsms_PDF'] == true) {
             $schedule_RET = DBGet($QI, array('ACTION' => '_makeAction', 'TITLE' => '_makeTitle', 'PERIOD_PULLDOWN' => '_makePeriodSelect', 'DAYS' => '_makeDays', 'COURSE_MARKING_PERIOD_ID' => '_makeMPSelect', 'SCHEDULER_LOCK' => '_makeLock', 'START_DATE' => '_makeDate', 'END_DATE' => '_makeDate', 'SCHEDULE_ID' => '_makeInfo'));
             //$schedule_RET = DBGet($QI, array('ACTION' => '_makeAction', 'TITLE' => '_makeTitle', 'PERIOD_PULLDOWN' => '_makePeriodSelect', 'DAYS' => '_makeDays', 'COURSE_MARKING_PERIOD_ID' => '_makeMPSelect', 'SCHEDULER_LOCK' => '_makeLock', 'START_DATE' => '_makeDate_red', 'END_DATE' => '_makeDate', 'SCHEDULE_ID' => '_makeInfo'));
             //       print_r($schedule_RET);
@@ -999,7 +999,7 @@ if ($_REQUEST['del'] == 'true') {
             unset($columns['DAYS']);
         }
 
-        if ($_REQUEST['_openSIS_PDF']) {
+        if ($_REQUEST['_hcwsms_PDF']) {
             unset($columns['SCHEDULER_LOCK']);
         }
 
@@ -1078,7 +1078,7 @@ if ($_REQUEST['del'] == 'true') {
         if (!$schedule_RET) {
             echo '';
         } else {
-            echo '<div class="panel-footer no-padding-bottom">' . ProgramLinkforExport('scheduling/PrintSchedules.php', '<b><i class="icon-printer4"></i></b>' . _printSchedule . '', '&modfunc=save&st_arr[]=' . UserStudentID() . '&mp_id=' . $mp_id . '&include_inactive=' . $_REQUEST['include_inactive'] . '&_openSIS_PDF=true', ' target=_blank class="btn btn-success btn-labeled"') . ' &nbsp; ';
+            echo '<div class="panel-footer no-padding-bottom">' . ProgramLinkforExport('scheduling/PrintSchedules.php', '<b><i class="icon-printer4"></i></b>' . _printSchedule . '', '&modfunc=save&st_arr[]=' . UserStudentID() . '&mp_id=' . $mp_id . '&include_inactive=' . $_REQUEST['include_inactive'] . '&_hcwsms_PDF=true', ' target=_blank class="btn btn-success btn-labeled"') . ' &nbsp; ';
             echo SubmitButton(_save, '', 'class="btn btn-primary" onclick=\'formload_ajax("modify");self_disable(this);\'') . '</div>';
         }
 
@@ -1189,7 +1189,7 @@ if ($_REQUEST['del'] == 'true') {
 
 function _makeTitle($value, $column = '')
 {
-    global $_openSIS, $THIS_RET;
+    global $_hcwsms, $THIS_RET;
     return $value;
 }
 
@@ -1221,7 +1221,7 @@ function _makeViewLock($value, $column)
 
 function _makePeriodSelect($course_period_id, $column = '')
 {
-    global $_openSIS, $THIS_RET, $fy_id;
+    global $_hcwsms, $THIS_RET, $fy_id;
 
     $sql = 'SELECT sp.TITLE AS PERIOD,cp.COURSE_PERIOD_ID,cp.PARENT_ID,cp.TITLE,cp.MARKING_PERIOD_ID,COALESCE(cp.TOTAL_SEATS-cp.FILLED_SEATS,0) AS AVAILABLE_SEATS FROM course_periods cp,course_period_var cpv,school_periods sp WHERE sp.PERIOD_ID=cpv.PERIOD_ID AND cp.COURSE_PERIOD_ID=cpv.COURSE_PERIOD_ID AND cp.COURSE_ID=\'' . $THIS_RET['COURSE_ID'] . '\' ORDER BY sp.SORT_ORDER';
     $orders_RET = DBGet(DBQuery($sql));
@@ -1240,39 +1240,39 @@ function _makePeriodSelect($course_period_id, $column = '')
 
 function _makeMPSelect($mp_id, $name = '')
 {
-    global $_openSIS, $THIS_RET, $fy_id;
+    global $_hcwsms, $THIS_RET, $fy_id;
     if ($mp_id != '') {
-        if (!$_openSIS['_makeMPSelect']) {
+        if (!$_hcwsms['_makeMPSelect']) {
             $semesters_RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,TITLE,NULL AS SEMESTER_ID FROM school_semesters WHERE SYEAR=\'' . UserSyear() . '\' AND SCHOOL_ID=\'' . UserSchool() . '\' ORDER BY SORT_ORDER'));
             $quarters_RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,TITLE,SEMESTER_ID FROM school_quarters WHERE SYEAR=\'' . UserSyear() . '\' AND SCHOOL_ID=\'' . UserSchool() . '\' ORDER BY SORT_ORDER'));
 
-            $_openSIS['_makeMPSelect'][$fy_id][1] = array('MARKING_PERIOD_ID' => "$fy_id", 'TITLE' => 'Full Year', 'SEMESTER_ID' => '');
+            $_hcwsms['_makeMPSelect'][$fy_id][1] = array('MARKING_PERIOD_ID' => "$fy_id", 'TITLE' => 'Full Year', 'SEMESTER_ID' => '');
             foreach ($semesters_RET as $sem) {
-                $_openSIS['_makeMPSelect'][$fy_id][] = $sem;
+                $_hcwsms['_makeMPSelect'][$fy_id][] = $sem;
             }
 
             foreach ($quarters_RET as $qtr) {
-                $_openSIS['_makeMPSelect'][$fy_id][] = $qtr;
+                $_hcwsms['_makeMPSelect'][$fy_id][] = $qtr;
             }
 
             $quarters_QI = DBQuery('SELECT MARKING_PERIOD_ID,TITLE,SEMESTER_ID FROM school_quarters WHERE SYEAR=\'' . UserSyear() . '\' AND SCHOOL_ID=\'' . UserSchool() . '\' ORDER BY SORT_ORDER');
             $quarters_indexed_RET = DBGet($quarters_QI, array(), array('SEMESTER_ID'));
 
             foreach ($semesters_RET as $sem) {
-                $_openSIS['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][1] = $sem;
+                $_hcwsms['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][1] = $sem;
                 foreach ($quarters_indexed_RET[$sem['MARKING_PERIOD_ID']] as $qtr) {
-                    $_openSIS['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][] = $qtr;
+                    $_hcwsms['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][] = $qtr;
                 }
 
             }
 
             foreach ($quarters_RET as $qtr) {
-                $_openSIS['_makeMPSelect'][$qtr['MARKING_PERIOD_ID']][] = $qtr;
+                $_hcwsms['_makeMPSelect'][$qtr['MARKING_PERIOD_ID']][] = $qtr;
             }
 
         }
 
-        foreach ($_openSIS['_makeMPSelect'][$mp_id] as $value) {
+        foreach ($_hcwsms['_makeMPSelect'][$mp_id] as $value) {
             $mps[$value['MARKING_PERIOD_ID']] = $value['TITLE'];
         }
 
@@ -1291,39 +1291,39 @@ function _makeMPSelect($mp_id, $name = '')
 
 function _makeMPSelect_red($mp_id, $name = '')
 {
-    global $_openSIS, $THIS_RET, $fy_id;
+    global $_hcwsms, $THIS_RET, $fy_id;
     if ($mp_id != '') {
-        if (!$_openSIS['_makeMPSelect']) {
+        if (!$_hcwsms['_makeMPSelect']) {
             $semesters_RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,TITLE,NULL AS SEMESTER_ID FROM school_semesters WHERE SYEAR=\'' . UserSyear() . '\' AND SCHOOL_ID=\'' . UserSchool() . '\' ORDER BY SORT_ORDER'));
             $quarters_RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,TITLE,SEMESTER_ID FROM school_quarters WHERE SYEAR=\'' . UserSyear() . '\' AND SCHOOL_ID=\'' . UserSchool() . '\' ORDER BY SORT_ORDER'));
 
-            $_openSIS['_makeMPSelect'][$fy_id][1] = array('MARKING_PERIOD_ID' => "$fy_id", 'TITLE' => 'Full Year', 'SEMESTER_ID' => '');
+            $_hcwsms['_makeMPSelect'][$fy_id][1] = array('MARKING_PERIOD_ID' => "$fy_id", 'TITLE' => 'Full Year', 'SEMESTER_ID' => '');
             foreach ($semesters_RET as $sem) {
-                $_openSIS['_makeMPSelect'][$fy_id][] = $sem;
+                $_hcwsms['_makeMPSelect'][$fy_id][] = $sem;
             }
 
             foreach ($quarters_RET as $qtr) {
-                $_openSIS['_makeMPSelect'][$fy_id][] = $qtr;
+                $_hcwsms['_makeMPSelect'][$fy_id][] = $qtr;
             }
 
             $quarters_QI = DBQuery('SELECT MARKING_PERIOD_ID,TITLE,SEMESTER_ID FROM school_quarters WHERE SYEAR=\'' . UserSyear() . '\' AND SCHOOL_ID=\'' . UserSchool() . '\' ORDER BY SORT_ORDER');
             $quarters_indexed_RET = DBGet($quarters_QI, array(), array('SEMESTER_ID'));
 
             foreach ($semesters_RET as $sem) {
-                $_openSIS['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][1] = $sem;
+                $_hcwsms['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][1] = $sem;
                 foreach ($quarters_indexed_RET[$sem['MARKING_PERIOD_ID']] as $qtr) {
-                    $_openSIS['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][] = $qtr;
+                    $_hcwsms['_makeMPSelect'][$sem['MARKING_PERIOD_ID']][] = $qtr;
                 }
 
             }
 
             foreach ($quarters_RET as $qtr) {
-                $_openSIS['_makeMPSelect'][$qtr['MARKING_PERIOD_ID']][] = $qtr;
+                $_hcwsms['_makeMPSelect'][$qtr['MARKING_PERIOD_ID']][] = $qtr;
             }
 
         }
 
-        foreach ($_openSIS['_makeMPSelect'][$mp_id] as $value) {
+        foreach ($_hcwsms['_makeMPSelect'][$mp_id] as $value) {
 
             $student_id = UserStudentID();
             $qr = DBGet(DBQuery('select end_date from student_enrollment where student_id=' . $student_id . ' order by id desc limit 0,1'));

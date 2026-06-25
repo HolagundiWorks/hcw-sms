@@ -40,7 +40,7 @@ if (isset($_REQUEST['tables']['new']) && $_REQUEST['tables']['new']['TITLE'] == 
 $course_period_id = UserCoursePeriod();
 $course_id = DBGet(DBQuery('SELECT COURSE_ID FROM course_periods WHERE COURSE_PERIOD_ID=\'' . UserCoursePeriod() . '\''));
 $course_id = $course_id[1]['COURSE_ID'];
-$_openSIS['allow_edit'] = true;
+$_hcwsms['allow_edit'] = true;
 unset($_SESSION['_REQUEST_vars']['assignment_type_id']);
 unset($_SESSION['_REQUEST_vars']['assignment_id']);
 

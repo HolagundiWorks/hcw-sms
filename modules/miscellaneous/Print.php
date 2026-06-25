@@ -29,7 +29,7 @@ include('../../RedirectModulesInc.php');
 include_once('functions/MiscExportFnc.php');
 $extra['search'] .= '<TR><TD align=center colspan=2><TABLE><TR><TD><DIV id=fields_div></DIV></TD></TR></TABLE></TD></TR>';
 $extra['new'] = true;
-$_openSIS['CustomFields'] = true;
+$_hcwsms['CustomFields'] = true;
 if($_REQUEST['ADDRESS_ID'] || $_REQUEST['fields']['ADDRESS'] || $_REQUEST['fields']['CITY'] || $_REQUEST['fields']['STATE'] || $_REQUEST['fields']['ZIPCODE'] || $_REQUEST['fields']['PHONE'] || $_REQUEST['fields']['MAIL_ADDRESS'] || $_REQUEST['fields']['MAIL_CITY'] || $_REQUEST['fields']['MAIL_STATE'] || $_REQUEST['fields']['MAIL_ZIPCODE'] || $_REQUEST['fields']['PARENTS'])
 {
 	$extra['SELECT'] .= ',a.ID AS ADDRESS_ID,a.ADDRESS,a.CITY,a.STATE,a.ZIPCODE,a.PHONE,a.ADDRESS AS MAIL_ADDRESS,a.CITY AS MAIL_CITY,a.STATE AS MAIL_STATE,a.ZIPCODE AS MAIL_ZIPCODE';
@@ -45,7 +45,7 @@ if($_REQUEST['fields']['PARENTS'])
 	$view_other_RET['ALL_CONTACTS'][1]['VALUE']='Y';
 	if($_REQUEST['relation']!='')
 	{
-		$_openSIS['makeParents'] = $_REQUEST['relation'];
+		$_hcwsms['makeParents'] = $_REQUEST['relation'];
 		$extra['students_join_address'] .= ' AND EXISTS (SELECT \'\' FROM students_join_people sjp WHERE sjp.STUDENT_ID=a.STUDENT_ID AND LOWER(sjp.REALTIONSHIP) LIKE \''.strtolower($_REQUEST['relation']).'%\') ';
 	}
 }

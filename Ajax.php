@@ -200,7 +200,7 @@ if (UserStaffID() && User('PROFILE') == 'admin' && substr(clean_param($_REQUEST[
     }
 }
 echo "<div id=\"divErr\"></div>";
-if (!isset($_REQUEST['_openSIS_PDF'])) {
+if (!isset($_REQUEST['_hcwsms_PDF'])) {
     Warehouse('header');
 
     if (strpos(clean_param($_REQUEST['modname'], PARAM_NOTAGS), 'miscellaneous/') === false)
@@ -213,7 +213,7 @@ $ajax_to_sign_in    = "";
 $ajax_to_sign_out   = "";
 
 if (clean_param($_REQUEST['modname'], PARAM_NOTAGS)) {
-    if ($_REQUEST['_openSIS_PDF'] == 'true')
+    if ($_REQUEST['_hcwsms_PDF'] == 'true')
         ob_start();
     if (strpos($_REQUEST['modname'], '?') !== false) {
         $vars = substr($_REQUEST['modname'], (strpos($_REQUEST['modname'], '?') + 1));
@@ -228,12 +228,12 @@ if (clean_param($_REQUEST['modname'], PARAM_NOTAGS)) {
     } else
         $modname = $_REQUEST['modname'];
 
-    if ($_REQUEST['LO_save'] != '1' && !isset($_REQUEST['_openSIS_PDF']) && (strpos($modname, 'miscellaneous/') === false || $modname == 'misc/Registration.php' || $modname == 'miscellaneous/Export.php' || $modname == 'miscellaneous/Portal.php'))
+    if ($_REQUEST['LO_save'] != '1' && !isset($_REQUEST['_hcwsms_PDF']) && (strpos($modname, 'miscellaneous/') === false || $modname == 'misc/Registration.php' || $modname == 'miscellaneous/Export.php' || $modname == 'miscellaneous/Portal.php'))
         $_SESSION['_REQUEST_vars'] = $_REQUEST;
 
     $allowed = false;
     include 'Menu.php';
-    foreach ($_openSIS['Menu'] as $modcat => $programs) {
+    foreach ($_hcwsms['Menu'] as $modcat => $programs) {
 
         if (clean_param($_REQUEST['modname'], PARAM_NOTAGS) == $modcat . '/Search.php') {
             $allowed = true;
@@ -269,10 +269,10 @@ if (clean_param($_REQUEST['modname'], PARAM_NOTAGS)) {
             $ip = sqlSecurityFilter($ip);
 
             echo "" . _youReNotAllowedToUseThisProgram . "! " . _thisAttemptedViolationHasBeenLoggedAndYourIpAddressWasCaptured . ".";
-            DBQuery("INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$openSISVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','$_REQUEST[modname]','" . User('USERNAME') . "')");
+            DBQuery("INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$hcwsmsVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','$_REQUEST[modname]','" . User('USERNAME') . "')");
             Warehouse('footer');
-            if ($openSISNotifyAddress)
-                mail($openSISNotifyAddress, 'HACKING ATTEMPT', "INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$openSISVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','$_REQUEST[modname]','" . User('USERNAME') . "')");
+            if ($hcwsmsNotifyAddress)
+                mail($hcwsmsNotifyAddress, 'HACKING ATTEMPT', "INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$hcwsmsVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','$_REQUEST[modname]','" . User('USERNAME') . "')");
         }
         exit;
     }
@@ -287,8 +287,8 @@ echo "<div id='cal' class='divcal'> </div>";
 
 
 
-if (!isset($_REQUEST['_openSIS_PDF'])) {
-    for ($i = 1; $i <= $_openSIS['PrepareDate']; $i++) {
+if (!isset($_REQUEST['_hcwsms_PDF'])) {
+    for ($i = 1; $i <= $_hcwsms['PrepareDate']; $i++) {
         echo '<script type="text/javascript">
     
 </script>';

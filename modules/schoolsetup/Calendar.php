@@ -38,7 +38,7 @@ include('lang/language.php');
 if (clean_param($_REQUEST['modfunc'], PARAM_ALPHAMOD) == 'print') {
     echo '<style type="text/css">.print_wrapper{font-family:arial;font-size:12px;}.print_wrapper table table{border-right:1px solid #666;border-bottom:1px solid #666;}.print_wrapper table td{font-size:12px;}</style>';
     echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-    echo "<tr><td  style=\"font-size:15px; font-weight:bold; padding-top:10px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . _listOfEvents . "</div></td><td align=right style=\"padding-top:10px;\">" . ProperDate(DBDate()) . "<br />" . _listOfEvents . " openSIS</td></tr><tr><td colspan=2 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+    echo "<tr><td  style=\"font-size:15px; font-weight:bold; padding-top:10px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . _listOfEvents . "</div></td><td align=right style=\"padding-top:10px;\">" . ProperDate(DBDate()) . "<br />" . _listOfEvents . " HCW-SMS</td></tr><tr><td colspan=2 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
     echo "<div class=print_wrapper>";
     ListOutputFloat($_SESSION['events_RET'], array('SCHOOL_DATE' => _date, 'TITLE' => _date, 'DESCRIPTION' => _description), _event, _events, '', '', array('search' => _date, 'count' => _description));
     echo "</div>";

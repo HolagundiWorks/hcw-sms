@@ -28,7 +28,7 @@
 #***************************************************************************************
 include('../../RedirectModulesInc.php');
 unset($_SESSION['student_id']);
-if ($_openSIS['modules_search'] && $extra['force_search'])
+if ($_hcwsms['modules_search'] && $extra['force_search'])
     $_REQUEST['search_modfunc'] = '';
 
 if (Preferences('SEARCH') != 'Y' && !$extra['force_search'])
@@ -199,7 +199,7 @@ else {
         elseif (!UserStudentID() && is_countable($students_RET) && count($students_RET) != 0)
             DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=false><i class=\"icon-square-up-left\"></i> "._originalView."</A>", $extra['header_right']);
         DrawHeader($extra['extra_header_left'], $extra['extra_header_right']);
-        DrawHeader(str_replace('<BR>', '<BR> &nbsp;', substr($_openSIS['SearchTerms'], 0, -4)));
+        DrawHeader(str_replace('<BR>', '<BR> &nbsp;', substr($_hcwsms['SearchTerms'], 0, -4)));
         if ($_REQUEST['LO_save'] != '1' && !$extra['suppress_save']) {
             $_SESSION['List_PHP_SELF'] = PreparePHP_SELF($_SESSION['_REQUEST_vars']);
             //echo '<script language=JavaScript>parent.help.location.reload();</script>';

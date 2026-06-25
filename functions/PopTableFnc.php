@@ -30,13 +30,13 @@
 // REQUIRES A TITLE
 
 function PopTable($action, $title = 'Search', $div_att = 'class="panel"', $cell_padding = '5') {
-    global $_openSIS;
+    global $_hcwsms;
     if ($action == 'header') {
         echo '<div ' . $div_att . '>';
         echo '<div class="tabbable">';
 
         if (is_array($title)) {
-            echo WrapTabs($title, $_openSIS['selected_tab']);
+            echo WrapTabs($title, $_hcwsms['selected_tab']);
         } else {
         echo '<ul class="nav nav-tabs nav-tabs-bottom no-margin-bottom">';
             echo DrawTab($title);
@@ -61,7 +61,7 @@ function PopTable($action, $title = 'Search', $div_att = 'class="panel"', $cell_
 }
 
 function PopTable_wo_header($action, $title = '', $div_att = 'class="panel"', $header_content = '') {
-    global $_openSIS;
+    global $_hcwsms;
 
     if ($action == 'header') {
         echo '<div ' . $div_att . '>';
@@ -88,7 +88,7 @@ function PopTable_wo_header($action, $title = '', $div_att = 'class="panel"', $h
 }
 
 function PopTable_wo_header_attn_code($action, $title = 'Search', $div_att = 'class="panel"', $cell_padding = '5') {
-    global $_openSIS;
+    global $_hcwsms;
 
     if ($action == 'header') {
         echo '<div ' . $div_att . '>';
@@ -112,7 +112,7 @@ function PopTable_wo_header_attn_code($action, $title = 'Search', $div_att = 'cl
 }
 
 function PopTable_grade_header($action, $title = 'Search', $div_att = 'class="panel"', $cell_padding = '5') {
-    global $_openSIS;
+    global $_hcwsms;
 
     if ($action == 'header') {
         echo '<div ' . $div_att . '>';
@@ -135,7 +135,7 @@ function PopTable_grade_header($action, $title = 'Search', $div_att = 'class="pa
 }
 
 function PopTableMod($action, $title = 'Search', $table_att = '', $cell_padding = '0') {
-    global $_openSIS;
+    global $_hcwsms;
 
     if ($action == 'header') {
         echo "
@@ -162,7 +162,7 @@ function PopTableMod($action, $title = 'Search', $table_att = '', $cell_padding 
 }
 
 function PopTableWindow($action, $title = 'Search', $table_att = '', $cell_padding = '0') {
-    global $_openSIS;
+    global $_hcwsms;
 
     if ($action == 'header') {
         echo "
@@ -170,7 +170,7 @@ function PopTableWindow($action, $title = 'Search', $table_att = '', $cell_paddi
 
         echo "<TR><TD >";
         if (is_array($title))
-            echo WrapTabs($title, $_openSIS['selected_tab']);
+            echo WrapTabs($title, $_hcwsms['selected_tab']);
         else
             echo DrawTab($title);
         echo "</TD></TR>
@@ -193,7 +193,7 @@ function PopTableWindow($action, $title = 'Search', $table_att = '', $cell_paddi
 }
 
 function PopTableforWindow($action, $title = 'Search', $table_att = '', $cell_padding = '0') {
-    global $_openSIS;
+    global $_hcwsms;
 
     if ($action == 'header') {
         echo "
@@ -201,7 +201,7 @@ function PopTableforWindow($action, $title = 'Search', $table_att = '', $cell_pa
 
         echo "<TR><TD >";
         if (is_array($title))
-            echo WrapTabs($title, $_openSIS['selected_tab']);
+            echo WrapTabs($title, $_hcwsms['selected_tab']);
         else
             echo "</TD></TR>
 			<TR><TD>";

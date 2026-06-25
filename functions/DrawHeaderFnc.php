@@ -28,11 +28,11 @@
 #***************************************************************************************
 
 function DrawHeader($left = '', $right = '', $center = '') {
-    global $_openSIS;
-    if (!isset($_openSIS['DrawHeader']))
-        $_openSIS['DrawHeader'] = '';
+    global $_hcwsms;
+    if (!isset($_hcwsms['DrawHeader']))
+        $_hcwsms['DrawHeader'] = '';
 
-    if ($_openSIS['DrawHeader'] == '') {
+    if ($_hcwsms['DrawHeader'] == '') {
         $attribute = 'b';
         $font_color = '';
     } else {
@@ -54,10 +54,10 @@ function DrawHeader($left = '', $right = '', $center = '') {
         echo '</div>';
     }
 
-    if ($_openSIS['DrawHeaderHome'] == '' && !$_REQUEST['_openSIS_PDF'])
-        $_openSIS['DrawHeaderHome'] = ' style="border:0;border-style: none none none none;"';
+    if ($_hcwsms['DrawHeaderHome'] == '' && !$_REQUEST['_hcwsms_PDF'])
+        $_hcwsms['DrawHeaderHome'] = ' style="border:0;border-style: none none none none;"';
     else
-        $_openSIS['DrawHeaderHome'] = '';
+        $_hcwsms['DrawHeaderHome'] = '';
 }
 
 ?>

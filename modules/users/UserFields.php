@@ -29,7 +29,7 @@
 include('../../RedirectModulesInc.php');
 include('lang/language.php');
 DrawBC("" . _users . " > " . ProgramTitle());
-$_openSIS['allow_edit'] = true;
+$_hcwsms['allow_edit'] = true;
 $not_default = false;
 
 echo '<input id="customFieldModule" type="hidden" value="people">';
@@ -407,8 +407,8 @@ if (!$_REQUEST['modfunc']) {
         $header .= '<input id="DEFAULT_DATATYPE_' . $_REQUEST['id'] . '" name="DEFAULT_DATATYPE_' . $_REQUEST['id'] . '" type="hidden" value="' . $RET['TYPE'] . '">';
 
         if ($_REQUEST['id'] != 'new' && $RET['TYPE'] != 'multiple' && $RET['TYPE'] != 'codeds' && $RET['TYPE'] != 'select' && $RET['TYPE'] != 'autos' && $RET['TYPE'] != 'edits' && $RET['TYPE'] != 'text' && $RET['TYPE'] != 'date' && $RET['TYPE'] != 'radio' && $RET['TYPE'] != 'numeric' && $RET['TYPE'] != 'textarea') {
-            $_openSIS['allow_edit'] = $allow_edit;
-            $_openSIS['AllowEdit'][$modname] = $AllowEdit;
+            $_hcwsms['allow_edit'] = $allow_edit;
+            $_hcwsms['AllowEdit'][$modname] = $AllowEdit;
         }
         foreach ($categories_RET as $type)
             $categories_options[$type['ID']] = $type['TITLE'];

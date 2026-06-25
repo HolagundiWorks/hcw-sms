@@ -39,7 +39,7 @@ if (!defined('WAREHOUSE_PHP')) {
     // }
 
     // Load functions.
-    if ($handle = opendir("$openSISPath/functions")) {
+    if ($handle = opendir("$hcwsmsPath/functions")) {
         if (!isset($IgnoreFiles) || !is_array($IgnoreFiles)) {
             $IgnoreFiles = [];
         }
@@ -47,8 +47,8 @@ if (!defined('WAREHOUSE_PHP')) {
         while (false !== ($file = readdir($handle))) {
             // if filename isn't '.' '..' or in the Ignore list... load it.
             if ($file !== "." && $file !== ".." && !in_array($file, $IgnoreFiles)) {
-                if (file_exists("$openSISPath/functions/$file")) {
-                    require_once("$openSISPath/functions/$file");
+                if (file_exists("$hcwsmsPath/functions/$file")) {
+                    require_once("$hcwsmsPath/functions/$file");
                 }
             }
         }
@@ -64,7 +64,7 @@ if (!defined('WAREHOUSE_PHP')) {
     }
 
     function Warehouse($mode, $extra = '') {
-        global $__SHOW_FOOTER, $_openSIS;
+        global $__SHOW_FOOTER, $_hcwsms;
 
         switch ($mode) {
             case 'header':
@@ -136,7 +136,7 @@ if (!defined('WAREHOUSE_PHP')) {
             case "footer":
                 echo '</td></tr></table>';
 
-                for ($i = 1; $i <= $_openSIS['PrepareDate']; $i++) {
+                for ($i = 1; $i <= $_hcwsms['PrepareDate']; $i++) {
                     echo '<script type="text/javascript">
 				Calendar.setup({
 					monthField     :    "monthSelect' . $i . '",

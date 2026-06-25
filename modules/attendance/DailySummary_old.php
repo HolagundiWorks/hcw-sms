@@ -231,16 +231,16 @@ function _makePeriodColor($name,$state_code,$default_code)
 }
 
 function makeCodePulldown($value,$student_id,$date)
-{	global $THIS_RET,$attendance_codes,$_openSIS;
+{	global $THIS_RET,$attendance_codes,$_hcwsms;
 
 	$date = substr($date,1,4).'-'.substr($date,5,2).'-'.substr($date,7);
 
-	if(!$_openSIS['code_options'])
+	if(!$_hcwsms['code_options'])
 	{
 		foreach($attendance_codes as $id=>$code)
-			$_openSIS['code_options'][$id] = $code[1]['SHORT_NAME'];
+			$_hcwsms['code_options'][$id] = $code[1]['SHORT_NAME'];
 	}
 
-	return SelectInput($value,'attendance['.$student_id.']['.$date.'][ATTENDANCE_CODE]','',$_openSIS['code_options']);
+	return SelectInput($value,'attendance['.$student_id.']['.$date.'][ATTENDANCE_CODE]','',$_hcwsms['code_options']);
 }
 ?>

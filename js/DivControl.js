@@ -874,7 +874,7 @@ function printViewSchedule(exportFileName, viewMode) {
     doc.output('dataurlnewwindow');
     // let dataSrc = doc.output("datauristring");
     // let win = window.open("", "myWindow");
-    // win.document.write('<html><head><title>openSIS Student Information System</title><link rel="shortcut icon" href="../favicon.ico"></head><body><iframe src="' + dataSrc + '" style="min-height:100vh;width:100%" frameborder="0"></iframe></body></html>');
+    // win.document.write('<html><head><title>HCW-SMS Student Information System</title><link rel="shortcut icon" href="../favicon.ico"></head><body><iframe src="' + dataSrc + '" style="min-height:100vh;width:100%" frameborder="0"></iframe></body></html>');
 }
 
 function togglePasswordView(thisElement, targetElement) {

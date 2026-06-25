@@ -52,10 +52,10 @@ if ($_REQUEST['modfunc'] == 'save') {
         $handle = PDFStart();
         $PCL_UserCoursePeriod = $_SESSION['UserCoursePeriod']; // save/restore for teachers
         foreach ($course_periods_RET as $teacher_id => $course_period) {
-            unset($_openSIS['DrawHeader']);
+            unset($_hcwsms['DrawHeader']);
 
 
-            $_openSIS['User'] = array(1 => array('STAFF_ID' => $course_period['TEACHER_ID'], 'NAME' => 'name', 'PROFILE' => 'teacher', 'SCHOOLS' => ',' . UserSchool() . ',', 'SYEAR' => UserSyear()));
+            $_hcwsms['User'] = array(1 => array('STAFF_ID' => $course_period['TEACHER_ID'], 'NAME' => 'name', 'PROFILE' => 'teacher', 'SCHOOLS' => ',' . UserSchool() . ',', 'SYEAR' => UserSyear()));
             $_SESSION['UserCoursePeriod'] = $course_period['COURSE_PERIOD_ID'];
             if ($_REQUEST['excelReport'] != 'Y') {
                 echo '<table width="100%" bgcolor="#fff" cellpadding="0" cellspacing="0" border="0"><tbody>';
@@ -64,7 +64,7 @@ if ($_REQUEST['modfunc'] == 'save') {
                 echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
                 echo "<tr><td width=105>" . DrawLogo() . "</td>";
                 echo "<td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">"._teacherClassList."</div></td>";
-                echo "<td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredBy." openSIS</td></tr>";
+                echo "<td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredBy." HCW-SMS</td></tr>";
                 echo "<tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr>";
                 echo "</table>";
                 echo '</td></tr>';
@@ -88,13 +88,13 @@ if ($_REQUEST['modfunc'] == 'save') {
             unset($extra['DATE']);
             $extra['search'] .= '<TR><TD align=center colspan=2><TABLE><TR><TD><DIV id=fields_div></DIV></TD></TR></TABLE></TD></TR>';
             $extra['new'] = true;
-            $_openSIS['CustomFields'] = true;
+            $_hcwsms['CustomFields'] = true;
 
             if ($_REQUEST['fields']['PARENTS']) {
                 $extra['SELECT'] .= ',ssm.STUDENT_ID AS PARENTS';
                 $view_other_RET['ALL_CONTACTS'][1]['VALUE'] = 'Y';
                 if ($_REQUEST['relation'] != '') {
-                    $_openSIS['makeParents'] = $_REQUEST['relation'];
+                    $_hcwsms['makeParents'] = $_REQUEST['relation'];
                     $extra['students_join_address'] .= ' AND EXISTS (SELECT \'\' FROM students_join_people sjp WHERE sjp.STUDENT_ID=sa.STUDENT_ID AND LOWER(sjp.RELATIONSHIP) LIKE \'' . strtolower($_REQUEST['relation']) . '%\') ';
                 }
             }
@@ -177,7 +177,7 @@ if ($_REQUEST['modfunc'] == 'save') {
                         $extra['SELECT'] .= ',(SELECT GROUP_CONCAT(DISTINCT CONCAT(COALESCE(st.FIRST_NAME,\' \'),\' \',COALESCE(st.LAST_NAME,\' \'),\' - \',COALESCE(r.TITLE,\' \'))) FROM staff st,schedule ss,course_periods cp,course_period_var cpv,rooms r WHERE ss.STUDENT_ID=ssm.STUDENT_ID AND cp.COURSE_PERIOD_ID=cpv.COURSE_PERIOD_ID AND r.ROOM_ID=cpv.ROOM_ID AND cp.COURSE_PERIOD_ID=ss.COURSE_PERIOD_ID AND cp.TEACHER_ID=st.STAFF_ID AND cpv.PERIOD_ID=\'' . $period['PERIOD_ID'] . '\' AND (\'' . $date . '\' BETWEEN ss.START_DATE AND ss.END_DATE OR \'' . $date . '\'>=ss.START_DATE AND ss.END_DATE IS NULL) LIMIT 1) AS PERIOD_' . $period['PERIOD_ID'];
                 }
 
-                if ($openSISModules['Food_Service'] && ($_REQUEST['fields']['FS_ACCOUNT_ID'] == 'Y' || $_REQUEST['fields']['FS_DISCOUNT'] == 'Y' || $_REQUEST['fields']['FS_STATUS'] == 'Y' || $_REQUEST['fields']['FS_BARCODE'] == 'Y' || $_REQUEST['fields']['FS_BALANCE'] == 'Y')) {
+                if ($hcwsmsModules['Food_Service'] && ($_REQUEST['fields']['FS_ACCOUNT_ID'] == 'Y' || $_REQUEST['fields']['FS_DISCOUNT'] == 'Y' || $_REQUEST['fields']['FS_STATUS'] == 'Y' || $_REQUEST['fields']['FS_BARCODE'] == 'Y' || $_REQUEST['fields']['FS_BALANCE'] == 'Y')) {
                     $extra['FROM'] = ',FOOD_SERVICE_STUDENT_ACCOUNTS fssa';
                     $extra['WHERE'] = ' AND fssa.STUDENT_ID=ssm.STUDENT_ID';
                     if ($_REQUEST['fields']['FS_ACCOUNT_ID'] == 'Y')
@@ -553,7 +553,7 @@ function mySearch($extra) {
     echo '</div>'; //. end the common .panel-body
     echo '<hr class="no-margin">';
 
-    echo "<FORM class='m-b-0' name=exp id=exp action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&head_html=Teacher+Class+List&modfunc=save&search_modfunc=list&_openSIS_PDF=true onsubmit=document.forms[0].relation.value=document.getElementById(\"relation\").value; method=POST target=_blank>";
+    echo "<FORM class='m-b-0' name=exp id=exp action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&head_html=Teacher+Class+List&modfunc=save&search_modfunc=list&_hcwsms_PDF=true onsubmit=document.forms[0].relation.value=document.getElementById(\"relation\").value; method=POST target=_blank>";
     echo '<DIV id=fields_div></DIV>';
     DrawHeader('', $extra['header_right']);
     DrawHeader($extra['extra_header_left'], $extra['extra_header_right']);

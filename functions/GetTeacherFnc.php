@@ -26,13 +26,13 @@
 #
 #***************************************************************************************
 function GetTeacher($teacher_id,$title='',$column='FULL_NAME',$schools=true)
-{	global $_openSIS;
-		if(!$_openSIS['GetTeacher'])
+{	global $_hcwsms;
+		if(!$_hcwsms['GetTeacher'])
 	{
 
                 $QI=DBQuery('SELECT STAFF_ID,CONCAT(LAST_NAME,\', \',FIRST_NAME) AS FULL_NAME,USERNAME,PROFILE FROM staff s INNER JOIN staff_school_relationship USING(staff_id),login_authentication la WHERE s.STAFF_ID=la.USER_ID AND s.PROFILE=\'teacher\' AND syear='.  UserSyear());
-		$_openSIS['GetTeacher'] = DBGet($QI,array(),array('STAFF_ID'));
+		$_hcwsms['GetTeacher'] = DBGet($QI,array(),array('STAFF_ID'));
 	}
-		return $_openSIS['GetTeacher'][$teacher_id][1][$column];
+		return $_hcwsms['GetTeacher'][$teacher_id][1][$column];
 }
 ?>

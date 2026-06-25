@@ -184,9 +184,9 @@ function _makeTextareaInput($column, $name, $request = 'students')
 }
 
 // function _makeMultipleInput($column, $name, $request = 'students') {
-//     global $value, $field, $_openSIS;
+//     global $value, $field, $_hcwsms;
 
-//     if ((AllowEdit() || $_openSIS['allow_edit']) && !$_REQUEST['_openSIS_PDF']) {
+//     if ((AllowEdit() || $_hcwsms['allow_edit']) && !$_REQUEST['_hcwsms_PDF']) {
 //         $field['SELECT_OPTIONS'] = str_replace("\n", "\r", str_replace("\r\n", "\r", $field['SELECT_OPTIONS']));
 //         $select_options = explode("\r", $field['SELECT_OPTIONS']);
 //         if (count($select_options)) {
@@ -238,9 +238,9 @@ function _makeTextareaInput($column, $name, $request = 'students')
 
 function _makeMultipleInput($column, $name, $request = 'students')
 {
-    global $value, $field, $_openSIS;
+    global $value, $field, $_hcwsms;
 
-    if ((AllowEdit() || $_openSIS['allow_edit']) && !$_REQUEST['_openSIS_PDF']) {
+    if ((AllowEdit() || $_hcwsms['allow_edit']) && !$_REQUEST['_hcwsms_PDF']) {
         $field['SELECT_OPTIONS'] = str_replace("\n", "\r", str_replace("\r\n", "\r", $field['SELECT_OPTIONS']));
         $select_options = explode("\r", $field['SELECT_OPTIONS']);
         if (count($select_options)) {

@@ -26,7 +26,7 @@
 #
 #***************************************************************************************
 function GetAllMP($mp,$marking_period_id='0')
-{	global $_openSIS;
+{	global $_hcwsms;
 	if($marking_period_id==0)
 	{
 		// there should be exactly one fy marking period
@@ -37,7 +37,7 @@ function GetAllMP($mp,$marking_period_id='0')
 	elseif(!$mp) 
 		 $mp = GetMPTable(GetMP($marking_period_id,'TABLE'));
              
-	if(!$_openSIS['GetAllMP'][$mp])
+	if(!$_hcwsms['GetAllMP'][$mp])
 	{
 		switch($mp)
 		{
@@ -49,10 +49,10 @@ function GetAllMP($mp,$marking_period_id='0')
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 				foreach($RET as $value)
 				{
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] .= ','.GetChildrenMP($mp,$value['MARKING_PERIOD_ID']);
-					if(substr($_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],-1)==',')
-						$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = substr($_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],0,-1);
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] .= ','.GetChildrenMP($mp,$value['MARKING_PERIOD_ID']);
+					if(substr($_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],-1)==',')
+						$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = substr($_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],0,-1);
 				}
 			break;
 
@@ -63,7 +63,7 @@ function GetAllMP($mp,$marking_period_id='0')
 
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 				foreach($RET as $value)
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
 			break;
 
 			case 'SEM':
@@ -74,38 +74,38 @@ function GetAllMP($mp,$marking_period_id='0')
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
 				foreach($RET as $sem=>$value)
 				{
-					$_openSIS['GetAllMP'][$mp][$sem] = "'$fy','$sem'";
+					$_hcwsms['GetAllMP'][$mp][$sem] = "'$fy','$sem'";
 					foreach($value as $qtr)
-						$_openSIS['GetAllMP'][$mp][$sem] .= ",'$qtr[MARKING_PERIOD_ID]'";
+						$_hcwsms['GetAllMP'][$mp][$sem] .= ",'$qtr[MARKING_PERIOD_ID]'";
 				}
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID FROM school_semesters s WHERE NOT EXISTS (SELECT \'\' FROM school_quarters q WHERE q.SEMESTER_ID=s.MARKING_PERIOD_ID) AND SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 				foreach($RET as $value)
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[MARKING_PERIOD_ID]'";
 			break;
 
 			case 'FY':
 				// there should be exactly one fy marking period which better be $marking_period_id
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
-				$_openSIS['GetAllMP'][$mp][$marking_period_id] = "'$marking_period_id'";
+				$_hcwsms['GetAllMP'][$mp][$marking_period_id] = "'$marking_period_id'";
 				foreach($RET as $sem=>$value)
 				{
-					$_openSIS['GetAllMP'][$mp][$marking_period_id] .= ",'$sem'";
+					$_hcwsms['GetAllMP'][$mp][$marking_period_id] .= ",'$sem'";
 					foreach($value as $qtr)
-						$_openSIS['GetAllMP'][$mp][$marking_period_id] .= ",'$qtr[MARKING_PERIOD_ID]'";
+						$_hcwsms['GetAllMP'][$mp][$marking_period_id] .= ",'$qtr[MARKING_PERIOD_ID]'";
 				}
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID FROM school_semesters s WHERE NOT EXISTS (SELECT \'\' FROM school_quarters q WHERE q.SEMESTER_ID=s.MARKING_PERIOD_ID) AND SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 				foreach($RET as $value)
-					$_openSIS['GetAllMP'][$mp][$marking_period_id] .= ",'$value[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetAllMP'][$mp][$marking_period_id] .= ",'$value[MARKING_PERIOD_ID]'";
 			break;
                         
 		}
 	}
 
-	return $_openSIS['GetAllMP'][$mp][$marking_period_id];
+	return $_hcwsms['GetAllMP'][$mp][$marking_period_id];
 }
 
 function GetAllMP_Mod($mp,$marking_period_id='0')
-{	global $_openSIS;
+{	global $_hcwsms;
 
 	if($marking_period_id==0)
 	{
@@ -118,7 +118,7 @@ function GetAllMP_Mod($mp,$marking_period_id='0')
 		 $mp = GetMPTable(GetMP($marking_period_id,'TABLE'));
         
      
-	if(!$_openSIS['GetAllMP'][$mp])
+	if(!$_hcwsms['GetAllMP'][$mp])
 	{
 		switch($mp)
 		{
@@ -130,10 +130,10 @@ function GetAllMP_Mod($mp,$marking_period_id='0')
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 				foreach($RET as $value)
 				{
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] .= ','.GetChildrenMP($mp,$value['MARKING_PERIOD_ID']);
-					if(substr($_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],-1)==',')
-						$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = substr($_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],0,-1);
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] .= ','.GetChildrenMP($mp,$value['MARKING_PERIOD_ID']);
+					if(substr($_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],-1)==',')
+						$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = substr($_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']],0,-1);
 				}
 			break;
 
@@ -144,7 +144,7 @@ function GetAllMP_Mod($mp,$marking_period_id='0')
 
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 				foreach($RET as $value)
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[SEMESTER_ID]','$value[MARKING_PERIOD_ID]'";
 			break;
 
 			case 'SEM':
@@ -155,38 +155,38 @@ function GetAllMP_Mod($mp,$marking_period_id='0')
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
 				foreach($RET as $sem=>$value)
 				{
-					$_openSIS['GetAllMP'][$mp][$sem] = "'$fy','$sem'";
+					$_hcwsms['GetAllMP'][$mp][$sem] = "'$fy','$sem'";
 
 				}
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID FROM school_semesters s WHERE NOT EXISTS (SELECT \'\' FROM school_quarters q WHERE q.SEMESTER_ID=s.MARKING_PERIOD_ID) AND SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 				foreach($RET as $value)
-					$_openSIS['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetAllMP'][$mp][$value['MARKING_PERIOD_ID']] = "'$fy','$value[MARKING_PERIOD_ID]'";
 			break;
 
 			case 'FY':
 				// there should be exactly one fy marking period which better be $marking_period_id
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
-				$_openSIS['GetAllMP'][$mp][$marking_period_id] = "'$marking_period_id'";
+				$_hcwsms['GetAllMP'][$mp][$marking_period_id] = "'$marking_period_id'";
 				foreach($RET as $sem=>$value)
 				{
-//					$_openSIS['GetAllMP'][$mp][$marking_period_id] .= ",'$sem'";
+//					$_hcwsms['GetAllMP'][$mp][$marking_period_id] .= ",'$sem'";
 //					foreach($value as $qtr)
-//						$_openSIS['GetAllMP'][$mp][$marking_period_id] .= ",'$qtr[MARKING_PERIOD_ID]'";
+//						$_hcwsms['GetAllMP'][$mp][$marking_period_id] .= ",'$qtr[MARKING_PERIOD_ID]'";
 				}
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID FROM school_semesters s WHERE NOT EXISTS (SELECT \'\' FROM school_quarters q WHERE q.SEMESTER_ID=s.MARKING_PERIOD_ID) AND SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''));
 //				foreach($RET as $value)
-//					$_openSIS['GetAllMP'][$mp][$marking_period_id] .= ",'$value[MARKING_PERIOD_ID]'";
+//					$_hcwsms['GetAllMP'][$mp][$marking_period_id] .= ",'$value[MARKING_PERIOD_ID]'";
 			break;
                         
 		}
 	}
 
-	return $_openSIS['GetAllMP'][$mp][$marking_period_id];
+	return $_hcwsms['GetAllMP'][$mp][$marking_period_id];
 }
 function GetParentMP($mp,$marking_period_id='0')
-{	global $_openSIS;
+{	global $_hcwsms;
 
-	if(!$_openSIS['GetParentMP'][$mp])
+	if(!$_hcwsms['GetParentMP'][$mp])
 	{
 		switch($mp)
 		{
@@ -195,52 +195,52 @@ function GetParentMP($mp,$marking_period_id='0')
 			break;
 
 			case 'SEM':
-				$_openSIS['GetParentMP'][$mp] = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID AS PARENT_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('MARKING_PERIOD_ID'));
+				$_hcwsms['GetParentMP'][$mp] = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID AS PARENT_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('MARKING_PERIOD_ID'));
 			break;
 
 			case 'FY':
-				$_openSIS['GetParentMP'][$mp] = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,YEAR_ID AS PARENT_ID FROM school_semesters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('MARKING_PERIOD_ID'));
+				$_hcwsms['GetParentMP'][$mp] = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,YEAR_ID AS PARENT_ID FROM school_semesters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('MARKING_PERIOD_ID'));
 			break;
 		}
 	}
 
-	return $_openSIS['GetParentMP'][$mp][$marking_period_id][1]['PARENT_ID'];
+	return $_hcwsms['GetParentMP'][$mp][$marking_period_id][1]['PARENT_ID'];
 }
 
 function GetChildrenMP($mp,$marking_period_id='0')
-{	global $_openSIS;
+{	global $_hcwsms;
 
 	switch($mp)
 	{
 		case 'FY':
-			if(!$_openSIS['GetChildrenMP']['FY'])
+			if(!$_hcwsms['GetChildrenMP']['FY'])
 			{
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
 				foreach($RET as $sem=>$value)
 				{
-					$_openSIS['GetChildrenMP'][$mp]['0'] .= ",'$sem'";
+					$_hcwsms['GetChildrenMP'][$mp]['0'] .= ",'$sem'";
 					foreach($value as $qtr)
-						$_openSIS['GetChildrenMP'][$mp]['0'] .= ",'$qtr[MARKING_PERIOD_ID]'";
+						$_hcwsms['GetChildrenMP'][$mp]['0'] .= ",'$qtr[MARKING_PERIOD_ID]'";
 				}
-				$_openSIS['GetChildrenMP'][$mp]['0'] = substr($_openSIS['GetChildrenMP'][$mp]['0'],1);
+				$_hcwsms['GetChildrenMP'][$mp]['0'] = substr($_hcwsms['GetChildrenMP'][$mp]['0'],1);
 			}
-			return $_openSIS['GetChildrenMP'][$mp]['0'];
+			return $_hcwsms['GetChildrenMP'][$mp]['0'];
 		break;
 
 		case 'SEM':
 			if(GetMP($marking_period_id,'TABLE')=='school_quarters')
 				$marking_period_id = GetParentMP('SEM',$marking_period_id);
-			if(!$_openSIS['GetChildrenMP']['SEM'])
+			if(!$_hcwsms['GetChildrenMP']['SEM'])
 			{
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
 				foreach($RET as $sem=>$value)
 				{
 					foreach($value as $qtr)
-						$_openSIS['GetChildrenMP'][$mp][$sem] .= ",'$qtr[MARKING_PERIOD_ID]'";
-					$_openSIS['GetChildrenMP'][$mp][$sem] = substr($_openSIS['GetChildrenMP'][$mp][$sem],1);
+						$_hcwsms['GetChildrenMP'][$mp][$sem] .= ",'$qtr[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetChildrenMP'][$mp][$sem] = substr($_hcwsms['GetChildrenMP'][$mp][$sem],1);
 				}
 			}
-			return $_openSIS['GetChildrenMP'][$mp][$marking_period_id];
+			return $_hcwsms['GetChildrenMP'][$mp][$marking_period_id];
 		break;
 
 		case 'QTR':
@@ -248,63 +248,63 @@ function GetChildrenMP($mp,$marking_period_id='0')
 		break;
 
 		case 'PRO':
-			if(!$_openSIS['GetChildrenMP']['PRO'])
+			if(!$_hcwsms['GetChildrenMP']['PRO'])
 			{
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,QUARTER_ID FROM school_progress_periods WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('QUARTER_ID'));
 				foreach($RET as $qtr=>$value)
 				{
 					foreach($value as $pro)
-						$_openSIS['GetChildrenMP'][$mp][$qtr] .= ",'$pro[MARKING_PERIOD_ID]'";
-					$_openSIS['GetChildrenMP'][$mp][$qtr] = substr($_openSIS['GetChildrenMP'][$mp][$qtr],1);
+						$_hcwsms['GetChildrenMP'][$mp][$qtr] .= ",'$pro[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetChildrenMP'][$mp][$qtr] = substr($_hcwsms['GetChildrenMP'][$mp][$qtr],1);
 				}
 			}
-			return $_openSIS['GetChildrenMP'][$mp][$marking_period_id];
+			return $_hcwsms['GetChildrenMP'][$mp][$marking_period_id];
 		break;
 	}
 }
 function GetMPChildren($mp,$marking_period_id='0')
-{	global $_openSIS;
+{	global $_hcwsms;
 
 	switch($mp)
 	{
 		case 'year':
-			if(!$_openSIS['GetChildrenMP']['FY'])
+			if(!$_hcwsms['GetChildrenMP']['FY'])
 			{
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
 				foreach($RET as $sem=>$value)
 				{
-					$_openSIS['GetChildrenMP'][$mp]['0'] .= ",'$sem'";
+					$_hcwsms['GetChildrenMP'][$mp]['0'] .= ",'$sem'";
 					foreach($value as $qtr)
-						$_openSIS['GetChildrenMP'][$mp]['0'] .= ",'$qtr[MARKING_PERIOD_ID]'";
+						$_hcwsms['GetChildrenMP'][$mp]['0'] .= ",'$qtr[MARKING_PERIOD_ID]'";
 				}
-				$_openSIS['GetChildrenMP'][$mp]['0'] = substr($_openSIS['GetChildrenMP'][$mp]['0'],1);
-                                if($_openSIS['GetChildrenMP'][$mp]['0']!='')
-                                    $_openSIS['GetChildrenMP'][$mp]['0']=$_openSIS['GetChildrenMP'][$mp]['0'].','.$marking_period_id;
+				$_hcwsms['GetChildrenMP'][$mp]['0'] = substr($_hcwsms['GetChildrenMP'][$mp]['0'],1);
+                                if($_hcwsms['GetChildrenMP'][$mp]['0']!='')
+                                    $_hcwsms['GetChildrenMP'][$mp]['0']=$_hcwsms['GetChildrenMP'][$mp]['0'].','.$marking_period_id;
                                 else
-                                    $_openSIS['GetChildrenMP'][$mp]['0']=$marking_period_id;
+                                    $_hcwsms['GetChildrenMP'][$mp]['0']=$marking_period_id;
 			}
-			return $_openSIS['GetChildrenMP'][$mp]['0'];
+			return $_hcwsms['GetChildrenMP'][$mp]['0'];
 		break;
 
 		case 'semester':
 			if(GetMP($marking_period_id,'TABLE')=='school_quarters')
 				$marking_period_id = GetParentMP('SEM',$marking_period_id);
-			if(!$_openSIS['GetChildrenMP']['SEM'])
+			if(!$_hcwsms['GetChildrenMP']['SEM'])
 			{
 				$RET = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,SEMESTER_ID FROM school_quarters WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\''),array(),array('SEMESTER_ID'));
 				foreach($RET as $sem=>$value)
 				{
 					foreach($value as $qtr)
-						$_openSIS['GetChildrenMP'][$mp][$sem] .= ",'$qtr[MARKING_PERIOD_ID]'";
-					$_openSIS['GetChildrenMP'][$mp][$sem] = substr($_openSIS['GetChildrenMP'][$mp][$sem],1);
+						$_hcwsms['GetChildrenMP'][$mp][$sem] .= ",'$qtr[MARKING_PERIOD_ID]'";
+					$_hcwsms['GetChildrenMP'][$mp][$sem] = substr($_hcwsms['GetChildrenMP'][$mp][$sem],1);
 				}
-                                if($_openSIS['GetChildrenMP'][$mp][$marking_period_id]!='')
-                                    $_openSIS['GetChildrenMP'][$mp][$marking_period_id]=$_openSIS['GetChildrenMP'][$mp][$marking_period_id].','.$marking_period_id;
+                                if($_hcwsms['GetChildrenMP'][$mp][$marking_period_id]!='')
+                                    $_hcwsms['GetChildrenMP'][$mp][$marking_period_id]=$_hcwsms['GetChildrenMP'][$mp][$marking_period_id].','.$marking_period_id;
                                 else
-                                    $_openSIS['GetChildrenMP'][$mp][$marking_period_id]=$marking_period_id;
+                                    $_hcwsms['GetChildrenMP'][$mp][$marking_period_id]=$marking_period_id;
 			}
                         
-			return $_openSIS['GetChildrenMP'][$mp][$marking_period_id];
+			return $_hcwsms['GetChildrenMP'][$mp][$marking_period_id];
 		break;
 
 		case 'quarter':

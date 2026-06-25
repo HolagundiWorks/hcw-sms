@@ -74,9 +74,9 @@ Widgets('gpa');
 Widgets('class_rank');
 Widgets('letter_grade');
 
-$extra['action'] .= "&_openSIS_PDF=true";
+$extra['action'] .= "&_hcwsms_PDF=true";
 
-if(!$_REQUEST['search_modfunc'] || $_openSIS['modules_search'])
+if(!$_REQUEST['search_modfunc'] || $_hcwsms['modules_search'])
 {
 	DrawHeader(ProgramTitle());
 

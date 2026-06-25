@@ -26,14 +26,14 @@
 #
 #***************************************************************************************
 
-function OpenSISNormalizeId($value)
+function HcwsmsNormalizeId($value)
 {
     $value = (int) $value;
 
     return ($value > 0 ? $value : 0);
 }
 
-function OpenSISDenyAccess()
+function HcwsmsDenyAccess()
 {
     if (function_exists('HackingLog') && !empty($_SESSION['USERNAME'])) {
         HackingLog();
@@ -43,11 +43,11 @@ function OpenSISDenyAccess()
     die('Access denied!');
 }
 
-function OpenSISGetOwnedMailGroup($group_id)
+function HcwsmsGetOwnedMailGroup($group_id)
 {
     static $cache = array();
 
-    $group_id = OpenSISNormalizeId($group_id);
+    $group_id = HcwsmsNormalizeId($group_id);
 
     if (!$group_id || !User('USERNAME')) {
         return false;
@@ -72,20 +72,20 @@ function OpenSISGetOwnedMailGroup($group_id)
     return $cache[$group_id];
 }
 
-function OpenSISRequireOwnedMailGroup($group_id)
+function HcwsmsRequireOwnedMailGroup($group_id)
 {
-    $group_RET = OpenSISGetOwnedMailGroup($group_id);
+    $group_RET = HcwsmsGetOwnedMailGroup($group_id);
 
     if (!$group_RET) {
-        OpenSISDenyAccess();
+        HcwsmsDenyAccess();
     }
 
     return $group_RET;
 }
 
-function OpenSISUserCanAccessCoursePeriod($course_period_id)
+function HcwsmsUserCanAccessCoursePeriod($course_period_id)
 {
-    $course_period_id = OpenSISNormalizeId($course_period_id);
+    $course_period_id = HcwsmsNormalizeId($course_period_id);
 
     if (!$course_period_id) {
         return false;
@@ -101,7 +101,7 @@ function OpenSISUserCanAccessCoursePeriod($course_period_id)
     if (User('PROFILE') == 'teacher') {
         $sql .= " AND (TEACHER_ID='" . UserID() . "' OR SECONDARY_TEACHER_ID='" . UserID() . "')";
     } elseif (User('PROFILE') == 'student') {
-        $student_id = OpenSISNormalizeId($_SESSION['STUDENT_ID']);
+        $student_id = HcwsmsNormalizeId($_SESSION['STUDENT_ID']);
 
         if (!$student_id) {
             return false;
@@ -117,7 +117,7 @@ function OpenSISUserCanAccessCoursePeriod($course_period_id)
                        AND (END_DATE IS NULL OR END_DATE='0000-00-00' OR END_DATE>='" . $today . "')
                   )";
     } elseif (User('PROFILE') == 'parent') {
-        $parent_id = OpenSISNormalizeId(UserID());
+        $parent_id = HcwsmsNormalizeId(UserID());
 
         if (!$parent_id) {
             return false;
@@ -140,22 +140,22 @@ function OpenSISUserCanAccessCoursePeriod($course_period_id)
     return (count(DBGet(DBQuery($sql))) > 0);
 }
 
-function OpenSISRequireCoursePeriodAccess($course_period_id)
+function HcwsmsRequireCoursePeriodAccess($course_period_id)
 {
-    $course_period_id = OpenSISNormalizeId($course_period_id);
+    $course_period_id = HcwsmsNormalizeId($course_period_id);
 
-    if (!$course_period_id || !OpenSISUserCanAccessCoursePeriod($course_period_id)) {
-        OpenSISDenyAccess();
+    if (!$course_period_id || !HcwsmsUserCanAccessCoursePeriod($course_period_id)) {
+        HcwsmsDenyAccess();
     }
 
     return $course_period_id;
 }
 
-function OpenSISGetAuthorizedStudentIds()
+function HcwsmsGetAuthorizedStudentIds()
 {
     static $cache = array();
 
-    $cache_key = User('PROFILE') . '|' . UserSchool() . '|' . UserSyear() . '|' . UserCoursePeriod() . '|' . UserID() . '|' . OpenSISNormalizeId($_SESSION['STUDENT_ID']);
+    $cache_key = User('PROFILE') . '|' . UserSchool() . '|' . UserSyear() . '|' . UserCoursePeriod() . '|' . UserID() . '|' . HcwsmsNormalizeId($_SESSION['STUDENT_ID']);
 
     if (array_key_exists($cache_key, $cache)) {
         return $cache[$cache_key];
@@ -165,13 +165,13 @@ function OpenSISGetAuthorizedStudentIds()
     $student_ids = array();
 
     if (User('PROFILE') == 'student') {
-        $student_id = OpenSISNormalizeId($_SESSION['STUDENT_ID']);
+        $student_id = HcwsmsNormalizeId($_SESSION['STUDENT_ID']);
 
         if ($student_id) {
             $student_ids[] = $student_id;
         }
     } elseif (User('PROFILE') == 'parent') {
-        $parent_id = OpenSISNormalizeId(UserID());
+        $parent_id = HcwsmsNormalizeId(UserID());
         $student_RET = DBGet(DBQuery(
             "SELECT DISTINCT se.STUDENT_ID
                FROM student_enrollment se
@@ -187,9 +187,9 @@ function OpenSISGetAuthorizedStudentIds()
             $student_ids[] = (int) $student['STUDENT_ID'];
         }
     } elseif (User('PROFILE') == 'teacher') {
-        $course_period_id = OpenSISNormalizeId(UserCoursePeriod());
+        $course_period_id = HcwsmsNormalizeId(UserCoursePeriod());
 
-        if ($course_period_id && OpenSISUserCanAccessCoursePeriod($course_period_id)) {
+        if ($course_period_id && HcwsmsUserCanAccessCoursePeriod($course_period_id)) {
             $student_RET = DBGet(DBQuery(
                 "SELECT DISTINCT STUDENT_ID
                    FROM schedule
@@ -212,9 +212,9 @@ function OpenSISGetAuthorizedStudentIds()
     return $cache[$cache_key];
 }
 
-function OpenSISGetStudentCurrentSchool($student_id)
+function HcwsmsGetStudentCurrentSchool($student_id)
 {
-    $student_id = OpenSISNormalizeId($student_id);
+    $student_id = HcwsmsNormalizeId($student_id);
 
     if (!$student_id) {
         return 0;
@@ -246,9 +246,9 @@ function OpenSISGetStudentCurrentSchool($student_id)
     return (int) $school_RET[1]['SCHOOL_ID'];
 }
 
-function OpenSISUserCanAccessStudent($student_id)
+function HcwsmsUserCanAccessStudent($student_id)
 {
-    $student_id = OpenSISNormalizeId($student_id);
+    $student_id = HcwsmsNormalizeId($student_id);
 
     if (!$student_id) {
         return false;
@@ -258,37 +258,37 @@ function OpenSISUserCanAccessStudent($student_id)
         return (count(DBGet(DBQuery("SELECT STUDENT_ID FROM students WHERE STUDENT_ID='" . $student_id . "' LIMIT 1"))) > 0);
     }
 
-    return in_array($student_id, OpenSISGetAuthorizedStudentIds());
+    return in_array($student_id, HcwsmsGetAuthorizedStudentIds());
 }
 
-function OpenSISResolveAuthorizedStudentId($requested_student_id = '')
+function HcwsmsResolveAuthorizedStudentId($requested_student_id = '')
 {
-    $requested_student_id = OpenSISNormalizeId($requested_student_id);
-    $session_student_id = OpenSISNormalizeId(isset($_SESSION['student_id']) ? $_SESSION['student_id'] : 0);
+    $requested_student_id = HcwsmsNormalizeId($requested_student_id);
+    $session_student_id = HcwsmsNormalizeId(isset($_SESSION['student_id']) ? $_SESSION['student_id'] : 0);
 
     if (User('PROFILE') == 'admin') {
         return ($requested_student_id ? $requested_student_id : $session_student_id);
     }
 
-    if ($requested_student_id && OpenSISUserCanAccessStudent($requested_student_id)) {
+    if ($requested_student_id && HcwsmsUserCanAccessStudent($requested_student_id)) {
         return $requested_student_id;
     }
 
-    if ($session_student_id && OpenSISUserCanAccessStudent($session_student_id)) {
+    if ($session_student_id && HcwsmsUserCanAccessStudent($session_student_id)) {
         return $session_student_id;
     }
 
-    $student_ids = OpenSISGetAuthorizedStudentIds();
+    $student_ids = HcwsmsGetAuthorizedStudentIds();
 
     return ($student_ids[0] ? $student_ids[0] : 0);
 }
 
-function OpenSISRequireStudentAccess($student_id)
+function HcwsmsRequireStudentAccess($student_id)
 {
-    $student_id = OpenSISNormalizeId($student_id);
+    $student_id = HcwsmsNormalizeId($student_id);
 
-    if (!$student_id || !OpenSISUserCanAccessStudent($student_id)) {
-        OpenSISDenyAccess();
+    if (!$student_id || !HcwsmsUserCanAccessStudent($student_id)) {
+        HcwsmsDenyAccess();
     }
 
     return $student_id;

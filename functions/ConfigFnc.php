@@ -26,13 +26,13 @@
 #
 #***************************************************************************************
 function Config($item)
-{	global $_openSIS,$openSISTitle,$DefaultSyear;
+{	global $_hcwsms,$hcwsmsTitle,$DefaultSyear;
 
-	if(!$_openSIS['Config'])
+	if(!$_hcwsms['Config'])
 	{
-		$_openSIS['Config'][1]['TITLE'] = $openSISTitle;
-		$_openSIS['Config'][1]['SYEAR'] = $DefaultSyear;
+		$_hcwsms['Config'][1]['TITLE'] = $hcwsmsTitle;
+		$_hcwsms['Config'][1]['SYEAR'] = $DefaultSyear;
 	}
-	return $_openSIS['Config'][1][$item];
+	return $_hcwsms['Config'][1][$item];
 }
 ?>

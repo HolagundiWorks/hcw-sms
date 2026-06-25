@@ -36,7 +36,7 @@ function db_start() {
 // Not receiving the return == unusable search.
 //		ie, $processable_results = DBQuery("select * from students");
 function DBQuery($sql) {
-    global $DatabaseType, $_openSIS;
+    global $DatabaseType, $_hcwsms;
 
     $connection = db_start();
 
@@ -207,7 +207,7 @@ function DBGet($QI,$functions=array(),$index=array())
 }
 
 function db_show_error($sql, $failnote, $additional = '') {
-    global $openSISTitle, $openSISVersion, $openSISNotifyAddress, $openSISMode;
+    global $hcwsmsTitle, $hcwsmsVersion, $hcwsmsNotifyAddress, $hcwsmsMode;
 
     $tb = debug_backtrace();
     $error = $tb[1]['file'] . " at " . $tb[1]['line'];
@@ -239,7 +239,7 @@ function db_show_error($sql, $failnote, $additional = '') {
 			<TD><pre>" . date("m/d/Y h:i:s") . "</pre></TD>
 		</TR><TR>
 			<TD align=right></TD>
-			<TD>openSIS has encountered an error that could have resulted from any of the following:
+			<TD>HCW-SMS has encountered an error that could have resulted from any of the following:
 			<br/>
 			<ul>
 			<li>Invalid data input</li>
@@ -247,7 +247,7 @@ function db_show_error($sql, $failnote, $additional = '') {
 			<li>Program error</li>
 			</ul>
 			
-			Please take this screen shot and send it to your openSIS representative for debugging and resolution.
+			Please take this screen shot and send it to your HCW-SMS representative for debugging and resolution.
 			</TD>
 		</TR>
 		
@@ -255,8 +255,8 @@ function db_show_error($sql, $failnote, $additional = '') {
 
     echo "<!-- SQL STATEMENT: \n\n $sql \n\n -->";
 
-    if ($openSISNotifyAddress) {
-        $message = "System: $openSISTitle \n";
+    if ($hcwsmsNotifyAddress) {
+        $message = "System: $hcwsmsTitle \n";
         $message .= "Date: " . date("m/d/Y h:i:s") . "\n";
         $message .= "Page: " . $_SERVER['PHP_SELF'] . ' ' . ProgramTitle() . " \n\n";
         $message .= "Failure Notice:  $failnote \n";
@@ -264,22 +264,22 @@ function db_show_error($sql, $failnote, $additional = '') {
         $message .= "\n $sql \n";
         $message .= "Request Array: \n" . ShowVar($_REQUEST, 'Y', 'N');
         $message .= "\n\nSession Array: \n" . ShowVar($_SESSION, 'Y', 'N');
-        mail($openSISNotifyAddress, 'openSIS Database Error', $message);
+        mail($hcwsmsNotifyAddress, 'HCW-SMS Database Error', $message);
     }
 
     die();
 }
 function GetMP($mp='',$column='TITLE',$syear,$school)
-{	global $_openSIS;
+{	global $_hcwsms;
 	// mab - need to translate marking_period_id to title to be useful as a function call from dbget
 	// also, it doesn't make sense to ask for same thing you give
 	if($column=='MARKING_PERIOD_ID')
 		$column='TITLE';
 
-	if(!$_openSIS['GetMP'])
+	if(!$_hcwsms['GetMP'])
 	{
            
-		$_openSIS['GetMP'] = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,TITLE,POST_START_DATE,POST_END_DATE,\'school_quarters\' AS `TABLE`,\'SEMESTER_ID\' AS `PA_ID`,SORT_ORDER,SHORT_NAME,START_DATE,END_DATE,DOES_GRADES,DOES_EXAM,DOES_COMMENTS FROM school_quarters         WHERE SYEAR=\''.$syear.'\' AND SCHOOL_ID=\''.$school.'\'
+		$_hcwsms['GetMP'] = DBGet(DBQuery('SELECT MARKING_PERIOD_ID,TITLE,POST_START_DATE,POST_END_DATE,\'school_quarters\' AS `TABLE`,\'SEMESTER_ID\' AS `PA_ID`,SORT_ORDER,SHORT_NAME,START_DATE,END_DATE,DOES_GRADES,DOES_EXAM,DOES_COMMENTS FROM school_quarters         WHERE SYEAR=\''.$syear.'\' AND SCHOOL_ID=\''.$school.'\'
 					UNION      SELECT MARKING_PERIOD_ID,TITLE,POST_START_DATE,POST_END_DATE,\'school_semesters\' AS `TABLE`,\'YEAR_ID\' AS `PA_ID`,SORT_ORDER,SHORT_NAME,START_DATE,END_DATE,DOES_GRADES,DOES_EXAM,DOES_COMMENTS FROM school_semesters        WHERE SYEAR=\''.$syear.'\' AND SCHOOL_ID=\''.$school.'\'
 					UNION      SELECT MARKING_PERIOD_ID,TITLE,POST_START_DATE,POST_END_DATE,\'school_years\' AS `TABLE`, \'-1\' AS `PA_ID`,SORT_ORDER,SHORT_NAME,START_DATE,END_DATE,DOES_GRADES,DOES_EXAM,DOES_COMMENTS FROM school_years            WHERE SYEAR=\''.$syear.'\' AND SCHOOL_ID=\''.$school.'\'
 					UNION      SELECT MARKING_PERIOD_ID,TITLE,POST_START_DATE,POST_END_DATE,\'school_progress_periods\' AS `TABLE`, \'-1\' AS `PA_ID`,SORT_ORDER,SHORT_NAME,START_DATE,END_DATE,DOES_GRADES,DOES_EXAM,DOES_COMMENTS FROM school_progress_periods WHERE SYEAR=\''.$syear.'\' AND SCHOOL_ID=\''.$school.'\''),array(),array('MARKING_PERIOD_ID'));
@@ -303,14 +303,14 @@ if($mp=='')
 		return 'Full Year'.$suffix;
 	else
         {
-		return $_openSIS['GetMP'][$mp][1][$column].$suffix;  
+		return $_hcwsms['GetMP'][$mp][1][$column].$suffix;  
         }
 }
 	
 }
 function _makeLetterGrade($percent,$course_period_id=0,$staff_id=0,$ret='')
 {	
-    global $programconfig,$_openSIS;
+    global $programconfig,$_hcwsms;
 	
 
 	
@@ -328,10 +328,10 @@ $cp=DBGet(DBQuery('SELECT * FROM course_periods WHERE COURSE_PERIOD_ID='.$course
 		else
 			$programconfig[$staff_id] = true;
 	}
-	if(!$_openSIS['_makeLetterGrade']['courses'][$course_period_id])
-		$_openSIS['_makeLetterGrade']['courses'][$course_period_id] = DBGet(DBQuery('SELECT DOES_BREAKOFF,GRADE_SCALE_ID FROM course_periods WHERE COURSE_PERIOD_ID=\''.$course_period_id.'\''));
-	$does_breakoff = $_openSIS['_makeLetterGrade']['courses'][$course_period_id][1]['DOES_BREAKOFF'];
-	$grade_scale_id = $_openSIS['_makeLetterGrade']['courses'][$course_period_id][1]['GRADE_SCALE_ID'];
+	if(!$_hcwsms['_makeLetterGrade']['courses'][$course_period_id])
+		$_hcwsms['_makeLetterGrade']['courses'][$course_period_id] = DBGet(DBQuery('SELECT DOES_BREAKOFF,GRADE_SCALE_ID FROM course_periods WHERE COURSE_PERIOD_ID=\''.$course_period_id.'\''));
+	$does_breakoff = $_hcwsms['_makeLetterGrade']['courses'][$course_period_id][1]['DOES_BREAKOFF'];
+	$grade_scale_id = $_hcwsms['_makeLetterGrade']['courses'][$course_period_id][1]['GRADE_SCALE_ID'];
 
 	$percent *= 100;
 
@@ -354,10 +354,10 @@ $cp=DBGet(DBQuery('SELECT * FROM course_periods WHERE COURSE_PERIOD_ID='.$course
 	if($ret=='%')
 		return $percent;
 
-	if(!$_openSIS['_makeLetterGrade']['grades'][$grade_scale_id])
-		$_openSIS['_makeLetterGrade']['grades'][$grade_scale_id] = DBGet(DBQuery('SELECT TITLE,ID,BREAK_OFF FROM report_card_grades WHERE SYEAR=\''.$cp[1]['SYEAR'].'\' AND SCHOOL_ID=\''.$cp[1]['SCHOOL_ID'].'\' AND GRADE_SCALE_ID=\''.$grade_scale_id.'\' ORDER BY BREAK_OFF IS NOT NULL DESC,BREAK_OFF DESC,SORT_ORDER'));
+	if(!$_hcwsms['_makeLetterGrade']['grades'][$grade_scale_id])
+		$_hcwsms['_makeLetterGrade']['grades'][$grade_scale_id] = DBGet(DBQuery('SELECT TITLE,ID,BREAK_OFF FROM report_card_grades WHERE SYEAR=\''.$cp[1]['SYEAR'].'\' AND SCHOOL_ID=\''.$cp[1]['SCHOOL_ID'].'\' AND GRADE_SCALE_ID=\''.$grade_scale_id.'\' ORDER BY BREAK_OFF IS NOT NULL DESC,BREAK_OFF DESC,SORT_ORDER'));
 	
-	foreach($_openSIS['_makeLetterGrade']['grades'][$grade_scale_id] as $grade)
+	foreach($_hcwsms['_makeLetterGrade']['grades'][$grade_scale_id] as $grade)
 	{
 		if($does_breakoff=='Y' ? $percent>=$programconfig[$staff_id][$course_period_id.'-'.$grade['ID']] && is_numeric($programconfig[$staff_id][$course_period_id.'-'.$grade['ID']]) : $percent>=$grade['BREAK_OFF'])
 			return $ret=='ID' ? $grade['ID'] : $grade['TITLE'];

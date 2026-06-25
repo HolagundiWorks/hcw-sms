@@ -27,7 +27,7 @@
 #***************************************************************************************
 function _makeLetterGrade($percent,$course_period_id=0,$staff_id=0,$ret='')
 {	
-    global $programconfig,$_openSIS;
+    global $programconfig,$_hcwsms;
 	if(!$course_period_id)
 		$course_period_id = UserCoursePeriod();
 
@@ -67,10 +67,10 @@ function _makeLetterGrade($percent,$course_period_id=0,$staff_id=0,$ret='')
                
            }
         }
-	if(!$_openSIS['_makeLetterGrade']['courses'][$course_period_id])
-		$_openSIS['_makeLetterGrade']['courses'][$course_period_id] = DBGet(DBQuery('SELECT DOES_BREAKOFF,GRADE_SCALE_ID FROM course_periods WHERE COURSE_PERIOD_ID=\''.$course_period_id.'\''));
-	$does_breakoff = $_openSIS['_makeLetterGrade']['courses'][$course_period_id][1]['DOES_BREAKOFF'];
-	$grade_scale_id = $_openSIS['_makeLetterGrade']['courses'][$course_period_id][1]['GRADE_SCALE_ID'];
+	if(!$_hcwsms['_makeLetterGrade']['courses'][$course_period_id])
+		$_hcwsms['_makeLetterGrade']['courses'][$course_period_id] = DBGet(DBQuery('SELECT DOES_BREAKOFF,GRADE_SCALE_ID FROM course_periods WHERE COURSE_PERIOD_ID=\''.$course_period_id.'\''));
+	$does_breakoff = $_hcwsms['_makeLetterGrade']['courses'][$course_period_id][1]['DOES_BREAKOFF'];
+	$grade_scale_id = $_hcwsms['_makeLetterGrade']['courses'][$course_period_id][1]['GRADE_SCALE_ID'];
 
 	$percent = is_numeric($percent) ? $percent * 100 : 0;
        
@@ -93,10 +93,10 @@ function _makeLetterGrade($percent,$course_period_id=0,$staff_id=0,$ret='')
 	if($ret=='%')
 		return $percent;
 
-	if(!$_openSIS['_makeLetterGrade']['grades'][$grade_scale_id])
-		$_openSIS['_makeLetterGrade']['grades'][$grade_scale_id] = DBGet(DBQuery('SELECT TITLE,ID,BREAK_OFF FROM report_card_grades WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\' AND GRADE_SCALE_ID=\''.$grade_scale_id.'\' ORDER BY BREAK_OFF IS NOT NULL DESC,BREAK_OFF DESC,SORT_ORDER'));
+	if(!$_hcwsms['_makeLetterGrade']['grades'][$grade_scale_id])
+		$_hcwsms['_makeLetterGrade']['grades'][$grade_scale_id] = DBGet(DBQuery('SELECT TITLE,ID,BREAK_OFF FROM report_card_grades WHERE SYEAR=\''.UserSyear().'\' AND SCHOOL_ID=\''.UserSchool().'\' AND GRADE_SCALE_ID=\''.$grade_scale_id.'\' ORDER BY BREAK_OFF IS NOT NULL DESC,BREAK_OFF DESC,SORT_ORDER'));
 	
-	foreach($_openSIS['_makeLetterGrade']['grades'][$grade_scale_id] as $grade)
+	foreach($_hcwsms['_makeLetterGrade']['grades'][$grade_scale_id] as $grade)
 	{
             
 		if($does_breakoff=='Y' ? $percent>=$programconfig[$staff_id][$course_period_id.'-'.$grade['ID']] && is_numeric($programconfig[$staff_id][$course_period_id.'-'.$grade['ID']]) : $percent>=$grade['BREAK_OFF'])

@@ -27,7 +27,7 @@
 #***************************************************************************************
 include('../../RedirectModulesInc.php');
 DrawBC("" . _students . " > " . ProgramTitle());
-$_openSIS['allow_edit'] = true;
+$_hcwsms['allow_edit'] = true;
 
 if ($_REQUEST['tables'] && ($_POST['tables'] || $_REQUEST['ajax'])) {
 	$table = $_REQUEST['table'];
@@ -226,10 +226,10 @@ if (!$_REQUEST['modfunc']) {
 		// mab - allow changing between select and autos and edits and text
 		if ($_REQUEST['id'] != 'new') {
 			if ($RET['TYPE'] != 'select' && $RET['TYPE'] != 'autos' && $RET['TYPE'] != 'edits' && $RET['TYPE'] != 'text') {
-				$allow_edit = $_openSIS['allow_edit'];
-				$AllowEdit = $_openSIS['AllowEdit'][$modname];
-				$_openSIS['allow_edit'] = false;
-				$_openSIS['AllowEdit'][$modname] = array();
+				$allow_edit = $_hcwsms['allow_edit'];
+				$AllowEdit = $_hcwsms['AllowEdit'][$modname];
+				$_hcwsms['allow_edit'] = false;
+				$_hcwsms['AllowEdit'][$modname] = array();
 				$type_options = array(
 					'select' => _pullDown,
 					'autos' => _autoPullDown,
@@ -265,8 +265,8 @@ if (!$_REQUEST['modfunc']) {
 
 		$header .= '<TD>' . SelectInput($RET['TYPE'], 'tables[' . $_REQUEST['id'] . '][TYPE]', _dataType, $type_options, false) . '</TD>';
 		if ($_REQUEST['id'] != 'new' && $RET['TYPE'] != 'select' && $RET['TYPE'] != 'autos' && $RET['TYPE'] != 'edits' && $RET['TYPE'] != 'text') {
-			$_openSIS['allow_edit'] = $allow_edit;
-			$_openSIS['AllowEdit'][$modname] = $AllowEdit;
+			$_hcwsms['allow_edit'] = $allow_edit;
+			$_hcwsms['AllowEdit'][$modname] = $AllowEdit;
 		}
 		foreach ($categories_RET as $type)
 			$categories_options[$type['ID']] = $type['TITLE'];

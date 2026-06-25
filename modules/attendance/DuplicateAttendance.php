@@ -105,7 +105,7 @@ if (optional_param('delete', '', PARAM_ALPHA) == 'true') {
     }
 }
 
-if ((!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) && $_REQUEST['delete'] != 'true' && !$_SESSION['student_id']) {
+if ((!$_REQUEST['search_modfunc'] || $_hcwsms['modules_search']) && $_REQUEST['delete'] != 'true' && !$_SESSION['student_id']) {
     DrawBC("" . _attendance . " > " . ProgramTitle());
 
     $extra['new'] = true;

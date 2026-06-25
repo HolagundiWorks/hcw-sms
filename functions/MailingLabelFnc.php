@@ -26,9 +26,9 @@
 #
 #***************************************************************************************
 function MailingLabel($address_id)
-{	global $THIS_RET,$_openSIS;
+{	global $THIS_RET,$_hcwsms;
 	$student_id = $THIS_RET['STUDENT_ID'];
-	if($address_id && !$_openSIS['MailingLabel'][$address_id][$student_id])
+	if($address_id && !$_hcwsms['MailingLabel'][$address_id][$student_id])
 	{
 
             
@@ -55,9 +55,9 @@ function MailingLabel($address_id)
 		}
 
 
-		$_openSIS['MailingLabel'][$address_id][$student_id] = $return;
+		$_hcwsms['MailingLabel'][$address_id][$student_id] = $return;
 	}
 
-	return $_openSIS['MailingLabel'][$address_id][$student_id];
+	return $_hcwsms['MailingLabel'][$address_id][$student_id];
 }
 ?>

@@ -36,7 +36,7 @@ if($url===FALSE){
  header('Location: index.php');
  }
 
-echo "<HTML><HEAD><TITLE>"._openSisSchoolSoftware."</TITLE>
+echo "<HTML><HEAD><TITLE>"._hcwsmsSchoolSoftware."</TITLE>
 <script language=javascript>
 function resizeImages()
 {
@@ -79,7 +79,7 @@ echo '<TR>';
 echo '<TD valign=middle width=170><A HREF=index.php target=_top><IMG id=logo SRC="assets/themes/'.Preferences('THEME').'/logo.png" border=0></A></TD>';
 echo '<TD width=15></TD><TD><TABLE width=100% border=0 cellpadding=2 cellspacing=0 style="border: 1px inset #999999"><TR bgcolor=#E8E8E9>';
 require('Menu.php');
-foreach($_openSIS['Menu'] as $modcat=>$value)
+foreach($_hcwsms['Menu'] as $modcat=>$value)
 {
 	if($value)
 	{

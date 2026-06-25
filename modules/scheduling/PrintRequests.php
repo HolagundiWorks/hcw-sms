@@ -40,10 +40,10 @@ $extra['search'] .= '</div>'; //.col-lg-6
 $extra['search'] .= '</div>'; //.row
 
 $extra['force_search'] = true;
-if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
+if (!$_REQUEST['search_modfunc'] || $_hcwsms['modules_search']) {
     DrawBC("" . _scheduling . " > " . ProgramTitle());
     $extra['new'] = true;
-    $extra['action'] .= "&_openSIS_PDF=true&head_html=Student+Print+Request";
+    $extra['action'] .= "&_hcwsms_PDF=true&head_html=Student+Print+Request";
     $extra['pdf'] = true;
     Search('student_id', $extra);
 } else {
@@ -63,12 +63,12 @@ if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
         $__DBINC_NO_SQLSHOW = true;
         $handle = PDFStart();
         echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-        echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . _studentPrintRequest . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br \>" . _poweredByOpenSis . " openSIS</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+        echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . _studentPrintRequest . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br \>" . _poweredByHcwsms . " HCW-SMS</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
         foreach ($RET as $student_id => $courses) {
             if ($_REQUEST['mailing_labels'] == 'Y') {
                 foreach ($courses as $address) {
 
-                    unset($_openSIS['DrawHeader']);
+                    unset($_hcwsms['DrawHeader']);
 
                     echo "</table >";
                     echo '<BR><BR>';
@@ -89,7 +89,7 @@ if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
                     echo '<!-- NEW PAGE -->';
                 }
             } else {
-                unset($_openSIS['DrawHeader']);
+                unset($_hcwsms['DrawHeader']);
 
                 echo "</table >";
                 echo '<BR><BR>';
@@ -166,7 +166,7 @@ if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
     }
 
 }
-if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
+if (!$_REQUEST['search_modfunc'] || $_hcwsms['modules_search']) {
     echo '<div id="modal_default_request" class="modal fade">';
     echo '<div class="modal-dialog">';
     echo '<div class="modal-content">';

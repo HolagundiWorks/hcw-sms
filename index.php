@@ -590,8 +590,8 @@ if (optional_param('USERNAME', '', PARAM_RAW) && optional_param('PASSWORD', '', 
             DBQuery("UPDATE login_authentication SET LAST_LOGIN=CURRENT_TIMESTAMP,FAILED_LOGIN=0 WHERE USER_ID='" . $student_RET[1]['STUDENT_ID'] . "' AND PROFILE_ID='" . $student_RET[1]['PROFILE_ID'] . "' AND USERNAME='" . $student_RET[1]['USERNAME'] . "'");
     } else {
 
-        $openSIS_uname = mysqli_real_escape_string($connection, trim(optional_param('USERNAME', 0, PARAM_RAW)));
-        DBQuery("UPDATE login_authentication SET FAILED_LOGIN=FAILED_LOGIN+1 WHERE UPPER(USERNAME)=UPPER('" . $openSIS_uname . "')");
+        $hcwsms_uname = mysqli_real_escape_string($connection, trim(optional_param('USERNAME', 0, PARAM_RAW)));
+        DBQuery("UPDATE login_authentication SET FAILED_LOGIN=FAILED_LOGIN+1 WHERE UPPER(USERNAME)=UPPER('" . $hcwsms_uname . "')");
 
         if ($_SERVER['HTTP_X_FORWARDED_FOR']) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -602,20 +602,20 @@ if (optional_param('USERNAME', '', PARAM_RAW) && optional_param('PASSWORD', '', 
 
         $faillog_time = date("Y-m-d h:i:s");
 
-        $openSIS2_uname = mysqli_real_escape_string($connection, trim(optional_param('USERNAME', 0, PARAM_ALPHAEXT)));
+        $hcwsms2_uname = mysqli_real_escape_string($connection, trim(optional_param('USERNAME', 0, PARAM_ALPHAEXT)));
         $ip = sqlSecurityFilter($ip);
-        DBQuery("INSERT INTO login_records (USER_NAME,FAILLOG_TIME,IP_ADDRESS,SYEAR,STATUS) values('" . $openSIS2_uname . "','$faillog_time','$ip','$_SESSION[UserSyear]','Failed')");
+        DBQuery("INSERT INTO login_records (USER_NAME,FAILLOG_TIME,IP_ADDRESS,SYEAR,STATUS) values('" . $hcwsms2_uname . "','$faillog_time','$ip','$_SESSION[UserSyear]','Failed')");
 
 
         $max_id = DBGet(DBQuery("SELECT MAX(id) FROM login_records"));
         $m_id = $max_id[1]['MAX'];
         if ($faillog_time)
-            DBQuery("UPDATE login_records SET LOGIN_TIME=FAILLOG_TIME WHERE USER_NAME='" . $openSIS2_uname . "' AND ID='" . $m_id . "'");
+            DBQuery("UPDATE login_records SET LOGIN_TIME=FAILLOG_TIME WHERE USER_NAME='" . $hcwsms2_uname . "' AND ID='" . $m_id . "'");
 
         $admin_failed_count = DBGet(DBQuery("SELECT FAIL_COUNT FROM system_preference_misc"));
         $ad_f_cnt = $admin_failed_count[1]['FAIL_COUNT'];
 
-        $res = DBGet(DBQuery("SELECT USER_ID,FAILED_LOGIN,up.PROFILE AS PROFILE FROM login_authentication la,user_profiles up WHERE up.ID=la.PROFILE_ID AND UPPER(USERNAME)=UPPER('" . $openSIS_uname . "')"));
+        $res = DBGet(DBQuery("SELECT USER_ID,FAILED_LOGIN,up.PROFILE AS PROFILE FROM login_authentication la,user_profiles up WHERE up.ID=la.PROFILE_ID AND UPPER(USERNAME)=UPPER('" . $hcwsms_uname . "')"));
         $failed_login_staff = $res[1]['FAILED_LOGIN'];
         $failed_login_stu = $res[1]['FAILED_LOGIN'];
         if ($failed_login_stu != '' && $res[1]['PROFILE'] == 'student') {
@@ -692,7 +692,7 @@ if (optional_param('USERNAME', '', PARAM_RAW) && optional_param('PASSWORD', '', 
 
 if (optional_param('modfunc', '', PARAM_ALPHA) == 'create_account') {
     Warehouse('header');
-    $_openSIS['allow_edit'] = true;
+    $_hcwsms['allow_edit'] = true;
     if ($_REQUEST['staff']['USERNAME'])
         $_REQUEST['modfunc'] = 'update';
     else

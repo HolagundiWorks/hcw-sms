@@ -134,7 +134,7 @@ if ($_REQUEST['modfunc'] == 'save') {
             foreach ($RET as $student) {
                 $_SESSION['student_id'] = $student['STUDENT_ID'];
                 echo "<table width=100% style=\" font-family:Arial; font-size:12px;\" >";
-                echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . _studentInformationReport . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByOpenSis . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+                echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . _studentInformationReport . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByHcwsms . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
 
                 echo "<table cellspacing=0  border=\"0\" style=\"border-collapse:collapse\">";
                 echo "<tr><td colspan=3 style=\"height:18px\"></td></tr>";
@@ -576,7 +576,7 @@ if ($_REQUEST['modfunc'] == 'save') {
 
                     ########################## DOCTORS NOTE TABLE ###########################################
                     $medical_note = DBGet(DBQuery('SELECT doctors_note_date AS MCOMNT,doctors_note_comments AS DNOTE FROM student_medical_notes WHERE  STUDENT_ID=\'' . $_SESSION['student_id'] . '\''), array('MCOMNT' => 'ProperDate'));
-                    unset($_openSIS['DrawHeader']);
+                    unset($_hcwsms['DrawHeader']);
                     foreach ($medical_note as $id => $medical) {
                         $doc_note_col = array(
                             'DNOTE' => _doctorSNote,
@@ -887,7 +887,7 @@ if (!$_REQUEST['modfunc']) {
     DrawBC("" . _students . " > " . ProgramTitle());
 
     if ($_REQUEST['search_modfunc'] == 'list') {
-        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_openSIS_PDF=true method=POST target=_blank>";
+        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_hcwsms_PDF=true method=POST target=_blank>";
 
 
         $extra['extra_header_left'] .= $extra['search'];

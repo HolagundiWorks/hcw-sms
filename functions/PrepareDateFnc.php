@@ -34,7 +34,7 @@
 
 function PrepareDate($date = '', $title = '', $allow_na = true, $options = '', $cal_img = 'Y') {
     //print_r($options);
-    global $_openSIS;
+    global $_hcwsms;
     if ($options == '') {
         $options = array();
     }
@@ -59,7 +59,7 @@ function PrepareDate($date = '', $title = '', $allow_na = true, $options = '', $
     }
 
     if ($options['C'])
-        $_openSIS['PrepareDate'] ++;
+        $_hcwsms['PrepareDate'] ++;
 
     if (strlen($date) == 9) { // ORACLE
         $day = substr($date, 0, 2);
@@ -78,18 +78,18 @@ function PrepareDate($date = '', $title = '', $allow_na = true, $options = '', $
         }
     }
 
-    $return .= '<div id="date_div_'.$_openSIS['PrepareDate'].'" class="fake_datepicker" onclick="$(\'#original_date_' . $_openSIS['PrepareDate'] . '\').show(); $(\'#date_div_'.$_openSIS['PrepareDate'].'\').hide();">';
+    $return .= '<div id="date_div_'.$_hcwsms['PrepareDate'].'" class="fake_datepicker" onclick="$(\'#original_date_' . $_hcwsms['PrepareDate'] . '\').show(); $(\'#date_div_'.$_hcwsms['PrepareDate'].'\').hide();">';
     $return .= '<div class="input-group"><span class="input-group-addon"><i class="icon-calendar22"></i></span><input readonly="readonly" data-calid="1" class="form-control" value="'.(($options['view']=='month')?date('M/Y', strtotime($date)):date('M/d/Y', strtotime($date))).'" type="text"></div>';
     $return .= '</div>';
     
-    $return .= '<div class="input-group '.(($options['view']=='month')?'datepicker-group-month':'datepicker-group').'" style="display: none;" id="original_date_' . $_openSIS['PrepareDate'] . '" value="' . date('Y-m-d', strtotime($date)) . '">';
+    $return .= '<div class="input-group '.(($options['view']=='month')?'datepicker-group-month':'datepicker-group').'" style="display: none;" id="original_date_' . $_hcwsms['PrepareDate'] . '" value="' . date('Y-m-d', strtotime($date)) . '">';
     $return .= '<span class="input-group-addon"><i class="icon-calendar22"></i></span>';
-    $return .= '<input id="date_' . $_openSIS['PrepareDate'] . '" placeholder="" value="' .(($options['view']=='month')?date('m/Y', strtotime($date)):date('Y-m-d', strtotime($date))). '" class="form-control daterange-single" type="text">';
+    $return .= '<input id="date_' . $_hcwsms['PrepareDate'] . '" placeholder="" value="' .(($options['view']=='month')?date('m/Y', strtotime($date)):date('Y-m-d', strtotime($date))). '" class="form-control daterange-single" type="text">';
     $return .= '</div>';
 
     // MONTH  ---------------
     if ($options['M']) {
-//		$return .= "<SELECT NAME=month".$title." class=\"form-control\" id=monthSelect".$_openSIS['PrepareDate']." $extraM>";
+//		$return .= "<SELECT NAME=month".$title." class=\"form-control\" id=monthSelect".$_hcwsms['PrepareDate']." $extraM>";
 //		//  -------------------------------------------------------------------------- //
 //		
 //		if($month == 'JAN')
@@ -137,12 +137,12 @@ function PrepareDate($date = '', $title = '', $allow_na = true, $options = '', $
 //		if($month=='12'){$return .= "<OPTION VALUE=DEC SELECTED>December";}else{$return .= "<OPTION VALUE=DEC>December";}
 //		
 //		$return .= "</SELECT>";
-        $return .= '<input value="' . date('m', strtotime($date)) . '" id="monthSelect_date_' . $_openSIS['PrepareDate'] . '" name="month' . $title . '" type="hidden">';
+        $return .= '<input value="' . date('m', strtotime($date)) . '" id="monthSelect_date_' . $_hcwsms['PrepareDate'] . '" name="month' . $title . '" type="hidden">';
     }
 
     // DAY  ---------------
     if ($options['D']) {
-//        $return .= "<SELECT NAME=day" . $title . " id=daySelect" . $_openSIS['PrepareDate'] . " class=\"form-control\" $extraD>";
+//        $return .= "<SELECT NAME=day" . $title . " id=daySelect" . $_hcwsms['PrepareDate'] . " class=\"form-control\" $extraD>";
 //        if ($allow_na) {
 //            if ($day == '00') {
 //                $return .= "<OPTION value=\"\" SELECTED>N/A";
@@ -164,7 +164,7 @@ function PrepareDate($date = '', $title = '', $allow_na = true, $options = '', $
 //        }
 //        $return .="</SELECT></div>";
 
-        $return .= '<input value="' . date('d', strtotime($date)) . '" id="daySelect_date_' . $_openSIS['PrepareDate'] . '" name="day' . $title . '" type="hidden">';
+        $return .= '<input value="' . date('d', strtotime($date)) . '" id="daySelect_date_' . $_hcwsms['PrepareDate'] . '" name="day' . $title . '" type="hidden">';
     }
 
     // YEAR	 ---------------
@@ -185,7 +185,7 @@ function PrepareDate($date = '', $title = '', $allow_na = true, $options = '', $
 //            $end = $year + 21;
 //        }
 //
-//        $return .="<div class=\"form-group\"><SELECT NAME=year" . $title . " id=yearSelect" . $_openSIS['PrepareDate'] . " class=\"form-control\" $extraY>";
+//        $return .="<div class=\"form-group\"><SELECT NAME=year" . $title . " id=yearSelect" . $_hcwsms['PrepareDate'] . " class=\"form-control\" $extraY>";
 //        if ($allow_na) {
 //            if ($year == '00') {
 //                $return .= "<OPTION value=\"\" SELECTED>N/A";
@@ -203,21 +203,21 @@ function PrepareDate($date = '', $title = '', $allow_na = true, $options = '', $
 //        }
 //        $return .="</SELECT></div>";
 
-        $return .= '<input value="' . date('Y', strtotime($date)) . '" id="yearSelect_date_' . $_openSIS['PrepareDate'] . '" name="year' . $title . '" type="hidden">';
+        $return .= '<input value="' . date('Y', strtotime($date)) . '" id="yearSelect_date_' . $_hcwsms['PrepareDate'] . '" name="year' . $title . '" type="hidden">';
     }
 
 //    if ($options['C']) {
 //        if ($cal_img != 'N') {
-//            $return .= '<span style="padding-top:4px"><img src="assets/calendar.gif" id="trigger' . $_openSIS['PrepareDate'] . '" style="cursor: pointer;" onmouseover=this.style.background=""; onmouseout=this.style.background=""; onClick=' . "MakeDate('" . $_openSIS['PrepareDate'] . "',this);" . ' /></span>';
+//            $return .= '<span style="padding-top:4px"><img src="assets/calendar.gif" id="trigger' . $_hcwsms['PrepareDate'] . '" style="cursor: pointer;" onmouseover=this.style.background=""; onmouseout=this.style.background=""; onClick=' . "MakeDate('" . $_hcwsms['PrepareDate'] . "',this);" . ' /></span>';
 //        }
 //    }
-    if ($_REQUEST['_openSIS_PDF'])
+    if ($_REQUEST['_hcwsms_PDF'])
         $return = ProperDateAY($date);
     return $return;
 }
 
 function PrepareDate2($date = '', $title = '', $selectid, $allow_na = true, $options = '', $cal_img = 'Y') {
-    global $_openSIS;
+    global $_hcwsms;
     if ($options == '')
         $options = array();
     if (!$options['Y'] && !$options['M'] && !$options['D'] && !$options['C'])
@@ -240,7 +240,7 @@ function PrepareDate2($date = '', $title = '', $selectid, $allow_na = true, $opt
     }
 
     if ($options['C'])
-        $_openSIS['PrepareDate'] ++;
+        $_hcwsms['PrepareDate'] ++;
 
     if (strlen($date) == 9) { // ORACLE
         $day = substr($date, 0, 2);
@@ -424,13 +424,13 @@ function PrepareDate2($date = '', $title = '', $selectid, $allow_na = true, $opt
             $return .= '<span style="padding-top:4px"><img src="assets/calendar.gif" id="trigger' . $selectid . '" style="cursor: pointer;" onmouseover=this.style.background=""; onmouseout=this.style.background=""; onClick=' . "MakeDate('" . $selectid . "',this);" . ' /></span></div>';
         }
     }
-    if ($_REQUEST['_openSIS_PDF'])
+    if ($_REQUEST['_hcwsms_PDF'])
         $return = ProperDate($date);
     return $return;
 }
 
 function PrepareDate_for_EndInput($date = '', $title = '', $allow_na = true, $options = '') {
-    global $_openSIS;
+    global $_hcwsms;
 
     if ($options == '')
         $options = array();
@@ -450,7 +450,7 @@ function PrepareDate_for_EndInput($date = '', $title = '', $allow_na = true, $op
     }
 
     if ($options['C'])
-        $_openSIS['PrepareDate'] ++;
+        $_hcwsms['PrepareDate'] ++;
 
     if (strlen($date) == 9) { // ORACLE
         $day = substr($date, 0, 2);
@@ -468,7 +468,7 @@ function PrepareDate_for_EndInput($date = '', $title = '', $allow_na = true, $op
 
     // MONTH  ---------------
     if ($options['M']) {
-        $return .= "<div class=\"form-group\"><SELECT NAME=month" . $title . " id=monthSelect" . $_openSIS['PrepareDate'] . " class=\"form-control\" $extraM>";
+        $return .= "<div class=\"form-group\"><SELECT NAME=month" . $title . " id=monthSelect" . $_hcwsms['PrepareDate'] . " class=\"form-control\" $extraM>";
         //  -------------------------------------------------------------------------- //
 
         if ($month == 'JAN')
@@ -569,7 +569,7 @@ function PrepareDate_for_EndInput($date = '', $title = '', $allow_na = true, $op
 
     // DAY  ---------------
     if ($options['D']) {
-        $return .="<div class=\"form-group\"><SELECT NAME=day" . $title . " id=daySelect" . $_openSIS['PrepareDate'] . " class=\"form-control\" $extraD>";
+        $return .="<div class=\"form-group\"><SELECT NAME=day" . $title . " id=daySelect" . $_hcwsms['PrepareDate'] . " class=\"form-control\" $extraD>";
         if ($allow_na) {
             if ($day == '00') {
                 $return .= "<OPTION value=\"\" SELECTED>N/A";
@@ -610,7 +610,7 @@ function PrepareDate_for_EndInput($date = '', $title = '', $allow_na = true, $op
             $end = $year + 21;
         }
 
-        $return .="<div class=\"form-group\"><SELECT NAME=year" . $title . " id=yearSelect" . $_openSIS['PrepareDate'] . " SIZE=1 $extraY>";
+        $return .="<div class=\"form-group\"><SELECT NAME=year" . $title . " id=yearSelect" . $_hcwsms['PrepareDate'] . " SIZE=1 $extraY>";
         if ($allow_na) {
             if ($year == '00') {
                 $return .= "<OPTION value=\"\" SELECTED>N/A";
@@ -632,7 +632,7 @@ function PrepareDate_for_EndInput($date = '', $title = '', $allow_na = true, $op
     if ($options['C'])
         $return .= '</div>';
 
-    if ($_REQUEST['_openSIS_PDF'])
+    if ($_REQUEST['_hcwsms_PDF'])
         $return = ProperDate($date);
     return $return;
 }

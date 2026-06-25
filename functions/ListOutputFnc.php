@@ -50,7 +50,7 @@
 //         $link = array();
 
 //     if (!isset($options['add'])) {
-//         if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+//         if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
 //             if ($link) {
 //                 unset($link['add']);
 //                 unset($link['remove']);
@@ -310,7 +310,7 @@
 //             #echo '<CENTER>';
 //             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-//                 if (isset($_REQUEST['_openSIS_PDF']))
+//                 if (isset($_REQUEST['_hcwsms_PDF']))
 //                     echo " <TR><TD align=center>";
 //             }
 
@@ -321,7 +321,7 @@
 //                 echo '<div style=text-align:left><table cellpadding=1 cellspacing=0 ><tr><td ></td><td ><b>' . _noneWereFound . '.</b></td></tr><tr><td colspan=2></td></tr></table></div>';
 //         }
 //         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-//             if (!isset($_REQUEST['_openSIS_PDF'])) {
+//             if (!isset($_REQUEST['_hcwsms_PDF'])) {
 //                 if (!$_REQUEST['page'])
 //                     $_REQUEST['page'] = 1;
 //                 if (!$_REQUEST['LO_direction'])
@@ -389,13 +389,13 @@
 //             echo '<TABLE width=98% border=0 cellspacing=0 cellpadding=0><TR>';
 
 //             // SEARCH BOX & MORE HEADERS
-//             if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+//             if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
 //                 echo '<TD align=center>';
 
-//                 if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
+//                 if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
 //                     echo '</TD>';
 //                 $colspan = 1;
-//                 if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+//                 if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
 //                     $tmp_REQUEST = $_REQUEST;
 //                     unset($tmp_REQUEST['LO_search']);
 //                     unset($tmp_REQUEST['page']);
@@ -404,30 +404,30 @@
 //                     $colspan++;
 //                 }
 //                 echo "</TR>";
-//                 echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+//                 echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
 //             } else
-//                 echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+//                 echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
 //             // END SEARCH BOX ----
 //             echo '</TD></TR><TR><TD>';
 
 //             // SHADOW
-//             if (!isset($_REQUEST['_openSIS_PDF']))
+//             if (!isset($_REQUEST['_hcwsms_PDF']))
 //                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
 //             echo "<TABLE cellpadding=6 width=100% cellspacing=1 border=\"1px solid #a9d5e9 \" style=\"border-collapse:collapse\" align=center>";
-//             if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+//             if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
 //                 echo '<THEAD>';
-//             if (!isset($_REQUEST['_openSIS_PDF']))
+//             if (!isset($_REQUEST['_hcwsms_PDF']))
 //                 echo '<TR>';
 
 //             $i = 1;
-//             if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+//             if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
 
 //                 //THIS LINE IS FOR COLUMN HEADING
 //                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
 //                 $i++;
 //             }
 
-//             if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+//             if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
 //                 foreach ($column_names as $key => $value) {
 //                     if ($_REQUEST['LO_sort'] == $key)
 //                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -450,22 +450,22 @@
 
 //             $color = 'bgcolor="#ffffff"';
 
-//             if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+//             if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
 //                 echo '</THEAD><TBODY>';
 
 
 //             // mab - enable add link as first or last
 //             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-//                 if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+//                 if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
 //                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-//                 elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+//                 elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
 //                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add') . $link['add']['span'] . "</TD></TR>";
 //                 elseif ($link['add']['html'] && $cols) {
 //                     echo "<TR $color>";
-//                     if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+//                     if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
 //                         echo "<TD class=even align=left>" . $link['add']['html']['remove'] . "</TD>";
-//                     elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+//                     elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
 //                         echo "<TD class=even align=left>" . button('add') . "</TD>";
 
 //                     foreach ($column_names as $key => $value) {
@@ -496,7 +496,7 @@
 
 //             for ($i = $start; $i <= $stop; $i++) {
 //                 $item = $result[$i];
-//                 if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+//                 if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
 //                     foreach ($item as $key => $value) {
 //                         $value = par_rep_cb('<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>', '\\1', $value);
 //                         $value = par_rep_cb('<SELECT.*</SELECT\>', '', $value);
@@ -515,7 +515,7 @@
 //                 else
 //                     $color = 'bgcolor="#ffffff"';
 
-//                 if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+//                 if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
 //                     if ($count != 0) {
 //                         echo '</TABLE>';
 //                         echo "<div style=\"page-break-after: always;\"></div>";
@@ -529,7 +529,7 @@
 //                         echo '<TABLE cellpadding=6 width=100% cellspacing=1 border="1px solid #a9d5e9 " style="border-collapse:collapse" align=center>';
 //                     }
 //                     echo "<TR>";
-//                     if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+//                     if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
 //                         echo "<TD bgcolor=#d3d3d3></TD>";
 
 //                     if ($cols) {
@@ -544,7 +544,7 @@
 
 //                 echo "<TR $color>";
 //                 $count++;
-//                 if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+//                 if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
 //                     $button_title = $link['remove']['title'];
 //                     $button_link = $link['remove']['link'];
 //                     if (count($link['remove']['variables'])) {
@@ -556,7 +556,7 @@
 //                 }
 //                 if ($cols) {
 //                     foreach ($column_names as $key => $value) {
-//                         if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+//                         if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
 //                             echo "<TD $color >";
 //                             if ($key == 'FULL_NAME')
 //                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -651,9 +651,9 @@
 
 //             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-//                 if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+//                 if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
 //                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-//                 elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+//                 elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
 //                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add') . $link['add']['span'] . "</TD></TR>";
 //                 elseif ($link['add']['html'] && $cols) {
 //                     if ($count % 2)
@@ -662,9 +662,9 @@
 //                         $color = $side_color;
 
 //                     echo "<TR $color>";
-//                     if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+//                     if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
 //                         echo "<TD bgcolor=#ffffff align=left>" . $link['add']['html']['remove'] . "</TD>";
-//                     elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+//                     elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
 //                         echo "<TD bgcolor=#ffffff align=left >" . button('add') . "</TD>";
 
 //                     foreach ($column_names as $key => $value) {
@@ -674,10 +674,10 @@
 //                 }
 //             }
 //             if ($result_count != 0) {
-//                 if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+//                 if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
 //                     echo '</TBODY>';
 //                 echo "</TABLE>";
-//                 if (!isset($_REQUEST['_openSIS_PDF']))
+//                 if (!isset($_REQUEST['_hcwsms_PDF']))
 //                     echo '</TD ></TR></TABLE>';
 //                 echo "</TD ></TR>";
 //                 echo "</TABLE>";
@@ -688,9 +688,9 @@
 //         }
 //         if ($result_count == 0) {
 //             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-//                 if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+//                 if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
 //                     echo '<table width=120px cellspacing=8 cellpadding=6 ><tr><TD align=left class=lone_add >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-//                 elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+//                 elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
 //                     $color = $side_color;
 
 //                     if ($options['center'])
@@ -714,7 +714,7 @@
 //                         }
 //                         echo "</TR>";
 //                         echo "</TABLE>";
-//                     } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+//                     } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
 //                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 //                     echo "</TD></TR></TABLE>";
 //                     if ($options['center'])
@@ -727,7 +727,7 @@
 //                 echo '<TABLE cellpadding=6 id=LOy_table>';
 //                 $i = 1;
 
-//                 if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+//                 if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
 //                     $color = $side_color;
 //                     foreach ($result as $item) {
 //                         echo "<TR><TD $color  id=LO_row$i>";
@@ -757,12 +757,12 @@
 //             echo '<div style="page-break-before: inherit;">&nbsp;</div>';
 //             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
 //             $i = 1;
-//             if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+//             if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
 //                 echo "<TD class=grid id=LO_col$i></TD>";
 //                 $i++;
 //             }
 
-//             if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+//             if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
 //                 foreach ($column_names as $key => $value) {
 
 //                     echo '<TD class=grid id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
@@ -797,7 +797,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -1061,7 +1061,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
         #echo '<CENTER>';
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -1072,7 +1072,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                 echo '<div style=text-align:left><table cellpadding=1 cellspacing=0 ><tr><td ></td><td ><b>'._noneWereFound.'.</b></td></tr><tr><td colspan=2></td></tr></table></div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -1140,13 +1140,13 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
             echo '<TABLE width=98% border=0 cellspacing=0 cellpadding=0><TR>';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo '<TD align=center>';
 
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
                     echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
                     unset($tmp_REQUEST['page']);
@@ -1155,30 +1155,30 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                     $colspan++;
                 }
                 echo "</TR>";
-                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
             } else
-                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</TD></TR><TR><TD>';
 
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             echo "<TABLE cellpadding=6 width=100% cellspacing=1 border=\"1px solid #a9d5e9 \" style=\"border-collapse:collapse\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
 
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -1201,22 +1201,22 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
 
             $color = 'bgcolor="#ffffff"';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD class=even align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD class=even align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -1250,7 +1250,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>', '\\1', $value);
                         $value = par_rep_cb('<SELECT.*</SELECT\>', '', $value);
@@ -1269,7 +1269,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                 else
                     $color = 'bgcolor="#ffffff"';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE>';
                         echo "<div style=\"page-break-after: always;\"></div>";
@@ -1283,7 +1283,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                         echo '<TABLE cellpadding=6 width=100% cellspacing=1 border="1px solid #a9d5e9 " style="border-collapse:collapse" align=center>';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#d3d3d3></TD>";
 
                     if ($cols) {
@@ -1298,7 +1298,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
                     $button_link = $link['remove']['link'];
                     if (count($link['remove']['variables'])) {
@@ -1310,7 +1310,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -1414,9 +1414,9 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left class=even>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -1425,9 +1425,9 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD bgcolor=#ffffff align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#ffffff align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -1437,10 +1437,10 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
-                if (!isset($_REQUEST['_openSIS_PDF']))
+                if (!isset($_REQUEST['_hcwsms_PDF']))
                     echo '</TD ></TR></TABLE>';
                 echo "</TD ></TR>";
                 echo "</TABLE>";
@@ -1451,9 +1451,9 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
         }
         if ($result_count == 0) {
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table width=120px cellspacing=8 cellpadding=6 ><tr><TD align=left class=lone_add >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -1477,7 +1477,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
                     echo "</TD></TR></TABLE>";
                     if ($options['center'])
@@ -1490,7 +1490,7 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -1520,12 +1520,12 @@ function ListOutputPrint_sch($result, $column_names, $singular = '', $plural = '
             echo '<div style="page-break-before: inherit;">&nbsp;</div>';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD class=grid id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
 
                     echo '<TD class=grid id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
@@ -1570,7 +1570,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -1850,7 +1850,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -1867,7 +1867,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -1946,7 +1946,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                 } else {
 
                     // SEARCH BOX & MORE HEADERS
-                    if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+                    if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                         echo "<h6 class=\"panel-title\">";
                         if ($singular && $plural && $options['count']) {
                             if ($display_count > 1)
@@ -1956,14 +1956,14 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                         } else {
                             echo '&nbsp;';
                         }
-                        if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0) {
+                        if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0) {
                             $lo_save_id = isset($options['LO_save_id']) ? "&LO_save_id=" . $options['LO_save_id'] : "";
-                            echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true" . $lo_save_id . " class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                            echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true" . $lo_save_id . " class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
                         }
 
                         echo '</h6>';
                         $colspan = 1;
-                        if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                        if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                             $_REQUEST['portal_search'] = 'true';
                             $tmp_REQUEST = $_REQUEST;
                             unset($tmp_REQUEST['LO_search']);
@@ -1978,16 +1978,16 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                             echo "</div>"; //.heading-elements
                             $colspan++;
                         }
-                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                     } else {
-                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                     }
                 }
                 // END SEARCH BOX ----
                 echo '</div>'; //.panel-heading
             } // $headerVisibility
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
@@ -1995,19 +1995,19 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
             echo '<div class="panel-body">';
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -2035,22 +2035,22 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -2064,7 +2064,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
             
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -2083,13 +2083,13 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -2104,7 +2104,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -2118,7 +2118,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
 
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD>";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -2174,9 +2174,9 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -2185,9 +2185,9 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -2197,9 +2197,9 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                 }
             }
             if ($result_count != 0) {
-                //if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                //if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
                     $number_rec = 50;
@@ -2266,9 +2266,9 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<hr class="no-margin"/><table class="table"><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -2297,7 +2297,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -2315,7 +2315,7 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -2344,12 +2344,12 @@ function ListOutput($result, $column_names, $singular = '', $plural = '', $link 
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -2407,7 +2407,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -2696,7 +2696,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -2713,7 +2713,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -2793,7 +2793,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                 } else {
 
                     // SEARCH BOX & MORE HEADERS
-                    if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+                    if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                         echo "<h6 class=\"panel-title\">";
                         if ($singular && $plural && $options['count']) {
                             if ($display_count > 1)
@@ -2803,14 +2803,14 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                         }else {
                             echo '&nbsp;';
                         }
-                        if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0){
+                        if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0){
                             $lo_save_id = isset($options['LO_save_id']) ? "&LO_save_id=".$options['LO_save_id'] : "";
-                            echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true". $lo_save_id ." class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                            echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true". $lo_save_id ." class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
                         }
 
                         echo '</h6>';
                         $colspan = 1;
-                        if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                        if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                             $_REQUEST['portal_search'] = 'true';
                             $tmp_REQUEST = $_REQUEST;
                             unset($tmp_REQUEST['LO_search']);
@@ -2825,16 +2825,16 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                             echo "</div>"; //.heading-elements
                             $colspan++;
                         }
-                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                     } else {
-                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                     }
                 }
                 // END SEARCH BOX ----
                 echo '</div>'; //.panel-heading
             } // $headerVisibility
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
@@ -2842,19 +2842,19 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
             echo '<div class="panel-body">';
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -2882,22 +2882,22 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -2911,7 +2911,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -2930,13 +2930,13 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -2951,7 +2951,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -2965,7 +2965,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
 
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD>";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -3023,9 +3023,9 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -3034,9 +3034,9 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -3046,9 +3046,9 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                 }
             }
             if ($result_count != 0) {
-                //if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                //if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
                     $number_rec = 50;
@@ -3104,9 +3104,9 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<hr class="no-margin"/><table class="table"><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -3135,7 +3135,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -3153,7 +3153,7 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -3182,12 +3182,12 @@ function ListOutputWithStudentInfo($result, $column_names, $singular = '', $plur
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -3229,7 +3229,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -3450,7 +3450,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -3467,7 +3467,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -3545,7 +3545,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                 } else {
 
                     // SEARCH BOX & MORE HEADERS
-                    if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+                    if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                         echo "<h6 class=\"panel-title\">";
                         if ($singular && $plural && $options['count']) {
                             // if ($display_count > 1)
@@ -3557,14 +3557,14 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                         } else {
                             echo '&nbsp;';
                         }
-                        if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0) {
-                            // echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                        if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0) {
+                            // echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
                             echo " &nbsp; <a HREF=\"javascript:void(0);\" onclick=\"generateDataTableSpreadsheet();\" class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
                         }
 
                         echo '</h6>';
                         $colspan = 1;
-                        if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                        if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                             $_REQUEST['portal_search'] = 'true';
                             $tmp_REQUEST = $_REQUEST;
                             unset($tmp_REQUEST['LO_search']);
@@ -3579,16 +3579,16 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                             echo "</div>"; //.heading-elements
                             $colspan++;
                         }
-                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                     } else {
-                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                        echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                     }
                 }
                 // END SEARCH BOX ----
                 echo '</div>'; //.panel-heading
             } // $headerVisibility
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
@@ -3682,21 +3682,21 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
 
             echo '<div class="row ' . $paginationVisibility . '"><div class="col-md-6"><p class="m-0 p-t-10">' . _showing . ' ' . $EntryCounts['aaIni'] . ' ' . strtolower(_to) . ' ' . $EntryCounts['aaEnd'] . ' ' . _of . ' ' . $EntryCounts['aaTot'] . ' ' . _entries . '</p></div><div class="col-md-6"><div class="pull-right">' . $format_paginate . '</div></div></div>';
 
-            echo '<div class="table-responsive opensis-dataTable">';
+            echo '<div class="table-responsive hcwsms-dataTable">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -3724,22 +3724,22 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -3753,7 +3753,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -3772,13 +3772,13 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -3793,7 +3793,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -3807,7 +3807,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
 
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD>";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -3863,9 +3863,9 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -3874,9 +3874,9 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -3886,9 +3886,9 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                 }
             }
             if ($result_count != 0) {
-                //if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                //if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
                     $number_rec = 50;
@@ -3954,9 +3954,9 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<hr class="no-margin"/><table class="table"><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -3985,7 +3985,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -4003,7 +4003,7 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -4032,12 +4032,12 @@ function ListOutputCustomDT($result, $column_names, $singular = '', $plural = ''
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -4079,7 +4079,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -4360,7 +4360,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -4377,7 +4377,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -4454,7 +4454,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
             } else {
 
                 // SEARCH BOX & MORE HEADERS
-                if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+                if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                     echo "<h6 class=\"panel-title\">";
                     if ($singular && $plural && $options['count']) {
                         if ($display_count > 1)
@@ -4462,12 +4462,12 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
                         elseif ($display_count == 1)
                             echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                     }
-                    if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                        echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                    if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                        echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
 
                     echo '</h6>';
                     $colspan = 1;
-                    if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                    if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                         $_REQUEST['portal_search'] = 'true';
                         $tmp_REQUEST = $_REQUEST;
                         unset($tmp_REQUEST['LO_search']);
@@ -4482,34 +4482,34 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
                         echo "</div>"; //.heading-elements
                         $colspan++;
                     }
-                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                 } else {
-                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                 }
             }
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
 
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -4537,22 +4537,22 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -4566,7 +4566,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -4585,13 +4585,13 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -4606,7 +4606,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -4620,7 +4620,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
 
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD>";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -4676,9 +4676,9 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -4687,9 +4687,9 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -4699,12 +4699,12 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 echo '</div>';
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
 
@@ -4731,9 +4731,9 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<hr class="no-margin"/><table class="table"><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -4762,7 +4762,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -4780,7 +4780,7 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -4809,12 +4809,12 @@ function ListOutputPeriod($result, $column_names, $singular = '', $plural = '', 
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -4872,7 +4872,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -5149,7 +5149,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -5160,7 +5160,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -5233,7 +5233,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
 
             echo '<div class="panel-heading">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
 
@@ -5242,12 +5242,12 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -5262,31 +5262,31 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
 
             echo '</div>'; //.panel-heading                        
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
 
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
@@ -5315,7 +5315,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
@@ -5324,15 +5324,15 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -5346,7 +5346,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -5366,7 +5366,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
 
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered table-striped\">';
@@ -5374,7 +5374,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                     }
                     echo "<TR>";
 
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -5391,7 +5391,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                 echo "<TR $color>";
 
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -5406,7 +5406,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
 
 
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
 
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
@@ -5478,9 +5478,9 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
 
 
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
 
@@ -5491,9 +5491,9 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
 
                     echo "<TR $color>";
 
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD>" . button('add') . "</TD>";
 
 
@@ -5505,11 +5505,11 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
             }
             if ($result_count != 0) {
 
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
 
@@ -5537,9 +5537,9 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
 
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -5568,7 +5568,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -5586,7 +5586,7 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
 
                     $color = $side_color;
                     foreach ($result as $item) {
@@ -5616,12 +5616,12 @@ function ListOutputSchedule($result, $column_names, $singular = '', $plural = ''
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -5657,7 +5657,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -5910,7 +5910,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -5923,7 +5923,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
 
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
 
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -5989,7 +5989,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
 
             echo '<div class="panel-heading">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
                     if ($display_count > 1)
@@ -5999,13 +5999,13 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
                     if ($where_message)
                         echo $where_message;
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo " &nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white legitRipple\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true" . " ><i class=\"icon-file-excel\"></i></a>";
-                // echo " &nbsp; <A HREF=" . encode_url(str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true") . " ><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo " &nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white legitRipple\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true" . " ><i class=\"icon-file-excel\"></i></a>";
+                // echo " &nbsp; <A HREF=" . encode_url(str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true") . " ><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
                     unset($tmp_REQUEST['page']);
@@ -6018,18 +6018,18 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            //            if (!isset($_REQUEST['_openSIS_PDF']))
+            //            if (!isset($_REQUEST['_hcwsms_PDF']))
             //                echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             //echo "<TABLE class=\"table table-bordered table-striped\" align=center>";
-            //            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            //            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
             //                echo '<THEAD>';
-            //            if (!isset($_REQUEST['_openSIS_PDF']))
+            //            if (!isset($_REQUEST['_hcwsms_PDF']))
             //                echo '<TR>';
 
             $i = 1;
@@ -6038,20 +6038,20 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
 
             $color = '';
 
-            //            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            //            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
             //                echo '</THEAD><TBODY>';
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo button('add', $link['add']['title'], $link['add']['link']);
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo button('add') . $link['add']['span'];
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo $link['add']['html']['remove'];
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo button('add');
 
                     foreach ($column_names as $key => $value) {
@@ -6067,7 +6067,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
 
             for ($j = $start; $j <= $stop; $j++) {    ////// MAIN CODE PORTION
                 $item = $result[$j];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -6086,13 +6086,13 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         //echo '</TABLE><TABLE class=\"table table-bordered table-striped\">';
                         echo '<div style="page-break-after: always;"></div><!-- NEW PAGE -->';
                     }
                     //echo "<TR>";
-                    //                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    //                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                     //                        echo "<TD></TD>";
 
                     if ($cols) {
@@ -6111,7 +6111,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
 
                 //echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
                     $button_type = $link['remove']['buttontype'];
 
@@ -6132,7 +6132,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
                     echo '<div class="row"><div class="col-md-6">';
 
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             //echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -6225,9 +6225,9 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
                 echo '<div class="well">';
                 echo '<h4 class="text-primary m-t-0"><i class="icon-plus3 "></i> ' . _addNewCertification . '</h4>';
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo button('add', $link['add']['title'], $link['add']['link']);
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo button('add') . $link['add']['span'];
 
                 elseif ($link['add']['html'] && $cols) {
@@ -6307,9 +6307,9 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
 
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF'])) {
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                } elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                } elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
 
                     $color = $side_color;
 
@@ -6365,7 +6365,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
                             }
                             $i++;
                         }
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -6379,7 +6379,7 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -6408,12 +6408,12 @@ function ListOutputStaffCert($result, $column_names, $singular = '', $plural = '
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -6449,7 +6449,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -6708,7 +6708,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
                 echo "<TABLE border=0";
-                //if(isset($_REQUEST['_openSIS_PDF']))
+                //if(isset($_REQUEST['_hcwsms_PDF']))
                 echo " width=100%";
                 echo " ><TR><TD>";
             }
@@ -6720,7 +6720,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -6782,34 +6782,34 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
             }
             // END MISC ---
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
 
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
                     unset($tmp_REQUEST['page']);
 
                     (isset($colspan)) ? $colspan++ : $colspan = 0;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX 
             // SHADOW
             echo "<TABLE class='table table-bordered table-striped'>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -6831,22 +6831,22 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
             }
 
             $color = '';
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD $color>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD $color>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -6860,7 +6860,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -6879,13 +6879,13 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered table-striped\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -6900,7 +6900,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -6913,7 +6913,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -6969,9 +6969,9 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -6980,9 +6980,9 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD $color>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD $color>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -6992,11 +6992,11 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     $number_rec = 100;
                     if ($result_count > $number_rec) {
                         echo "<script language='javascript' type='text/javascript'>\n";
@@ -7018,9 +7018,9 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
                 echo '</TD></TR></TABLE>';
-            if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+            if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                 echo '<div class="panel-footer">' . button('add', $link['add']['title'], $link['add']['link']) . '</div>';
-            elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+            elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                 $color = $side_color;
 
 
@@ -7045,7 +7045,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
                     }
                     echo "</TR>";
                     echo "</TABLE>";
-                } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TABLE ><TR><TD align=left>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                 // SHADOW
@@ -7057,7 +7057,7 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -7086,12 +7086,12 @@ function ListOutputMod($result, $column_names, $singular = '', $plural = '', $li
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -7127,7 +7127,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -7389,7 +7389,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
             #echo '<CENTER>';
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -7400,7 +7400,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                 echo '<div style=text-align:left><table cellpadding=1 cellspacing=0 ><tr><td ></td><td ><b>' . _noneWereFound . '.</b></td></tr><tr><td colspan=2></td></tr></table></div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -7466,13 +7466,13 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
             echo '<TABLE width=100% border=0 cellspacing=0 cellpadding=0><TR>';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo '<TD align=center>';
 
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
                     echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
                     unset($tmp_REQUEST['page']);
@@ -7481,29 +7481,29 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                     $colspan++;
                 }
                 echo "</TR>";
-                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
             } else
-                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</TD></TR><TR><TD>';
 
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             echo "<TABLE cellpadding=6 width=100% cellspacing=1 border=\"1 \" style=\"border-collapse:collapse\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -7526,22 +7526,22 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
 
             $color = 'bgcolor="#ffffff"';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -7555,7 +7555,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -7574,16 +7574,16 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                 else
                     $color = 'bgcolor="#ffffff"';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE>';
                         echo "<div style=\"page-break-after: always;\"></div>";
                         echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-                        echo "<tr><td width=105>" . DrawLogo() . "</td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . $_SESSION['_REQUEST_vars'][0] . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByOpenSis . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+                        echo "<tr><td width=105>" . DrawLogo() . "</td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . $_SESSION['_REQUEST_vars'][0] . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByHcwsms . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
                         echo '<TABLE cellpadding=6 width=100% cellspacing=1 border="1px solid #a9d5e9 " style="border-collapse:collapse" align=center>';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#d3d3d3></TD>";
 
                     if ($cols) {
@@ -7598,7 +7598,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
                     $button_link = $link['remove']['link'];
                     if (count($link['remove']['variables'])) {
@@ -7610,7 +7610,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -7676,9 +7676,9 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -7687,9 +7687,9 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD bgcolor=#ffffff align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#ffffff align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -7699,10 +7699,10 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
-                if (!isset($_REQUEST['_openSIS_PDF']))
+                if (!isset($_REQUEST['_hcwsms_PDF']))
                     echo '</TD ></TR></TABLE>';
                 echo "</TD ></TR>";
                 echo "</TABLE>";
@@ -7713,9 +7713,9 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
         }
         if ($result_count == 0) {
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -7739,7 +7739,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
                     echo "</TD></TR></TABLE>";
                     if ($options['center'])
@@ -7752,7 +7752,7 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -7782,12 +7782,12 @@ function ListOutputPrint_Report($result, $column_names, $singular = '', $plural 
             echo '<div style="page-break-before: inherit;">&nbsp;</div>';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
 
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
@@ -7824,7 +7824,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -8083,7 +8083,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
             #echo '<CENTER>';
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -8094,7 +8094,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                 echo '<div style=text-align:left><table cellpadding=1 cellspacing=0 ><tr><td ></td><td ><b>' . _noneWereFound . '.</b></td></tr><tr><td colspan=2></td></tr></table></div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -8160,13 +8160,13 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
             echo '<TABLE width=100% border=0 cellspacing=0 cellpadding=0><TR>';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo '<TD align=center>';
 
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
                     echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
                     unset($tmp_REQUEST['page']);
@@ -8175,30 +8175,30 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                     $colspan++;
                 }
                 echo "</TR>";
-                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
             } else
-                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</TD></TR><TR><TD>';
 
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             echo "<TABLE cellpadding=6 width=100% cellspacing=1 border=\"1px solid #a9d5e9 \" style=\"border-collapse:collapse\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
 
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -8221,22 +8221,22 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
 
             $color = 'bgcolor="#ffffff"';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -8250,7 +8250,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         //$value = eregi_replace('<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
@@ -8271,7 +8271,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                 else
                     $color = 'bgcolor="#ffffff"';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE>';
                         echo "<div style=\"page-break-after: always;\"></div>";
@@ -8285,7 +8285,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                         echo '<TABLE cellpadding=6 width=100% cellspacing=1 border="1px solid #a9d5e9 " style="border-collapse:collapse" align=center>';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#d3d3d3></TD>";
 
                     if ($cols) {
@@ -8300,7 +8300,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
                     $button_link = $link['remove']['link'];
                     if (count($link['remove']['variables'])) {
@@ -8312,7 +8312,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -8368,9 +8368,9 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -8379,9 +8379,9 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD bgcolor=#ffffff align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#ffffff align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -8391,10 +8391,10 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
-                if (!isset($_REQUEST['_openSIS_PDF']))
+                if (!isset($_REQUEST['_hcwsms_PDF']))
                     echo '</TD ></TR></TABLE>';
                 echo "</TD ></TR>";
                 echo "</TABLE>";
@@ -8405,9 +8405,9 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
         }
         if ($result_count == 0) {
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -8431,7 +8431,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
                     echo "</TD></TR></TABLE>";
                     if ($options['center'])
@@ -8444,7 +8444,7 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -8474,12 +8474,12 @@ function ListOutputPrint($result, $column_names, $singular = '', $plural = '', $
             echo '<div style="page-break-before: inherit;">&nbsp;</div>';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
 
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
@@ -8516,7 +8516,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -8781,7 +8781,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -8792,7 +8792,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                 echo '<div style=text-align:left><table cellpadding=1 cellspacing=0 ><tr><td ></td><td ><b>' . _noneWereFound . '.</b></td></tr><tr><td colspan=2></td></tr></table></div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -8858,13 +8858,13 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
             echo '<TABLE width=100% border=0 cellspacing=0 cellpadding=0><TR>';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo '<TD align=center>';
 
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
                     echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
                     unset($tmp_REQUEST['page']);
@@ -8873,31 +8873,31 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                     $colspan++;
                 }
                 echo "</TR>";
-                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
             } else
-                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</TD></TR><TR><TD>';
 
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             echo "<TABLE cellpadding=6 width=100% cellspacing=1 border=\"1px solid #a9d5e9 \" style=\"border-collapse:collapse\" align=center>";
 
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -8920,22 +8920,22 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
 
             $color = 'bgcolor="#ffffff"';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -8949,7 +8949,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         //$value = eregi_replace('<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
@@ -8972,7 +8972,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                 else
                     $color = 'bgcolor="#ffffff"';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE>';
                         echo "<div style=\"page-break-after: always;\"></div>";
@@ -8982,7 +8982,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                         echo '<TABLE cellpadding=6 width=100% cellspacing=1 border="1px solid #a9d5e9 " style="border-collapse:collapse" align=center>';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#d3d3d3></TD>";
 
                     if ($cols) {
@@ -8997,7 +8997,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
                     $button_link = $link['remove']['link'];
                     if (count($link['remove']['variables'])) {
@@ -9009,7 +9009,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -9065,9 +9065,9 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -9076,9 +9076,9 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD bgcolor=#ffffff align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#ffffff align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -9088,10 +9088,10 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
-                if (!isset($_REQUEST['_openSIS_PDF']))
+                if (!isset($_REQUEST['_hcwsms_PDF']))
                     echo '</TD ></TR></TABLE>';
                 echo "</TD ></TR>";
                 echo "</TABLE>";
@@ -9102,9 +9102,9 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
         }
         if ($result_count == 0) {
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -9128,7 +9128,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
                     echo "</TD></TR></TABLE>";
                     if ($options['center'])
@@ -9141,7 +9141,7 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -9171,12 +9171,12 @@ function ListOutputCustom($result, $column_names, $singular = '', $plural = '', 
             echo '<div style="page-break-before: inherit;">&nbsp;</div>';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD  id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -9214,7 +9214,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -9476,7 +9476,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -9487,7 +9487,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                 echo '<div style=text-align:left><table cellpadding=1 cellspacing=0 ><tr><td ></td><td ><b>' . _noneWereFound . '.</b></td></tr><tr><td colspan=2></td></tr></table></div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -9553,13 +9553,13 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
             echo '<TABLE width=100% border=0 cellspacing=0 cellpadding=0><TR>';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo '<TD align=center>';
 
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
                     echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
                     unset($tmp_REQUEST['page']);
@@ -9568,29 +9568,29 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                     $colspan++;
                 }
                 echo "</TR>";
-                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
             } else
-                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</TD></TR><TR><TD>';
 
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             echo "<TABLE cellpadding=6 width=100% cellspacing=1 border=\"1px solid #a9d5e9 \" style=\"border-collapse:collapse\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -9613,22 +9613,22 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
 
             $color = 'bgcolor="#ffffff"';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -9642,7 +9642,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -9661,7 +9661,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                 else
                     $color = 'bgcolor="#ffffff"';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE>';
                         echo "<div style=\"page-break-after: always;\"></div>";
@@ -9670,7 +9670,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                         echo '<TABLE cellpadding=6 width=100% cellspacing=1 border="1px solid #a9d5e9 " style="border-collapse:collapse" align=center>';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#d3d3d3></TD>";
 
                     if ($cols) {
@@ -9685,7 +9685,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
                     $button_link = $link['remove']['link'];
                     if (count($link['remove']['variables'])) {
@@ -9697,7 +9697,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -9754,9 +9754,9 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -9765,9 +9765,9 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD bgcolor=#ffffff align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#ffffff align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -9777,10 +9777,10 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
-                if (!isset($_REQUEST['_openSIS_PDF']))
+                if (!isset($_REQUEST['_hcwsms_PDF']))
                     echo '</TD ></TR></TABLE>';
                 echo "</TD ></TR>";
                 echo "</TABLE>";
@@ -9791,9 +9791,9 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
         }
         if ($result_count == 0) {
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -9817,7 +9817,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
                     echo "</TD></TR></TABLE>";
                     if ($options['center'])
@@ -9830,7 +9830,7 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -9860,12 +9860,12 @@ function PrintCatalog($result, $column_names, $singular = '', $plural = '', $lin
             echo '<div style="page-break-before: inherit;">&nbsp;</div>';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
 
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
@@ -9909,7 +9909,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
     }
 
     //    if (!isset($options['add'])) {
-    //        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+    //        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
     //            if ($link) {
     //                unset($link['add']);
     //                unset($link['remove']);
@@ -10178,7 +10178,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -10195,7 +10195,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -10271,7 +10271,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
             //            } else {
             //
             //            // SEARCH BOX & MORE HEADERS
-            //            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            //            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
             //                    echo "<h6 class=\"panel-title\">";
             //                if ($singular && $plural && $options['count']) {
             //                    if ($display_count > 1)
@@ -10279,12 +10279,12 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
             //                    elseif ($display_count == 1)
             //                            echo "<span class=\"heading-text\">1 $singular "._wasFound.".</span>";
             //                }
-            //                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-            //                        echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+            //                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+            //                        echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
             //
             //                echo '</h6>';
             //                $colspan = 1;
-            //                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+            //                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
             //                        $_REQUEST['portal_search'] = 'true';
             //                    $tmp_REQUEST = $_REQUEST;
             //                    unset($tmp_REQUEST['LO_search']);
@@ -10299,34 +10299,34 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
             //                        echo "</div>"; //.heading-elements
             //                    $colspan++;
             //                }
-            //                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+            //                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             //                } else {
-            //                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+            //                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             //                }
             //            }
             //            // END SEARCH BOX ----
             //            echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
 
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -10354,22 +10354,22 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -10383,7 +10383,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -10402,13 +10402,13 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -10423,7 +10423,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -10437,7 +10437,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
 
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD>";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -10493,9 +10493,9 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -10504,9 +10504,9 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -10524,9 +10524,9 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
 
 
             if ($result_count != 0) {
-                //if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                //if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
                     $number_rec = 100;
@@ -10569,9 +10569,9 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<hr class="no-margin"/><table class="table"><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -10600,7 +10600,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -10616,7 +10616,7 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -10645,12 +10645,12 @@ function ListOutput_missing_attn($result, $column_names, $singular = '', $plural
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -10694,7 +10694,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
     }
 
     //    if (!isset($options['add'])) {
-    //        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+    //        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
     //            if ($link) {
     //                unset($link['add']);
     //                unset($link['remove']);
@@ -10963,11 +10963,11 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -11037,26 +11037,26 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
             }
             // END MISC ---
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
 
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -11084,22 +11084,22 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -11113,7 +11113,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -11132,13 +11132,13 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -11153,7 +11153,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -11170,7 +11170,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
 
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD>";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -11226,9 +11226,9 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -11237,9 +11237,9 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -11249,7 +11249,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
                 }
             }
             if ($result_count != 0) {
-                //if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                //if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 // SHADOW
 
 
@@ -11262,7 +11262,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
             echo '</div>'; //.table-responsive
 
 
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 //echo '</TD ></TR></TABLE>';
 
                 $number_rec = 100;
@@ -11302,9 +11302,9 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<hr class="no-margin"/><table class="table"><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -11333,7 +11333,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -11349,7 +11349,7 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -11378,12 +11378,12 @@ function ListOutput_missing_attn_teach_port($result, $column_names, $singular = 
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -11428,7 +11428,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -11824,7 +11824,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -11835,7 +11835,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -11908,7 +11908,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
             echo '<TABLE width=100% border=0 cellspacing=0 cellpadding=0><TR>';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo '<TD align=center>';
                 echo '<TABLE class="table table-bordered table-striped">';
                 echo "<TR><TD align=left valign=middle>";
@@ -11918,12 +11918,12 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                     elseif ($display_count == 1)
                         echo "<h6 class=\"panel-title\"><span class=\"heading-text\">1 $singular " . _wasFound . ".</span></h6>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo "<A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true ><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo "<A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true ><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -11933,32 +11933,32 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                     $colspan++;
                 }
                 echo "</TR>";
-                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
             } else
-                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</TD></TR><TR><TD>';
 
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
                 echo '<div id="pagerNavPosition"></div>';
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -11986,22 +11986,22 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
 
             $color = '';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -12015,7 +12015,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -12034,13 +12034,13 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -12055,7 +12055,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -12070,7 +12070,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
 
                     foreach ($column_names as $key => $value) {
 
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -12126,9 +12126,9 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -12137,9 +12137,9 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -12149,11 +12149,11 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     echo '</TD ></TR></TABLE>';
 
 
@@ -12182,9 +12182,9 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -12213,7 +12213,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW				
@@ -12228,7 +12228,7 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -12257,12 +12257,12 @@ function ListOutputGrade_old($result, $column_names, $singular = '', $plural = '
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -12305,7 +12305,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -12583,7 +12583,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -12594,7 +12594,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -12666,7 +12666,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
             // WIDTH = 100%
             //echo '<TABLE width=100% border=0 cellspacing=0 cellpadding=0><TR>';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 //echo '<TD align=center>';
                 //echo '<TABLE class="table table-bordered table-striped">';
                 echo '<div class="panel-heading">';
@@ -12677,11 +12677,11 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo " &nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true ><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo " &nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true ><i class=\"icon-file-excel\"></i></a>";
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -12697,31 +12697,31 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                 }
                 echo '</div>'; //.panel-heading
                 //echo "</TR>";
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             //echo '</TD></TR><TR><TD>';
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
                 echo '<div id="pagerNavPosition"></div>';
                 echo '<div class="table-responsive">';
             }
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TH class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TH>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -12749,22 +12749,22 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
 
             $color = '';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -12778,7 +12778,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -12797,13 +12797,13 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -12818,7 +12818,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -12833,7 +12833,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
 
                     foreach ($column_names as $key => $value) {
 
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -12889,9 +12889,9 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -12900,9 +12900,9 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -12912,11 +12912,11 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     echo '</div>'; //.table-responsive
 
 
@@ -12972,9 +12972,9 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -13003,7 +13003,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW				
@@ -13018,7 +13018,7 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -13047,12 +13047,12 @@ function ListOutputGrade($result, $column_names, $singular = '', $plural = '', $
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -13088,7 +13088,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
         $link = array();
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -13392,7 +13392,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) 
             {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -13405,7 +13405,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) 
         {
-            if (!isset($_REQUEST['_openSIS_PDF'])) 
+            if (!isset($_REQUEST['_hcwsms_PDF'])) 
             {
                 if (!$_REQUEST['page'])
                     $_REQUEST['page'] = 1;
@@ -13483,14 +13483,14 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
             echo '<TABLE width=100% border=0 cellspacing=0 cellpadding=0><TR>';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search']))
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']))
             {
                 echo '<TD align=center>';
 
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
                     echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) 
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) 
                 {
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -13500,30 +13500,30 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
                     $colspan++;
                 }
                 echo "</TR>";
-                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
+                echo '<TR style="height:0;"><TD width=100% align=center colspan=' . $colspan . '><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV></TD></TR></TABLE>';
             } 
             else
-                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<TD width=100% align=right><DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</TD></TR><TR><TD>';
 
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             echo "<TABLE cellpadding=6 width=100% cellspacing=1 border=\"1 \" style=\"border-collapse:collapse\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) 
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) 
             {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
@@ -13547,22 +13547,22 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
 
             $color = 'bgcolor="#ffffff"';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -13576,7 +13576,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) 
                     {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
@@ -13602,16 +13602,16 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
 
 
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE>';
                         echo "<div style=\"page-break-after: always;\"></div>";
                         echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-                        echo "<tr><td width=105>" . DrawLogo() . "</td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . $_SESSION['_REQUEST_vars'][0] . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByOpenSis . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+                        echo "<tr><td width=105>" . DrawLogo() . "</td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">" . $_SESSION['_REQUEST_vars'][0] . "</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByHcwsms . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
                         echo '<TABLE cellpadding=6 width=100% cellspacing=1 border="1px solid #a9d5e9 " style="border-collapse:collapse" align=center>';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#d3d3d3></TD>";
 
                     if ($cols) {
@@ -13632,7 +13632,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
                     $button_link = $link['remove']['link'];
                     if (count($link['remove']['variables'])) {
@@ -13644,7 +13644,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -13707,9 +13707,9 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -13718,9 +13718,9 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD bgcolor=#ffffff align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD bgcolor=#ffffff align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -13730,10 +13730,10 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
-                if (!isset($_REQUEST['_openSIS_PDF']))
+                if (!isset($_REQUEST['_hcwsms_PDF']))
                     echo '</TD ></TR></TABLE>';
                 echo "</TD ></TR>";
                 echo "</TABLE>";
@@ -13744,9 +13744,9 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
         }
         if ($result_count == 0) {
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -13770,7 +13770,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
                     echo "</TD></TR></TABLE>";
                     if ($options['center'])
@@ -13783,7 +13783,7 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -13813,12 +13813,12 @@ function ListOutputPrint_Institute_Report($result, $column_names, $singular = ''
             echo '<div style="page-break-before: inherit;">&nbsp;</div>';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
 
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
@@ -13861,7 +13861,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -14134,7 +14134,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -14145,7 +14145,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -14219,7 +14219,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
             echo '<div class="panel-heading">';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
                     if ($display_count > 1)
@@ -14227,12 +14227,12 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo "&nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true ><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo "&nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true ><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -14247,31 +14247,31 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
                 echo '<div id="pagerNavPosition"></div>';
                 echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '<THEAD>';
-            if (!isset($_REQUEST['_openSIS_PDF']))
+            if (!isset($_REQUEST['_hcwsms_PDF']))
                 echo '<TR>';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TD class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></TD>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -14299,22 +14299,22 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
 
             $color = '';
 
-            if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+            if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -14328,7 +14328,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -14347,13 +14347,13 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -14368,7 +14368,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -14381,7 +14381,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -14437,9 +14437,9 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -14448,9 +14448,9 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -14460,11 +14460,11 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     echo '</TD ></TR></TABLE>';
 
 
@@ -14493,9 +14493,9 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -14524,7 +14524,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -14540,7 +14540,7 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -14569,12 +14569,12 @@ function ListOutputStaffPrint($result, $column_names, $singular = '', $plural = 
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -14616,7 +14616,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -14909,7 +14909,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -14920,7 +14920,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -14993,7 +14993,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
 
             echo '<div class="panel-heading">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
 
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
@@ -15002,12 +15002,12 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -15025,31 +15025,31 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
                 echo '<div id="pagerNavPosition"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
             echo '<TABLE id="results" class="table table-bordered table-striped" align=center>';
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
 
 
             $i = 1;
-            // if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            // if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
             //     //THIS LINE IS FOR COLUMN HEADING
             //     echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
             //     $i++;
             // }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<TR class="bg-grey-200">';
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
@@ -15078,22 +15078,22 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -15107,7 +15107,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -15126,13 +15126,13 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -15147,7 +15147,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -15160,7 +15160,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -15216,9 +15216,9 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -15227,9 +15227,9 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -15239,11 +15239,11 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                 }
             }
             if ($result_count != 0) {
-                // if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                // if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 //     echo '</TBODY>';
                 // echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
 
@@ -15300,9 +15300,9 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -15331,7 +15331,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -15347,7 +15347,7 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -15376,12 +15376,12 @@ function ListOutputExcel($result, $column_names, $singular = '', $plural = '', $
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -15424,7 +15424,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -15647,7 +15647,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -15658,7 +15658,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -15731,7 +15731,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
 
             echo '<div class="panel-heading p-l-0">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
 
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
@@ -15742,14 +15742,14 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                     elseif ($_SESSION['AL_RES_COUNT'] == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0) {
-                    // echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0) {
+                    // echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
                     echo " &nbsp; <A HREF=\"javascript:void(0);\" onclick=\"generateDataTableSpreadsheet();\" class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
                 }
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -15767,13 +15767,13 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
@@ -15866,21 +15866,21 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
 
             echo '<div class="row ' . $paginationVisibility . '"><div class="col-md-6"><p class="m-0 p-t-10">' . _showing . ' ' . $EntryCounts['aaIni'] . ' ' . strtolower(_to) . ' ' . $EntryCounts['aaEnd'] . ' ' . _of . ' ' . $EntryCounts['aaTot'] . ' ' . _entries . '</p></div><div class="col-md-6"><div class="pull-right">' . $format_paginate . '</div></div></div>';
 
-            echo '<div class="table-responsive opensis-dataTable">';
+            echo '<div class="table-responsive hcwsms-dataTable">';
             echo '<TABLE id="results" class="table table-bordered table-striped" align=center>';
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
 
 
             $i = 1;
-            // if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            // if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
             //     //THIS LINE IS FOR COLUMN HEADING
             //     echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
             //     $i++;
             // }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<TR class="bg-grey-200">';
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
@@ -15909,22 +15909,22 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -15938,7 +15938,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -15957,13 +15957,13 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -15978,7 +15978,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -15991,7 +15991,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -16047,9 +16047,9 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -16058,9 +16058,9 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -16070,11 +16070,11 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                 }
             }
             if ($result_count != 0) {
-                // if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                // if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 //     echo '</TBODY>';
                 // echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
 
@@ -16136,9 +16136,9 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -16167,7 +16167,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -16183,7 +16183,7 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -16212,12 +16212,12 @@ function ListOutputExcelCustomDT($result, $column_names, $singular = '', $plural
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -16261,7 +16261,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -16540,7 +16540,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
             #echo '<CENTER>';
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -16556,7 +16556,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_searchNew'] && $_REQUEST['LO_searchNew'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -16629,7 +16629,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
 
             echo '<div class="panel-heading">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
                     if ($display_count > 1)
@@ -16637,12 +16637,12 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular was found.</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_searchNew']);
@@ -16657,13 +16657,13 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
@@ -16671,19 +16671,19 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
             echo '<div class="panel-body">';
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TH><DIV id=LOx$i style='position: relative;'></DIV></TH>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -16711,22 +16711,22 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -16740,7 +16740,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -16759,13 +16759,13 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered table-striped\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -16780,7 +16780,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -16793,7 +16793,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -16849,9 +16849,9 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -16860,9 +16860,9 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -16872,11 +16872,11 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
 
                     $number_rec = 100;
@@ -16906,9 +16906,9 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -16937,7 +16937,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -16953,7 +16953,7 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -16982,12 +16982,12 @@ function ListOutputNew_mod($result, $column_names, $singular = '', $plural = '',
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -17031,7 +17031,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -17310,7 +17310,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
             #echo '<CENTER>';
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -17326,7 +17326,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_searchNew'] && $_REQUEST['LO_searchNew'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -17399,7 +17399,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
 
             echo '<div class="panel-heading">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
                     if ($display_count > 1)
@@ -17407,12 +17407,12 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_searchNew']);
@@ -17427,13 +17427,13 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
                 echo '<div id="pagerNavPosition"></div>';
             }
@@ -17442,13 +17442,13 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<TH><DIV id=LOx$i style='position: relative;'></DIV></TH>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -17476,20 +17476,20 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -17503,7 +17503,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -17522,13 +17522,13 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -17543,7 +17543,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -17556,7 +17556,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -17612,9 +17612,9 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -17623,9 +17623,9 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -17635,11 +17635,11 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
 
                     $number_rec = 100;
@@ -17665,9 +17665,9 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -17696,7 +17696,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -17712,7 +17712,7 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -17741,12 +17741,12 @@ function ListOutputNew($result, $column_names, $singular = '', $plural = '', $li
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -17788,7 +17788,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -18065,7 +18065,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -18076,7 +18076,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                 echo '<div class="panel-body"><div class="alert alert-danger no-border m-b-0">' . _noneWereFound . '.</div></div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -18149,7 +18149,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
 
             echo '<div class="panel-heading p-l-0">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
                     if ($display_count > 1)
@@ -18157,12 +18157,12 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo "&nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"\" data-original-title=\"Download Spreadsheet\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true ><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo "&nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"\" data-original-title=\"Download Spreadsheet\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true ><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</TD>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -18177,29 +18177,29 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition"></div>';
             }
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th class=subtabs><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -18227,22 +18227,22 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -18256,7 +18256,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -18275,13 +18275,13 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -18296,7 +18296,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -18309,7 +18309,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -18365,9 +18365,9 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -18376,9 +18376,9 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -18388,11 +18388,11 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
 
                     $number_rec = 100;
@@ -18418,9 +18418,9 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -18449,7 +18449,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -18465,7 +18465,7 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -18494,12 +18494,12 @@ function ListOutput_Medical($result, $column_names, $singular = '', $plural = ''
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -18570,7 +18570,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -18847,7 +18847,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -18876,7 +18876,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
             }
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -18953,7 +18953,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
             } else {
 
                 // SEARCH BOX & MORE HEADERS
-                if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+                if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                     echo "<h6 class=\"panel-title\">";
                     if ($singular && $plural && $options['count']) {
                         if ($display_count > 1)
@@ -18961,12 +18961,12 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                         elseif ($display_count == 1)
                             echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                     }
-                    if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                        echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                    if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                        echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true class=\" btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
 
                     echo '</h6>';
                     $colspan = 1;
-                    if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                    if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                         $_REQUEST['portal_search'] = 'true';
                         $tmp_REQUEST = $_REQUEST;
                         unset($tmp_REQUEST['LO_search']);
@@ -18981,34 +18981,34 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                         echo "</div>"; //.heading-elements
                         $colspan++;
                     }
-                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                 } else {
-                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                    echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
                 }
             }
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
 
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -19036,22 +19036,22 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -19065,7 +19065,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -19084,13 +19084,13 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered table-striped\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -19105,7 +19105,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -19118,7 +19118,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -19174,9 +19174,9 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -19185,9 +19185,9 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -19197,12 +19197,12 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                 }
             }
             if ($result_count != 0) {
-                if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                     echo '</TBODY>';
                 echo "</TABLE>";
                 echo '</div>';
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
 
@@ -19229,9 +19229,9 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -19260,7 +19260,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -19278,7 +19278,7 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -19307,12 +19307,12 @@ function ListOutputMessagingGroups($result, $column_names, $singular = '', $plur
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -19353,7 +19353,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -19636,7 +19636,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -19647,7 +19647,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -19721,7 +19721,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
             echo '<div class="panel-heading p-l-0">';
 
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
                     if ($display_count > 1)
@@ -19729,12 +19729,12 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo "&nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"\" data-original-title=\"Download Spreadsheet\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_openSIS_PDF=true ><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo "&nbsp; <A class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" title=\"\" data-original-title=\"Download Spreadsheet\" HREF=" . str_replace('Modules.php', 'ForExport.php', $PHP_tmp_SELF) . "&$extra&LO_save=1&_hcwsms_PDF=true ><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -19749,32 +19749,32 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<div id="pagerNavPosition" class="clearfix"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
 
             echo '<div class="table-responsive">';
             echo "<TABLE id='results' class=\"table table-bordered table-striped\" align=center>";
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
             echo '<TR class="bg-grey-200">';
 
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 //THIS LINE IS FOR COLUMN HEADING
                 echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
                 $i++;
             }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
                         $direction = -1 * $_REQUEST['LO_direction'];
@@ -19802,22 +19802,22 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -19831,7 +19831,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -19850,13 +19850,13 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class=\"table table-bordered\">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -19871,7 +19871,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
 
                 echo "<TR  class=\"$color\">";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -19885,7 +19885,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
 
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -19941,9 +19941,9 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -19952,9 +19952,9 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -19964,9 +19964,9 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                 }
             }
             if ($result_count != 0) {
-                //if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                //if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
                     $number_rec = 100;
@@ -20022,9 +20022,9 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<hr class="no-margin"/><table class="table"><tr><TD align=left>' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -20053,7 +20053,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -20071,7 +20071,7 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -20100,12 +20100,12 @@ function ListOutputStaffPrintSchoolInfo($result, $column_names, $singular = '', 
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;
@@ -20147,7 +20147,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
     }
 
     if (!isset($options['add'])) {
-        if (!AllowEdit() || $_REQUEST['_openSIS_PDF']) {
+        if (!AllowEdit() || $_REQUEST['_hcwsms_PDF']) {
             if ($link) {
                 unset($link['add']);
                 unset($link['remove']);
@@ -20421,7 +20421,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
         if ($options['center'])
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0)))) {
 
-                if (isset($_REQUEST['_openSIS_PDF']))
+                if (isset($_REQUEST['_hcwsms_PDF']))
                     echo " <TR><TD align=center>";
             }
 
@@ -20432,7 +20432,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                 echo '<div class="alert alert-danger no-border">' . _noneWereFound . '.</div>';
         }
         if ($result_count != 0 || ($_REQUEST['LO_search'] && $_REQUEST['LO_search'] != 'Search')) {
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
                 if (!$Request_page)
                     $Request_page = 1;
                 if (!$_REQUEST['LO_direction'])
@@ -20505,7 +20505,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
 
             echo '<div class="panel-heading">';
             // SEARCH BOX & MORE HEADERS
-            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_openSIS_PDF']) && $options['search'])) {
+            if ($where_message || ($singular && $plural) || (!isset($_REQUEST['_hcwsms_PDF']) && $options['search'])) {
 
                 echo "<h6 class=\"panel-title\">";
                 if ($singular && $plural && $options['count']) {
@@ -20514,12 +20514,12 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                     elseif ($display_count == 1)
                         echo "<span class=\"heading-text\">1 $singular " . _wasFound . ".</span>";
                 }
-                if ($options['save'] && !isset($_REQUEST['_openSIS_PDF']) && $result_count > 0)
-                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', 'Modules.php?modname=scheduling/UnfilledRequests.php&search_modfunc=list&next_modname=scheduling/UnfilledRequests.php') . "&$extra&LO_save=1&_openSIS_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
+                if ($options['save'] && !isset($_REQUEST['_hcwsms_PDF']) && $result_count > 0)
+                    echo " &nbsp; <A HREF=" . str_replace('Modules.php', 'ForExport.php', 'Modules.php?modname=scheduling/UnfilledRequests.php&search_modfunc=list&next_modname=scheduling/UnfilledRequests.php') . "&$extra&LO_save=1&_hcwsms_PDF=true  class=\"btn btn-success btn-xs btn-icon text-white\" data-popup=\"tooltip\" data-placement=\"top\" data-container=\"body\" data-original-title=\"Download Spreadsheet\" title=\"Download Spreadsheet\"><i class=\"icon-file-excel\"></i></a>";
 
                 echo '</h6>';
                 $colspan = 1;
-                if (!isset($_REQUEST['_openSIS_PDF']) && $options['search']) {
+                if (!isset($_REQUEST['_hcwsms_PDF']) && $options['search']) {
                     $_REQUEST['portal_search'] = 'true';
                     $tmp_REQUEST = $_REQUEST;
                     unset($tmp_REQUEST['LO_search']);
@@ -20536,31 +20536,31 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                     echo "</div>"; //.heading-elements
                     $colspan++;
                 }
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             } else
-                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_openSIS_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
+                echo '<DIV id=LOx' . (count($column_names) + (($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0) + (($remove && !isset($_REQUEST['_hcwsms_PDF'])) ? 1 : 0)) . ' style="width:0; position: relative; height:0;"></DIV>';
             // END SEARCH BOX ----
             echo '</div>'; //.panel-heading
             // SHADOW
-            if (!isset($_REQUEST['_openSIS_PDF'])) {
+            if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
                 echo '<div id="pagerNavPosition"></div>';
                 //echo '<TABLE width=100% cellpadding=0 cellspacing=0><TR><TD align=center>';
             }
             echo '<TABLE id="results" class="table table-bordered table-striped" align=center>';
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '<THEAD>';
-            //if(!isset($_REQUEST['_openSIS_PDF']))
+            //if(!isset($_REQUEST['_hcwsms_PDF']))
 
 
             $i = 1;
-            // if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            // if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
             //     //THIS LINE IS FOR COLUMN HEADING
             //     echo "<th><DIV id=LOx$i style='position: relative;'></DIV></th>";
             //     $i++;
             // }
 
-            if ($result_count != 0 && $cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($result_count != 0 && $cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 echo '<TR class="bg-grey-200">';
                 foreach ($column_names as $key => $value) {
                     if ($_REQUEST['LO_sort'] == $key)
@@ -20589,22 +20589,22 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
 
             $color = '';
 
-            //if(!isset($_REQUEST['_openSIS_PDF']) && ($stop-$start)>10)
+            //if(!isset($_REQUEST['_hcwsms_PDF']) && ($stop-$start)>10)
             echo '</THEAD><TBODY>';
 
 
             // mab - enable add link as first or last
             if ($result_count != 0 && $link['add']['first'] && ($stop - $start) >= $link['add']['first']) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left>" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -20618,7 +20618,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
 
             for ($i = $start; $i <= $stop; $i++) {
                 $item = $result[$i];
-                if (isset($_REQUEST['_openSIS_PDF']) && $options['print'] && count($item)) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $options['print'] && count($item)) {
                     foreach ($item as $key => $value) {
                         $value = par_rep_cb('/<SELECT.*SELECTED\>([^<]+)<.*</SELECT\>/', '\\1', $value);
                         $value = par_rep_cb('/<SELECT.*</SELECT\>/', '', $value);
@@ -20637,13 +20637,13 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                 else
                     $color = '';
 
-                if (isset($_REQUEST['_openSIS_PDF']) && $count % $repeat_headers == 0) {
+                if (isset($_REQUEST['_hcwsms_PDF']) && $count % $repeat_headers == 0) {
                     if ($count != 0) {
                         echo '</TABLE><TABLE class="table table-bordered table-striped">';
                         echo '<!-- NEW PAGE -->';
                     }
                     echo "<TR>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD></TD>";
 
                     if ($cols) {
@@ -20658,7 +20658,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
 
                 echo "<TR $color>";
                 $count++;
-                if ($remove && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($remove && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $button_title = $link['remove']['title'];
 
                     $button_link = $link['remove']['link'];
@@ -20671,7 +20671,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                 }
                 if ($cols) {
                     foreach ($column_names as $key => $value) {
-                        if ($link[$key] && !isset($_REQUEST['_openSIS_PDF'])) {
+                        if ($link[$key] && !isset($_REQUEST['_hcwsms_PDF'])) {
                             echo "<TD $color >";
                             if ($key == 'FULL_NAME')
                                 echo '<DIV id=LOy' . ($count - $br) . ' style="height: 100%; min-height: 100%; position: relative;">';
@@ -20727,9 +20727,9 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
 
             if ($result_count != 0 && (!$link['add']['first'] || $link['add']['first'] && ($stop - $start) < $link['add']['first'])) {
 
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add', $link['add']['title'], $link['add']['link']) . "</TD></TR>";
-                elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo "<TR><TD colspan=" . ($remove ? $cols + 1 : $cols) . " align=left>" . button('add') . $link['add']['span'] . "</TD></TR>";
                 elseif ($link['add']['html'] && $cols) {
                     if ($count % 2)
@@ -20738,9 +20738,9 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                         $color = $side_color;
 
                     echo "<TR $color>";
-                    if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $link['add']['html']['remove'])
+                    if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $link['add']['html']['remove'])
                         echo "<TD align=left>" . $link['add']['html']['remove'] . "</TD>";
-                    elseif ($remove && !isset($_REQUEST['_openSIS_PDF']))
+                    elseif ($remove && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TD align=left >" . button('add') . "</TD>";
 
                     foreach ($column_names as $key => $value) {
@@ -20750,11 +20750,11 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                 }
             }
             if ($result_count != 0) {
-                // if (!isset($_REQUEST['_openSIS_PDF']) && ($stop - $start) > 10)
+                // if (!isset($_REQUEST['_hcwsms_PDF']) && ($stop - $start) > 10)
                 //     echo '</TBODY>';
                 // echo "</TABLE>";
                 // SHADOW
-                if (!isset($_REQUEST['_openSIS_PDF'])) {
+                if (!isset($_REQUEST['_hcwsms_PDF'])) {
                     //echo '</TD ></TR></TABLE>';
 
 
@@ -20785,9 +20785,9 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
         if ($result_count == 0) {
             // mab - problem with table closing if not opened above - do same conditional?
             if (($result_count > $num_displayed) || (($options['count'] || $display_zero) && ((($result_count == 0 || $display_count == 0) && $plural) || ($result_count == 0 || $display_count == 0))))
-                if ($link['add']['link'] && !isset($_REQUEST['_openSIS_PDF']))
+                if ($link['add']['link'] && !isset($_REQUEST['_hcwsms_PDF']))
                     echo '<table cellspacing=8 cellpadding=6 ><tr><TD align=left >' . button('add', $link['add']['title'], $link['add']['link']) . '</td></tr></table>';
-                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_openSIS_PDF'])) {
+                elseif (($link['add']['html'] || $link['add']['span']) && count($column_names) && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
 
                     if ($options['center'])
@@ -20816,7 +20816,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                         }
                         echo "</TR>";
                         echo "</TABLE>";
-                    } elseif ($link['add']['span'] && !isset($_REQUEST['_openSIS_PDF']))
+                    } elseif ($link['add']['span'] && !isset($_REQUEST['_hcwsms_PDF']))
                         echo "<TABLE><TR><TD align=center>" . button('add') . $link['add']['span'] . "</TD></TR></TABLE>";
 
                     // SHADOW
@@ -20832,7 +20832,7 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
                 echo '<TABLE cellpadding=6 id=LOy_table>';
                 $i = 1;
 
-                if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+                if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                     $color = $side_color;
                     foreach ($result as $item) {
                         echo "<TR><TD $color  id=LO_row$i>";
@@ -20861,12 +20861,12 @@ function ListOutputUnscheduleRequests($result, $column_names, $singular = '', $p
             echo '<div id="LOx_layer" style="position: absolute; top: 0; left: 0; visibility:hidden;">';
             echo '<TABLE cellpadding=6 id=LOx_table><TR>';
             $i = 1;
-            if ($remove && !isset($_REQUEST['_openSIS_PDF']) && $result_count != 0) {
+            if ($remove && !isset($_REQUEST['_hcwsms_PDF']) && $result_count != 0) {
                 echo "<TD id=LO_col$i></TD>";
                 $i++;
             }
 
-            if ($cols && !isset($_REQUEST['_openSIS_PDF'])) {
+            if ($cols && !isset($_REQUEST['_hcwsms_PDF'])) {
                 foreach ($column_names as $key => $value) {
                     echo '<TD id=LO_col' . $i . '><A class=column_heading><b>' . str_replace('controller', '', $value) . '</b></A></TD>';
                     $i++;

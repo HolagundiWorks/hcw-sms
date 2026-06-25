@@ -31,7 +31,7 @@ function DateInput($value, $name, $title = '', $div = true, $allow_na = true) {
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($value == '' || $div == false)
             return PrepareDate($value, "_$name", $allow_na) . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '');
         else
@@ -46,7 +46,7 @@ function DateInput2($value, $name, $selectid, $title = '', $div = true, $allow_n
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($value == '' || $div == false)
             return PrepareDate2($value, "_$name", $selectid, $allow_na) . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '');
         else
@@ -165,7 +165,7 @@ function DateInput_for_EndInput($value, $name, $title = '', $div = true, $allow_
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($value == '' || $div == false)
             return PrepareDate_for_EndInput($value, "_$name", $allow_na) . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '');
         else
@@ -178,7 +178,7 @@ function DateInput_for_EndInputModal($value, $name, $title = '', $div = true, $a
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (!$_REQUEST['_openSIS_PDF']) {
+    if (!$_REQUEST['_hcwsms_PDF']) {
         if ($value == '' || $div == false)
             return PrepareDate_for_EndInput($value, "_$name", $allow_na) . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '');
         else
@@ -194,7 +194,7 @@ function TextInput($value, $name, $title = '', $options = '', $div = true, $divO
         $div = false;
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -226,7 +226,7 @@ function TextInputPortal($value, $name, $title = '', $options = '', $div = true,
         $div = false;
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -258,7 +258,7 @@ function TextInput_time($value, $name, $title = '', $options = '', $div = true, 
         $div = false;
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -286,7 +286,7 @@ function TextInput_time($value, $name, $title = '', $options = '', $div = true, 
 function TextInputModHidden($value, $name, $title = '', $options = '', $div = true) {
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -315,7 +315,7 @@ function TextInputCusId($value, $name, $title = '', $options = '', $div = true, 
         $div = false;
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -342,7 +342,7 @@ function TextInput_mail($value, $name, $title = '', $options = '', $div = true) 
         $div = false;
 
     // mab - support array style $option values
-    if (!$_REQUEST['_openSIS_PDF']) {
+    if (!$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -363,7 +363,7 @@ function TextInput_mod_a($value, $name, $title = '', $options = '', $div = true)
         $div = false;
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -385,7 +385,7 @@ function TextAreaInput($value, $name, $title = '', $options = '', $div = true) {
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
 
         if (strpos($options, 'cols') === false)
@@ -408,7 +408,7 @@ function TextAreaInputPortal($value, $name, $title = '', $options = '', $div = t
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
 
         if (strpos($options, 'cols') === false)
@@ -431,7 +431,7 @@ function TextAreaInputInputFinalGrade($value, $name, $title = '', $options = '',
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         if (strpos($options, 'cols') === false)
             $options .= ' cols=30';
@@ -468,7 +468,7 @@ function CheckboxInput($value, $name, $title = '', $checked = '', $new = false, 
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new && $div == false)
             return "<label class=checkbox-inline><INPUT type=checkbox name=$name  value=Y $checked $extra>" . ($title != '' ? ' ' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') : '') . '</label>';
         elseif ($new && $div == true)
@@ -496,7 +496,7 @@ function CheckboxInput_comments($value, $name, $title = '', $checked = '', $new 
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new && $div == false)
             return "<label class=checkbox-inline><INPUT type=checkbox name=$name  value=Y $checked $extra>" . ($title != '' ? ' ' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') : '') . '</label>';
         elseif ($new && $div == true)
@@ -530,7 +530,7 @@ function CheckboxInputSwitch($value, $name, $title = '', $checked = '', $new = f
         }
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
 
         if ($new || $div == false) {
             return '<INPUT type=hidden name="' . $name . '"  value=""><div class="checkbox checkbox-switch ' . $switchery_color . ' switch-' . $size . '">'
@@ -570,7 +570,7 @@ function CheckboxInput_grade($value, $name, $title = '', $checked = '', $new = f
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new || $div == false)
             return "<div class=\"checkbox-inline\"><INPUT type=checkbox name=$name id=$name value=Y $checked $extra>" . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '') . '</div>';
         else {
@@ -600,7 +600,7 @@ function CheckboxInput_exam($value, $name, $title = '', $checked = '', $new = fa
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new || $div == false)
             return "<div class=\"checkbox-inline\"><INPUT type=checkbox name=$name id=$name value=Y $checked  $extra>" . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '') . '</div>';
         else {
@@ -630,7 +630,7 @@ function CheckboxInput_var_sch($value, $name, $title = '', $checked = '', $new =
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new || $div == false)
             return "<div class=\"checkbox\"><label><INPUT type=checkbox name=$name  value=Y $checked $extra> " . ($title != '' ? $title : '') . '</label></div>';
         else
@@ -652,7 +652,7 @@ function CheckboxInputMod($value, $name, $title = '', $checked = '', $new = fals
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new || $div == false)
             return "<label class=\"form-control\"><INPUT type=checkbox  onclick=set_check_value(this,\"" . $name . "\"); id=$name  name=$name value=Y $checked $extra>" . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '') . "</label>";
         else
@@ -672,7 +672,7 @@ function CheckboxInput_Calendar($value, $name, $title = '', $checked = '', $new 
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new || $div == false)
             return "<INPUT type=checkbox name=$name value=Y $checked $extra>" . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '');
         else
@@ -693,7 +693,7 @@ function CheckboxInputWithID($value, $name, $id, $title = '', $checked = '', $ne
             $checked = '';
     }
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($new || $div == false)
             return "<INPUT type=checkbox name=$name id=$id value=Y $checked $extra>" . ($title != '' ? '<BR><small>' . (strpos(strtolower($title), '<font ') === false ? '<FONT color=' . Preferences('TITLES') . '>' : '') . $title . (strpos(strtolower($title), '<font ') === false ? '</FONT>' : '') . '</small>' : '');
         else
@@ -713,7 +713,7 @@ function SelectInput($value, $name, $title, $options, $allow_na = 'N/A', $extra 
     if ($value != '' && !$options[$value])
         $options[$value] = array($value, '<FONT color=red>' . $value . '</FONT>');
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
 //        $return = (($title != '') ? '<label class="control-label text-right col-lg-4">' . $title . '</label><div class="col-lg-8">' : '');
         $return = (($title != '') ? '<label class="control-label text-right col-lg-4">' . $title . '</label><div class="col-lg-8">' : '');
         if ($value != '' && $div) {
@@ -767,7 +767,7 @@ function SelectInputDisabledMsg($value, $name, $title, $options, $allow_na, $ext
     if ($value != '' && !$options[$value])
         $options[$value] = array($value, '<FONT color=red>' . $value . '</FONT>');
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($value != '' && $div) {
             $return = "<DIV id='div$name'><div class=\"form-control\" disabled=\"disabled\" onclick='show_this_msg(\"" . $msg . "\");javascript:addHTML(\"";
             $extra = str_replace('"', '\"', $extra);
@@ -855,7 +855,7 @@ function SelectInput_for_EndInput($value, $name, $title, $options, $type_id = ''
     if ($value != '' && !$options[$value])
         $options[$value] = array($value, '<FONT color=red>' . $value . '</FONT>');
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($value != '' && $div) {
             $return = "<DIV id='div$name'><div onclick='javascript:addHTML(\"";
             $extra = str_replace('"', '\"', $extra);
@@ -902,7 +902,7 @@ function TextInputSchool($value, $name, $title = '', $options = '', $div = true)
         $div = false;
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -923,7 +923,7 @@ function TextInputSchool($value, $name, $title = '', $options = '', $div = true)
 function ModTextInput($value, $name, $title = '', $options = '', $div = true) {
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -946,7 +946,7 @@ function TextInputWrap($value, $name, $title = '', $options = '', $div = true, $
         $div = false;
 
     // mab - support array style $option values
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -974,7 +974,7 @@ function TextAreaInputWrap($value, $name, $title = '', $options = '', $div = tru
         $div = false;
 
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
 
         if (strpos($options, 'cols') === false)
@@ -996,7 +996,7 @@ function StandardTextAreaInput($value, $name, $title = '', $options = '', $div =
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
 
         if (strpos($options, 'cols') === false)
@@ -1016,7 +1016,7 @@ function StandardTextAreaInput($value, $name, $title = '', $options = '', $div =
 
 function DateInputAY($value, $name, $counter = 1, $div_visibility = false) {
 
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
 
         if ($value != '') {
             $month_names = array('JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC');
@@ -1082,7 +1082,7 @@ function DateInputAY($value, $name, $counter = 1, $div_visibility = false) {
 function DateInputAY_red($value, $name, $counter, $cp_id) {
 
     if(empty($counter)) $counter = 1;
-    if (AllowEdit() && !$_REQUEST['_openSIS_PDF']) {
+    if (AllowEdit() && !$_REQUEST['_hcwsms_PDF']) {
         if ($value != '') {
             $month_names = array('JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC');
             $show = "value='$value'";
@@ -1128,7 +1128,7 @@ function TextInputModal($value, $name, $title = '', $options = '', $div = true) 
         $div = false;
 
     // mab - support array style $option values
-    if (!$_REQUEST['_openSIS_PDF']) {
+    if (!$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -1158,7 +1158,7 @@ function TextInputCusIdModal($value, $name, $title = '', $options = '', $div = t
         $div = false;
 
     // mab - support array style $option values
-    if (!$_REQUEST['_openSIS_PDF']) {
+    if (!$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
         $value1 = is_array($value) ? $value[1] : $value;
         $value = is_array($value) ? $value[0] : $value;
@@ -1184,7 +1184,7 @@ function TextAreaInputModal($value, $name, $title = '', $options = '', $div = tr
     if (Preferences('HIDDEN') != 'Y')
         $div = false;
 
-    if (!$_REQUEST['_openSIS_PDF']) {
+    if (!$_REQUEST['_hcwsms_PDF']) {
         $value = str_replace("'", '&#39;', str_replace('"', '&rdquo;', $value));
 
         if (strpos($options, 'cols') === false)
@@ -1222,7 +1222,7 @@ function CheckboxInputSwitchModal($value, $name, $title = '', $checked = '', $ne
         }
     }
 
-    if (!$_REQUEST['_openSIS_PDF']) {
+    if (!$_REQUEST['_hcwsms_PDF']) {
 
         if ($new || $div == false) {
             return '<INPUT type=hidden name="' . $name . '"  value=""><div class="checkbox checkbox-switch ' . $switchery_color . ' switch-' . $size . '">'
@@ -1256,7 +1256,7 @@ function SelectInputModal($value, $name, $title, $options, $allow_na = 'N/A', $e
     if ($value != '' && !$options[$value])
         $options[$value] = array($value, '<FONT color=red>' . $value . '</FONT>');
 
-    if (!$_REQUEST['_openSIS_PDF']) {
+    if (!$_REQUEST['_hcwsms_PDF']) {
 //        $return = (($title != '') ? '<label class="control-label text-right col-lg-4">' . $title . '</label><div class="col-lg-8">' : '');
         $return = (($title != '') ? '<label class="control-label text-right col-lg-4">' . $title . '</label><div class="col-lg-8">' : '');
         if ($value != '' && $div) {

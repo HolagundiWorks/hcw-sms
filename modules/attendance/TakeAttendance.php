@@ -167,9 +167,9 @@ if (!$mp_id)
     $mp_id = GetCurrentMP('SEM', $date, false);
 if (!$mp_id)
     $mp_id = GetCurrentMP('FY', $date, false);
-// if running as a teacher program then openSIS[allow_edit] will already be set according to admin permissions
+// if running as a teacher program then HCW-SMS[allow_edit] will already be set according to admin permissions
 
-if (!isset($_openSIS['allow_edit'])) {
+if (!isset($_hcwsms['allow_edit'])) {
     // allow teacher edit if selected date is in the current quarter or in the corresponding grade posting period
 
 
@@ -178,7 +178,7 @@ if (!isset($_openSIS['allow_edit'])) {
 
 
     if (($current_qtr_id || GetMP($mp_id, 'POST_START_DATE') && ($time <= strtotime(GetMP($mp_id, 'POST_END_DATE')))) && ($edit_days_before == '' || strtotime($date) <= $time + $edit_days_before * 86400) && ($edit_days_after == '' || strtotime($date) >= $time - $edit_days_after * 86400)) {
-        $_openSIS['allow_edit'] = true;
+        $_hcwsms['allow_edit'] = true;
     }
 }
 

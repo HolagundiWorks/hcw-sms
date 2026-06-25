@@ -162,7 +162,7 @@ if (!$_REQUEST['modfunc']) {
         $extra['FROM'] .= ',schedule w_ss';
         $extra['WHERE'] .= ' AND w_ss.STUDENT_ID=s.STUDENT_ID AND w_ss.SYEAR=ssm.SYEAR AND w_ss.SCHOOL_ID=ssm.SCHOOL_ID AND w_ss.COURSE_PERIOD_ID=\'' . $_SESSION['MassDrops.php']['course_period_id'] . '\' AND (' . (($_REQUEST['include_inactive']) ? '' : 'w_ss.START_DATE <=\'' . DBDate() . '\' AND') . ' (w_ss.END_DATE>=\'' . DBDate() . '\' OR w_ss.END_DATE IS NULL))';
         $course = DBGet(DBQuery('SELECT c.TITLE AS COURSE_TITLE,cp.TITLE,cp.COURSE_ID FROM course_periods cp,courses c WHERE c.COURSE_ID=cp.COURSE_ID AND cp.COURSE_PERIOD_ID=\'' . $_SESSION['MassDrops.php']['course_period_id'] . '\''));
-        $_openSIS['SearchTerms'] .= '<b>'._coursePeriod.' : </b>' . $course[1]['COURSE_TITLE'] . ' : ' . $course[1]['TITLE'];
+        $_hcwsms['SearchTerms'] .= '<b>'._coursePeriod.' : </b>' . $course[1]['COURSE_TITLE'] . ' : ' . $course[1]['TITLE'];
     }
 //    $extra['search'] .= "<label class=\"control-label\">Course Period</label><DIV id=course_div></DIV><A HREF=# onclick='window.open(\"ForWindow.php?modname=$_REQUEST[modname]&modfunc=choose_course\",\"\",\"scrollbars=yes,resizable=yes,width=800,height=400\");'>Choose Course Period</A>";
     $extra['search'] .= "<label class=\"control-label\">"._coursePeriod."</label><div><A HREF=javascript:void(0) data-toggle='modal' data-target='#modal_default'  onClick='cleanModal(\"course_modal\");cleanModal(\"cp_modal\");' class=\"text-primary\"><i class=\"icon-menu6 m-t-10 pull-right\"></i><DIV id=course_div class=form-control readonly=readonly><span class=text-grey>"._clickToSelect."</span></DIV></A></div>";
@@ -229,9 +229,9 @@ if (!$_REQUEST['modfunc']) {
             $tmp_REQUEST = $_REQUEST;
             unset($tmp_REQUEST['expanded_view']);
             if ($_REQUEST['expanded_view'] != 'true' && !UserStudentID() && count($students_RET) != 0) {
-                DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=true class=big_font ><i class=\"icon-square-down-right\"></i> "._expandedView."</A>", '<span class="heading-text">' . str_replace('<BR>', '<BR> &nbsp;', substr($_openSIS['SearchTerms'], 0, -4)) . '</span>', $extra['header_right']);
+                DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=true class=big_font ><i class=\"icon-square-down-right\"></i> "._expandedView."</A>", '<span class="heading-text">' . str_replace('<BR>', '<BR> &nbsp;', substr($_hcwsms['SearchTerms'], 0, -4)) . '</span>', $extra['header_right']);
             } elseif (!UserStudentID() && count($students_RET) != 0) {
-                DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=false class=big_font><i class=\"icon-square-up-left\"></i> "._originalView."</A>", '<span class="heading-text">' . str_replace('<BR>', '<BR> &nbsp;', substr($_openSIS['Search'], 0, -4)) . '</span>', $extra['header_right']);
+                DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=false class=big_font><i class=\"icon-square-up-left\"></i> "._originalView."</A>", '<span class="heading-text">' . str_replace('<BR>', '<BR> &nbsp;', substr($_hcwsms['Search'], 0, -4)) . '</span>', $extra['header_right']);
             }
             DrawHeader($extra['extra_header_left'], $extra['extra_header_right']);
             if ($_REQUEST['LO_save'] != '1' && !$extra['suppress_save']) {

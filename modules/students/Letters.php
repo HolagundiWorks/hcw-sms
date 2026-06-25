@@ -27,7 +27,7 @@
 #
 #***************************************************************************************
 include('../../RedirectModulesInc.php');
-$extra['action'] .= "&_openSIS_PDF=true";
+$extra['action'] .= "&_hcwsms_PDF=true";
 
 
 $extra['search'] .= '<div class="row">';
@@ -78,7 +78,7 @@ if (!$current_mp)
     $current_mp = GetCurrentMP('SEM', DBDate());
 if (!$current_mp)
     $current_mp = GetCurrentMP('FY', DBDate());
-if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
+if (!$_REQUEST['search_modfunc'] || $_hcwsms['modules_search']) {
     DrawBC(""._students." -> " . ProgramTitle());
 
     $extra['new'] = true;
@@ -186,7 +186,7 @@ if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
 
         foreach ($RET as $student) {
             $student_points = $total_points = 0;
-            unset($_openSIS['DrawHeader']);
+            unset($_hcwsms['DrawHeader']);
 
             if ($_REQUEST['mailing_labels'] == 'Y') {
                 echo "<tr><td colspan = 2 style = \"height:18px\"></td></tr>";
@@ -216,7 +216,7 @@ if (!$_REQUEST['search_modfunc'] || $_openSIS['modules_search']) {
                 echo "<div style=\"page-break-before: always;\"></div>";
             }
             else {
-                unset($_openSIS['DrawHeader']);
+                unset($_hcwsms['DrawHeader']);
 
                 echo "<tr><td colspan=2 style=\"height:18px\"></td></tr>";
                 echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";

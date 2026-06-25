@@ -28,8 +28,8 @@
 include('../../RedirectModulesInc.php');
 include 'modules/grades/ConfigInc.php';
 require_once('functions/MakeLetterGradeFnc.php');
-$_openSIS['allow_edit'] = false;
-if ($_REQUEST['_openSIS_PDF'])
+$_hcwsms['allow_edit'] = false;
+if ($_REQUEST['_hcwsms_PDF'])
     $do_stats = false;
 
 Search('student_id');
@@ -503,7 +503,7 @@ function _makeTipTitle($value, $column)
 {
     global $THIS_RET;
 
-    if (($THIS_RET['DESCRIPTION'] || $THIS_RET['ASSIGNED_DATE'] || $THIS_RET['DUE_DATE']) && !$_REQUEST['_openSIS_PDF']) {
+    if (($THIS_RET['DESCRIPTION'] || $THIS_RET['ASSIGNED_DATE'] || $THIS_RET['DUE_DATE']) && !$_REQUEST['_hcwsms_PDF']) {
         $tip_title = '<A HREF=Modules.php?modname=grades/StudentGrades.php&id=' . $_REQUEST['id'] . '&modfun=assgn_detail&assignment_id=' . $THIS_RET['ASSIGNMENT_ID'] . '>' . $value . '</A>';
     } else
         $tip_title = $value;

@@ -28,7 +28,7 @@
 #***************************************************************************************
 include('../../RedirectModulesInc.php');
 DrawBC("" . _students . " > " . ProgramTitle());
-$_openSIS['allow_edit'] = true;
+$_hcwsms['allow_edit'] = true;
 
 echo '<input id="customFieldModule" type="hidden" value="student">';
 
@@ -492,8 +492,8 @@ if (!$_REQUEST['modfunc']) {
         $header .= '<input id="DEFAULT_DATATYPE_' . $_REQUEST['id'] . '" name="DEFAULT_DATATYPE_' . $_REQUEST['id'] . '" type="hidden" value="' . $RET['TYPE'] . '">';
 
         if ($_REQUEST['id'] != 'new' && $RET['TYPE'] != 'multiple' && $RET['TYPE'] != 'codeds' && $RET['TYPE'] != 'select' && $RET['TYPE'] != 'autos' && $RET['TYPE'] != 'edits' && $RET['TYPE'] != 'text' && $RET['TYPE'] != 'date' && $RET['TYPE'] != 'radio' && $RET['TYPE'] != 'numeric' && $RET['TYPE'] != 'textarea') {
-            $_openSIS['allow_edit'] = $allow_edit;
-            $_openSIS['AllowEdit'][$modname] = $AllowEdit;
+            $_hcwsms['allow_edit'] = $allow_edit;
+            $_hcwsms['AllowEdit'][$modname] = $AllowEdit;
         }
 
         $header .= '</div>'; //.col-lg-6

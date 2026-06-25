@@ -96,7 +96,7 @@ if ($_REQUEST['modfunc'] != 'delete') {
             $extra['new'] = true;
             $extra['options']['search'] = false;
             $extra['profile'] = 'parent';
-            $_openSIS['DrawHeader'] = 'bgcolor=#ff8040';
+            $_hcwsms['DrawHeader'] = 'bgcolor=#ff8040';
 
             Search('staff_id', $extra);
         }

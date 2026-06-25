@@ -28,7 +28,7 @@
 // DRAWS A TABLE WITH A BLUE TAB, SURROUNDING SHADOW
 // REQUIRES A TITLE
 function PopTableCustom($action,$title='Search',$table_att='', $cell_padding='5')
-{	global $_openSIS;
+{	global $_hcwsms;
 	if($action=='header')
 	{
 		echo "<CENTER>
@@ -36,7 +36,7 @@ function PopTableCustom($action,$title='Search',$table_att='', $cell_padding='5'
 
 			echo "<TR><TD align=center colspan=3>";
 			if(is_array($title))
-				echo WrapTabs($title,$_openSIS['selected_tab']);
+				echo WrapTabs($title,$_hcwsms['selected_tab']);
 			else
 				echo DrawTab($title);
 			echo "</TD></TR>

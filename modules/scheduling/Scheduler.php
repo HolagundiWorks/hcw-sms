@@ -427,7 +427,7 @@ function Prompt_Home_Schedule($title = 'Confirm', $question = '', $message = '',
     $tmp_REQUEST = $_REQUEST;
     unset($tmp_REQUEST['delete_ok']);
     if ($pdf == true) {
-        $tmp_REQUEST['_openSIS_PDF'] = true;
+        $tmp_REQUEST['_hcwsms_PDF'] = true;
     }
 
     $PHP_tmp_SELF = PreparePHP_SELF($tmp_REQUEST);

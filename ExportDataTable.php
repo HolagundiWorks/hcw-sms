@@ -47,7 +47,7 @@ if(isset($_SESSION['mainSQL'])) {
 	if($_SESSION['PROGRAM_TITLE'] != '') {
 		$program_title = $_SESSION['PROGRAM_TITLE'];
 	} else {
-		$program_title = 'openSIS';
+		$program_title = 'HCW-SMS';
 	}
 
 	$_REQUEST['LO_save'] = '1';

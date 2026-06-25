@@ -27,7 +27,7 @@
 #***************************************************************************************
 function AllowEdit($modname = false)
 {
-    global $_openSIS;
+    global $_hcwsms;
     if (!$modname)
         $modname = $_REQUEST['modname'];
 
@@ -38,21 +38,21 @@ function AllowEdit($modname = false)
 
     if (User('PROFILE') == 'admin') {
 
-        if (!$_openSIS['AllowEdit']) {
+        if (!$_hcwsms['AllowEdit']) {
 
             if (User('PROFILE_ID') != '') {
-                $_openSIS['AllowEdit'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . User('PROFILE_ID') . '\' AND CAN_EDIT=\'Y\''), array(), array('MODNAME'));
+                $_hcwsms['AllowEdit'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . User('PROFILE_ID') . '\' AND CAN_EDIT=\'Y\''), array(), array('MODNAME'));
             } else {
                 $profile_id_mod = DBGet(DBQuery("SELECT PROFILE_ID FROM staff WHERE USER_ID='" . User('STAFF_ID')));
                 $profile_id_mod = $profile_id_mod[1]['PROFILE_ID'];
                 if ($profile_id_mod != '') {
-                    $_openSIS['AllowEdit'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . $profile_id_mod . '\' AND CAN_EDIT=\'Y\''), array(), array('MODNAME'));
+                    $_hcwsms['AllowEdit'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . $profile_id_mod . '\' AND CAN_EDIT=\'Y\''), array(), array('MODNAME'));
                 }
             }
         }
-        if (!$_openSIS['AllowEdit'])
-            $_openSIS['AllowEdit'] = array(true);
-        if (!empty($_openSIS['AllowEdit'][$modname]))
+        if (!$_hcwsms['AllowEdit'])
+            $_hcwsms['AllowEdit'] = array(true);
+        if (!empty($_hcwsms['AllowEdit'][$modname]))
             return true;
         else
             return false;
@@ -69,10 +69,10 @@ function AllowEdit($modname = false)
             elseif ($modname == 'messaging/Group.php')
                 return true;
             else
-                return $_openSIS['allow_edit'];
+                return $_hcwsms['allow_edit'];
         } elseif (User('PROFILE') == 'teacher') {
             if (User('PROFILE_ID') != '')
-                $_openSIS['AllowEdit'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . User('PROFILE_ID') . '\' AND CAN_EDIT=\'Y\''), array(), array('MODNAME'));
+                $_hcwsms['AllowEdit'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . User('PROFILE_ID') . '\' AND CAN_EDIT=\'Y\''), array(), array('MODNAME'));
 
             if ($modname == 'attendance/StudentSummary.php')
                 return true;
@@ -116,47 +116,47 @@ function AllowEdit($modname = false)
             elseif ($modname == 'users/TeacherPrograms.php?include=attendance/TakeAttendance.php')
                 return true;
             else {
-                if (!$_openSIS['AllowEdit'])
-                    $_openSIS['AllowEdit'] = array(true);
+                if (!$_hcwsms['AllowEdit'])
+                    $_hcwsms['AllowEdit'] = array(true);
 
-                if (is_countable($_openSIS['AllowEdit'][$modname]) && count($_openSIS['AllowEdit'][$modname]))
+                if (is_countable($_hcwsms['AllowEdit'][$modname]) && count($_hcwsms['AllowEdit'][$modname]))
                     return true;
                 else
                     return false;
             }
         } else
-            return $_openSIS['allow_edit'];
+            return $_hcwsms['allow_edit'];
     }
 }
 
 function AllowUse($modname = false)
 {
-    global $_openSIS;
+    global $_hcwsms;
     if (!$modname)
         $modname = $_REQUEST['modname'];
 
     if ($modname == 'students/Student.php' && $_REQUEST['category_id'])
         $modname = $modname . '&category_id=' . $_REQUEST['category_id'];
 
-    if (!$_openSIS['AllowUse']) {
+    if (!$_hcwsms['AllowUse']) {
         if (User('PROFILE_ID') != '') {
-            $_openSIS['AllowUse'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . User('PROFILE_ID') . '\' AND CAN_USE=\'Y\''), array(), array('MODNAME'));
+            $_hcwsms['AllowUse'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . User('PROFILE_ID') . '\' AND CAN_USE=\'Y\''), array(), array('MODNAME'));
 
             if (User('PROFILE_ID') == 4) {
-                $_openSIS['AllowUse']['scheduling/PrintSchedules.php']['1']['MODNAME'] = 'scheduling/PrintSchedules.php';
+                $_hcwsms['AllowUse']['scheduling/PrintSchedules.php']['1']['MODNAME'] = 'scheduling/PrintSchedules.php';
             }
         } else {
             $profile_id_mod = DBGet(DBQuery("SELECT PROFILE_ID FROM staff WHERE USER_ID='" . User('STAFF_ID')));
             $profile_id_mod = $profile_id_mod[1]['PROFILE_ID'];
-            $_openSIS['AllowUse'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . $profile_id_mod . '\' AND CAN_USE=\'Y\''), array(), array('MODNAME'));
+            $_hcwsms['AllowUse'] = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . $profile_id_mod . '\' AND CAN_USE=\'Y\''), array(), array('MODNAME'));
         }
     }
 
 
-    if (!$_openSIS['AllowUse'])
-        $_openSIS['AllowUse'] = array(true);
+    if (!$_hcwsms['AllowUse'])
+        $_hcwsms['AllowUse'] = array(true);
 
-    if (is_countable($_openSIS['AllowUse'][$modname]) && count($_openSIS['AllowUse'][$modname]))
+    if (is_countable($_hcwsms['AllowUse'][$modname]) && count($_hcwsms['AllowUse'][$modname]))
         return true;
     else
         return false;

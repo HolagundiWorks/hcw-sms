@@ -28,7 +28,7 @@
 #***************************************************************************************
 function GetStuList(&$extra)
 {
-    global $contacts_RET, $view_other_RET, $_openSIS, $select;
+    global $contacts_RET, $view_other_RET, $_hcwsms, $select;
     $offset = 'GRADE_ID';
     $get_rollover_id = DBGet(DBQuery('SELECT ID FROM student_enrollment_codes WHERE SYEAR=' . UserSyear() . ' AND TYPE=\'Roll\' '));
     $get_rollover_id = $get_rollover_id[1]['ID'];
@@ -86,7 +86,7 @@ function GetStuList(&$extra)
             $extra2['group'] = array('STUDENT_ID', 'PERSON_ID');
 
             // EXPANDED VIEW AND ADDR BREAKS THIS QUERY ... SO, TURN 'EM OFF
-            if (!$_REQUEST['_openSIS_PDF']) {
+            if (!$_REQUEST['_hcwsms_PDF']) {
                 $expanded_view = $_REQUEST['expanded_view'];
                 $_REQUEST['expanded_view'] = false;
                 $addr = $_REQUEST['addr'];
@@ -97,7 +97,7 @@ function GetStuList(&$extra)
             } else
                 unset($extra2['columns_after']['CONTACT_INFO']);
         } else {
-            if ($view_other_RET['CONTACT_INFO'][1]['VALUE'] == 'Y' && !$_REQUEST['_openSIS_PDF']) {
+            if ($view_other_RET['CONTACT_INFO'][1]['VALUE'] == 'Y' && !$_REQUEST['_hcwsms_PDF']) {
                 $select .= ',NULL AS CONTACT_INFO ';
                 $extra['columns_after']['CONTACT_INFO'] = '<IMG SRC=assets/down_phone_button.gif border=0>';
                 $functions['CONTACT_INFO'] = 'makeContactInfo';
@@ -688,7 +688,7 @@ function GetStuList(&$extra)
     if ($extra['LIMIT']) {
         $sql = $sql . ' LIMIT ' . $extra['LIMIT'];
     } else {
-        if ((!$_REQUEST['_openSIS_PDF'] || $_REQUEST['_openSIS_PDF'] == false) && !checkNoNeedPaging($_REQUEST['modname'])) {
+        if ((!$_REQUEST['_hcwsms_PDF'] || $_REQUEST['_hcwsms_PDF'] == false) && !checkNoNeedPaging($_REQUEST['modname'])) {
             $sql = $sql . ' LIMIT 0,50';
         }
     }
@@ -746,7 +746,7 @@ function makePhone($phone, $column = '')
 
 function makeParents($student_id, $column = '')
 {
-    global $THIS_RET, $view_other_RET, $_openSIS;
+    global $THIS_RET, $view_other_RET, $_hcwsms;
 
     if ($THIS_RET['PARENTS'] == $student_id) {
         if (!$THIS_RET['ADDRESS_ID'])
@@ -754,8 +754,8 @@ function makeParents($student_id, $column = '')
 
         $THIS_RET['PARENTS'] = '';
 
-        if ($_openSIS['makeParents'])
-            $constraint = 'AND (LOWER(sjp.RELATIONSHIP) LIKE \'' . strtolower($_openSIS['makeParents']) . '%\')';
+        if ($_hcwsms['makeParents'])
+            $constraint = 'AND (LOWER(sjp.RELATIONSHIP) LIKE \'' . strtolower($_hcwsms['makeParents']) . '%\')';
         elseif ($view_other_RET['ALL_CONTACTS'][1]['VALUE'] == 'Y')
             $constraint = 'AND (p.CUSTODY=\'Y\' OR sjp.IS_EMERGENCY=\'Y\')';
         else
@@ -770,12 +770,12 @@ function makeParents($student_id, $column = '')
                 elseif ($person['EMERGENCY'] == 'Y')
                     $color = 'FFFF00';
 
-                if ($_REQUEST['_openSIS_PDF'])
+                if ($_REQUEST['_hcwsms_PDF'])
                     $THIS_RET['PARENTS'] .= '<TR><TD>' . button('dot', $color, '', 6) . '</TD><TD>' . $person['FIRST_NAME'] . ' ' . $person['LAST_NAME'] . '</TD></TR>, ';
                 else
                     $THIS_RET['PARENTS'] .= '<TR><TD>' . button('dot', $color, '', 6) . '</TD><TD><A HREF=# onclick=\'window.open("Modules.php?modname=miscellaneous/ViewContact.php?person_id=' . $person['PERSON_ID'] . '","","scrollbars=yes,resizable=yes,width=400,height=200");\'>' . $person['FIRST_NAME'] . ' ' . $person['LAST_NAME'] . '</A></TD></TR>';
             }
-            if ($_REQUEST['_openSIS_PDF'])
+            if ($_REQUEST['_hcwsms_PDF'])
                 $THIS_RET['PARENTS'] = substr($THIS_RET['PARENTS'], 0, -2);
         }
     }
@@ -786,45 +786,45 @@ function makeParents($student_id, $column = '')
 
 function appendSQL($sql, &$extra)
 {
-    global $_openSIS, $imm_date, $med_date, $ma_date, $nv_date;
+    global $_hcwsms, $imm_date, $med_date, $ma_date, $nv_date;
 
     if ($_REQUEST['stuid']) {
         $sql .= ' AND ssm.STUDENT_ID = \'' . singleQuoteReplace("'", "\'", $_REQUEST['stuid']) . '\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
     }
     if ($_REQUEST['altid']) {
 
         $sql .= ' AND LOWER(s.ALT_ID) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['altid']))) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
     }
     if ($_REQUEST['last']) {
         $sql .= ' AND LOWER(s.LAST_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['last']))) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Last Name starts with: </b></font>' . stripslashes(trim($_REQUEST['last'])) . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Last Name starts with: </b></font>' . stripslashes(trim($_REQUEST['last'])) . '<BR>';
     }
     if ($_REQUEST['first']) {
         $sql .= ' AND LOWER(s.FIRST_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['first']))) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>First Name starts with: </b></font>' . stripslashes(trim($_REQUEST['first'])) . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>First Name starts with: </b></font>' . stripslashes(trim($_REQUEST['first'])) . '<BR>';
     }
     if ($_REQUEST['grade']) {
         $sql .= ' AND ssm.GRADE_ID IN(SELECT id FROM school_gradelevels WHERE id= \'' . singleQuoteReplace("'", "\'", $_REQUEST['grade']) . '\')';
         if (!$extra['NoSearchTerms']) {
             $title = DBGet(DBQuery('SELECT title FROM school_gradelevels WHERE id= \'' . singleQuoteReplace("'", "\'", $_REQUEST['grade']) . '\''));
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Grade: </b></font>' . $title[1]['TITLE'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Grade: </b></font>' . $title[1]['TITLE'] . '<BR>';
 	    }
     }
     if ($_REQUEST['addr']) {
         $sql .= ' AND (LOWER(sam.STREET_ADDRESS_1) LIKE \'%' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '%\' OR LOWER(sam.CITY) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '%\' OR LOWER(sam.STATE)=\'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '\' OR ZIPCODE LIKE \'' . trim(singleQuoteReplace("'", "\'", $_REQUEST['addr'])) . '%\')';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Address contains: </b></font>' . trim($_REQUEST['addr']) . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Address contains: </b></font>' . trim($_REQUEST['addr']) . '<BR>';
     }
     if ($_REQUEST['preferred_hospital']) {
         $sql .= ' AND LOWER(s.PREFERRED_HOSPITAL) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['preferred_hospital'])) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Preferred Medical Facility starts with: </b></font>' . $_REQUEST['preferred_hospital'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Preferred Medical Facility starts with: </b></font>' . $_REQUEST['preferred_hospital'] . '<BR>';
     }
 
     ////////////////////////extra search field start///////////////////////////
@@ -871,12 +871,12 @@ function appendSQL($sql, &$extra)
     if ($_REQUEST['mp_comment']) {
         $sql .= ' AND LOWER(smc.COMMENT) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['mp_comment'])) . '%\' AND s.STUDENT_ID=smc.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['mp_comment'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['mp_comment'] . '<BR>';
     }
     if ($_REQUEST['goal_title']) {
         $sql .= ' AND LOWER(g.GOAL_TITLE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['goal_title'])) . '%\' AND s.STUDENT_ID=g.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>GoalInc Title starts with: </b></font>' . $_REQUEST['goal_title'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>GoalInc Title starts with: </b></font>' . $_REQUEST['goal_title'] . '<BR>';
     }
 
 
@@ -890,38 +890,38 @@ function appendSQL($sql, &$extra)
     if ($_REQUEST['goal_description']) {
         $sql .= ' AND LOWER(g.GOAL_DESCRIPTION) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['goal_description'])) . '%\' AND s.STUDENT_ID=g.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>GoalInc Description starts with: </b></font>' . $_REQUEST['goal_description'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>GoalInc Description starts with: </b></font>' . $_REQUEST['goal_description'] . '<BR>';
     }
     if ($_REQUEST['progress_name']) {
         $sql .= ' AND LOWER(p.PROGRESS_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['progress_name'])) . '%\' AND s.STUDENT_ID=p.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Progress Period Name starts with: </b></font>' . $_REQUEST['progress_name'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Progress Period Name starts with: </b></font>' . $_REQUEST['progress_name'] . '<BR>';
     }
     if ($_REQUEST['progress_description']) {
         $sql .= ' AND LOWER(p.PROGRESS_DESCRIPTION) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['progress_description'])) . '%\' AND s.STUDENT_ID=p.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Progress Assessment starts with: </b></font>' . $_REQUEST['progress_description'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Progress Assessment starts with: </b></font>' . $_REQUEST['progress_description'] . '<BR>';
     }
     if ($_REQUEST['doctors_note_comments']) {
         $sql .= ' AND LOWER(smn.DOCTORS_NOTE_COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['doctors_note_comments'])) . '%\' AND s.STUDENT_ID=smn.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Doctor\'s Note starts with: </b></font>' . $_REQUEST['doctors_note_comments'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Doctor\'s Note starts with: </b></font>' . $_REQUEST['doctors_note_comments'] . '<BR>';
     }
     if ($_REQUEST['type']) {
         $sql .= ' AND LOWER(sm.TYPE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['type'])) . '%\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Type starts with: </b></font>' . $_REQUEST['type'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Type starts with: </b></font>' . $_REQUEST['type'] . '<BR>';
     }
     if ($_REQUEST['imm_comments']) {
         $sql .= ' AND LOWER(sm.COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['imm_comments'])) . '%\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['imm_comments'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['imm_comments'] . '<BR>';
     }
     if ($_REQUEST['imm_day'] && $_REQUEST['imm_month'] && $_REQUEST['imm_year']) {
         $imm_date = $_REQUEST['imm_year'] . '-' . $_REQUEST['imm_month'] . '-' . $_REQUEST['imm_day'];
         $sql .= ' AND sm.MEDICAL_DATE =\'' . date('Y-m-d', strtotime($imm_date)) . '\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
     } elseif ($_REQUEST['imm_day'] || $_REQUEST['imm_month'] || $_REQUEST['imm_year']) {
         if ($_REQUEST['imm_day']) {
             $sql .= ' AND SUBSTR(sm.MEDICAL_DATE,9,2) =\'' . $_REQUEST['imm_day'] . '\' AND s.STUDENT_ID=sm.STUDENT_ID ';
@@ -936,7 +936,7 @@ function appendSQL($sql, &$extra)
             $imm_date .= " Year :" . $_REQUEST['imm_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
     }
     if ($_REQUEST['med_day'] && $_REQUEST['med_month'] && $_REQUEST['med_year']) {
         $med_date = $_REQUEST['med_year'] . '-' . $_REQUEST['med_month'] . '-' . $_REQUEST['med_day'];
@@ -948,7 +948,7 @@ function appendSQL($sql, &$extra)
         //        echo '<br>';
         $sql .= ' AND smn.DOCTORS_NOTE_DATE =\'' . date('Y-m-d', strtotime($med_date)) . '\' AND s.STUDENT_ID=smn.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
     } elseif ($_REQUEST['med_day'] || $_REQUEST['med_month'] || $_REQUEST['med_year']) {
         if ($_REQUEST['med_day']) {
             $sql .= ' AND SUBSTR(smn.DOCTORS_NOTE_DATE,9,2) =\'' . $_REQUEST['med_day'] . '\' AND s.STUDENT_ID=smn.STUDENT_ID ';
@@ -963,13 +963,13 @@ function appendSQL($sql, &$extra)
             $med_date .= " Year :" . $_REQUEST['med_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
     }
     if ($_REQUEST['ma_day'] && $_REQUEST['ma_month'] && $_REQUEST['ma_year']) {
         $ma_date = $_REQUEST['ma_year'] . '-' . $_REQUEST['ma_month'] . '-' . $_REQUEST['ma_day'];
         $sql .= ' AND sma.ALERT_DATE =\'' . date('Y-m-d', strtotime($ma_date)) . '\' AND s.STUDENT_ID=sma.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
     } elseif ($_REQUEST['ma_day'] || $_REQUEST['ma_month'] || $_REQUEST['ma_year']) {
         if ($_REQUEST['ma_day']) {
             $sql .= ' AND SUBSTR(sma.ALERT_DATE,9,2) =\'' . $_REQUEST['ma_day'] . '\' AND s.STUDENT_ID=sma.STUDENT_ID ';
@@ -984,13 +984,13 @@ function appendSQL($sql, &$extra)
             $ma_date .= " Year :" . $_REQUEST['ma_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
     }
     if ($_REQUEST['nv_day'] && $_REQUEST['nv_month'] && $_REQUEST['nv_year']) {
         $nv_date = $_REQUEST['nv_year'] . '-' . $_REQUEST['nv_month'] . '-' . $_REQUEST['nv_day'];
         $sql .= ' AND smv.SCHOOL_DATE =\'' . date('Y-m-d', strtotime($nv_date)) . '\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
     } elseif ($_REQUEST['nv_day'] || $_REQUEST['nv_month'] || $_REQUEST['nv_year']) {
         if ($_REQUEST['nv_day']) {
             $sql .= ' AND SUBSTR(smv.SCHOOL_DATE,9,2) =\'' . $_REQUEST['nv_day'] . '\' AND s.STUDENT_ID=smv.STUDENT_ID ';
@@ -1005,29 +1005,29 @@ function appendSQL($sql, &$extra)
             $nv_date .= " Year :" . $_REQUEST['nv_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
     }
 
 
     if ($_REQUEST['med_alrt_title']) {
         $sql .= ' AND LOWER(sma.TITLE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['med_alrt_title'])) . '%\' AND s.STUDENT_ID=sma.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Alert starts with: </b></font>' . $_REQUEST['med_alrt_title'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Alert starts with: </b></font>' . $_REQUEST['med_alrt_title'] . '<BR>';
     }
     if ($_REQUEST['reason']) {
         $sql .= ' AND LOWER(smv.REASON) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['reason'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Reason starts with: </b></font>' . $_REQUEST['reason'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Reason starts with: </b></font>' . $_REQUEST['reason'] . '<BR>';
     }
     if ($_REQUEST['result']) {
         $sql .= ' AND LOWER(smv.RESULT) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['result'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Result starts with: </b></font>' . $_REQUEST['result'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Result starts with: </b></font>' . $_REQUEST['result'] . '<BR>';
     }
     if ($_REQUEST['med_vist_comments']) {
         $sql .= ' AND LOWER(smv.COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['med_vist_comments'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Nurse Visit Comments starts with: </b></font>' . $_REQUEST['med_vist_comments'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Nurse Visit Comments starts with: </b></font>' . $_REQUEST['med_vist_comments'] . '<BR>';
     }
 
     if ($_REQUEST['day_to_birthdate'] && $_REQUEST['month_to_birthdate']  && $_REQUEST['day_from_birthdate'] && $_REQUEST['month_from_birthdate']) {
@@ -1045,7 +1045,7 @@ function appendSQL($sql, &$extra)
         $sql .= ' AND (SUBSTR(s.BIRTHDATE,9,2) BETWEEN \'' . $_REQUEST['day_from_birthdate'] . '\' AND \'' . $_REQUEST['day_to_birthdate'] . '\') ';
         $sql .= ' AND (SUBSTR(s.BIRTHDATE,6,2) BETWEEN \'' . $_REQUEST['month_from_birthdate'] . '\' AND \'' . $_REQUEST['month_to_birthdate'] . '\') ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Birthday Starts from ' . $date_from . ' to ' . $date_to . '</b></font>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Birthday Starts from ' . $date_from . ' to ' . $date_to . '</b></font>';
     }
 
 
@@ -1057,7 +1057,7 @@ function appendSQL($sql, &$extra)
         $sql .= ' AND s.BIRTHDATE = \'' . $date_dob . '\'';
         //$sql .= ' AND (SUBSTR(s.BIRTHDATE,9,2) BETWEEN \'' . $_REQUEST['month_from_birthdate'] . '\' AND \'' . $_REQUEST['month_to_birthdate'] . '\') ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Birthday is ' . $date_dob . '</b></font>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Birthday is ' . $date_dob . '</b></font>';
     }
 
 
@@ -1071,7 +1071,7 @@ function appendSQL($sql, &$extra)
         $sql .= ' AND (s.ESTIMATED_GRAD_DATE BETWEEN \'' . $date_from_est . '\' AND \'' . $date_to_est . '\') ';
 
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Estimated Grad. Date Starts from ' . $date_from_est . ' to ' . $date_to_est . '</b></font>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Estimated Grad. Date Starts from ' . $date_from_est . ' to ' . $date_to_est . '</b></font>';
     }
 
     if ($_REQUEST['day_to_st'] && $_REQUEST['month_to_st'] && $_REQUEST['day_from_st'] && $_REQUEST['month_from_st']) {
@@ -1084,7 +1084,7 @@ function appendSQL($sql, &$extra)
         $sql .= ' AND (ssm.START_DATE BETWEEN \'' . $date_from_st . '\' AND \'' . $date_to_st . '\') ';
 
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Enrollment Starts from ' . $date_from_st . ' to ' . $date_to_st . '</b></font>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Enrollment Starts from ' . $date_from_st . ' to ' . $date_to_st . '</b></font>';
     }
 
     if ($_REQUEST['day_to_en'] && $_REQUEST['month_to_en'] && $_REQUEST['day_from_en'] && $_REQUEST['month_from_en']) {
@@ -1097,7 +1097,7 @@ function appendSQL($sql, &$extra)
         $sql .= ' AND (ssm.END_DATE BETWEEN \'' . $date_from_en . '\' AND \'' . $date_to_en . '\') ';
 
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Enrollment Ends from ' . $date_from_en . ' to ' . $date_to_en . '</b></font>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Enrollment Ends from ' . $date_from_en . ' to ' . $date_to_en . '</b></font>';
     }
     // test cases start
     // test cases end
@@ -1117,7 +1117,7 @@ function appendSQL($sql, &$extra)
 
 function appendAllSQL($allSQL, &$extra)
 {
-    global $_openSIS, $imm_date, $med_date, $ma_date, $nv_date;
+    global $_hcwsms, $imm_date, $med_date, $ma_date, $nv_date;
 
     if ($_REQUEST['stuid']) {
         $allSQL .= ' AND ssm.STUDENT_ID = \'' . singleQuoteReplace("'", "\'", $_REQUEST['stuid']) . '\' ';
@@ -1356,7 +1356,7 @@ function appendAllSQL($allSQL, &$extra)
 
 function GetStuList_Absence_Summary(&$extra)
 {
-    global $contacts_RET, $view_other_RET, $_openSIS, $select;
+    global $contacts_RET, $view_other_RET, $_hcwsms, $select;
     $offset = 'GRADE_ID';
 
     if ((!$extra['SELECT_ONLY'] || strpos($extra['SELECT_ONLY'], $offset) !== false) && !$extra['functions']['GRADE_ID'])
@@ -1413,7 +1413,7 @@ function GetStuList_Absence_Summary(&$extra)
             $extra2['group'] = array('STUDENT_ID', 'PERSON_ID');
 
             // EXPANDED VIEW AND ADDR BREAKS THIS QUERY ... SO, TURN 'EM OFF
-            if (!$_REQUEST['_openSIS_PDF']) {
+            if (!$_REQUEST['_hcwsms_PDF']) {
                 $expanded_view = $_REQUEST['expanded_view'];
                 $_REQUEST['expanded_view'] = false;
                 $addr = $_REQUEST['addr'];
@@ -1424,7 +1424,7 @@ function GetStuList_Absence_Summary(&$extra)
             } else
                 unset($extra2['columns_after']['CONTACT_INFO']);
         } else {
-            if ($view_other_RET['CONTACT_INFO'][1]['VALUE'] == 'Y' && !$_REQUEST['_openSIS_PDF']) {
+            if ($view_other_RET['CONTACT_INFO'][1]['VALUE'] == 'Y' && !$_REQUEST['_hcwsms_PDF']) {
                 $select .= ',NULL AS CONTACT_INFO ';
                 $extra['columns_after']['CONTACT_INFO'] = '<IMG SRC=assets/down_phone_button.gif border=0>';
                 $functions['CONTACT_INFO'] = 'makeContactInfo';
@@ -1756,7 +1756,7 @@ function GetStuList_Absence_Summary(&$extra)
     if ($extra['LIMIT']) {
         $sql = $sql . ' LIMIT ' . $extra['LIMIT'];
     } else {
-        if (!$_REQUEST['_openSIS_PDF'] || $_REQUEST['_openSIS_PDF'] == false) {
+        if (!$_REQUEST['_hcwsms_PDF'] || $_REQUEST['_hcwsms_PDF'] == false) {
             $sql = $sql . ' LIMIT 0,50';
         }
     }
@@ -1768,104 +1768,104 @@ function GetStuList_Absence_Summary(&$extra)
 
 function appendSQL_Absence_Summary($sql, &$extra)
 {
-    global $_openSIS, $imm_date, $med_date, $nv_date, $ma_date;
+    global $_hcwsms, $imm_date, $med_date, $nv_date, $ma_date;
     if ($_REQUEST['stuid']) {
         $sql .= ' AND ssm.STUDENT_ID = \'' . singleQuoteReplace("'", "\'", $_REQUEST['stuid']) . '\' ';
         $_SESSION['newsql1'] .= ' AND ssm.STUDENT_ID = \'' . singleQuoteReplace("'", "\'", $_REQUEST['stuid']) . '\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
     }
     if ($_REQUEST['altid']) {
 
         $sql .= ' AND LOWER(s.ALT_ID) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['altid']))) . '%\' ';
         $_SESSION['newsql1'] .= ' AND LOWER(s.ALT_ID) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['altid']))) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Student ID: </b></font>' . $_REQUEST['stuid'] . '<BR>';
     }
     if ($_REQUEST['last']) {
         $sql .= ' AND LOWER(s.LAST_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['last']))) . '%\' ';
         $_SESSION['newsql1'] .= ' AND LOWER(s.LAST_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['last']))) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Last Name starts with: </b></font>' . stripslashes(trim($_REQUEST['last'])) . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Last Name starts with: </b></font>' . stripslashes(trim($_REQUEST['last'])) . '<BR>';
     }
     if ($_REQUEST['first']) {
         $sql .= ' AND LOWER(s.FIRST_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['first']))) . '%\' ';
         $_SESSION['newsql1'] .= ' AND LOWER(s.FIRST_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['first']))) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>First Name starts with: </b></font>' . stripslashes(trim($_REQUEST['first'])) . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>First Name starts with: </b></font>' . stripslashes(trim($_REQUEST['first'])) . '<BR>';
     }
     if ($_REQUEST['grade']) {
         $sql .= ' AND ssm.GRADE_ID = \'' . singleQuoteReplace("'", "\'", $_REQUEST['grade']) . '\' ';
         $_SESSION['newsql1'] .= ' AND ssm.GRADE_ID = \'' . singleQuoteReplace("'", "\'", $_REQUEST['grade']) . '\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Grade: </b></font>' . GetGrade($_REQUEST['grade']) . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Grade: </b></font>' . GetGrade($_REQUEST['grade']) . '<BR>';
     }
     if ($_REQUEST['addr']) {
         $sql .= ' AND (LOWER(a.STREET_ADDRESS_1) LIKE \'%' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '%\' OR LOWER(a.CITY) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '%\' OR LOWER(a.STATE)=\'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '\' OR ZIPCODE LIKE \'' . trim(singleQuoteReplace("'", "\'", $_REQUEST['addr'])) . '%\')';
         $_SESSION['newsql1'] .= ' AND (LOWER(a.STREET_ADDRESS_1) LIKE \'%' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '%\' OR LOWER(a.CITY) LIKE \'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '%\' OR LOWER(a.STATE)=\'' . singleQuoteReplace("'", "\'", strtolower(trim($_REQUEST['addr']))) . '\' OR ZIPCODE LIKE \'' . trim(singleQuoteReplace("'", "\'", $_REQUEST['addr'])) . '%\')';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Address contains: </b></font>' . trim($_REQUEST['addr']) . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Address contains: </b></font>' . trim($_REQUEST['addr']) . '<BR>';
     }
     if ($_REQUEST['preferred_hospital']) {
         $sql .= ' AND LOWER(s.PREFERRED_HOSPITAL) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['preferred_hospital'])) . '%\' ';
         $_SESSION['newsql1'] .= ' AND LOWER(s.PREFERRED_HOSPITAL) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['preferred_hospital'])) . '%\' ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Preferred Medical Facility starts with: </b></font>' . $_REQUEST['preferred_hospital'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Preferred Medical Facility starts with: </b></font>' . $_REQUEST['preferred_hospital'] . '<BR>';
     }
     if ($_REQUEST['mp_comment']) {
         $sql .= ' AND LOWER(smc.COMMENT) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['mp_comment'])) . '%\' AND s.STUDENT_ID=smc.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(smc.COMMENT) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['mp_comment'])) . '%\' AND s.STUDENT_ID=smc.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['mp_comment'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['mp_comment'] . '<BR>';
     }
     if ($_REQUEST['goal_title']) {
         $sql .= ' AND LOWER(g.GOAL_TITLE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['goal_title'])) . '%\' AND s.STUDENT_ID=g.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(g.GOAL_TITLE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['goal_title'])) . '%\' AND s.STUDENT_ID=g.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>GoalInc Title starts with: </b></font>' . $_REQUEST['goal_title'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>GoalInc Title starts with: </b></font>' . $_REQUEST['goal_title'] . '<BR>';
     }
     if ($_REQUEST['goal_description']) {
         $sql .= ' AND LOWER(g.GOAL_DESCRIPTION) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['goal_description'])) . '%\' AND s.STUDENT_ID=g.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(g.GOAL_DESCRIPTION) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['goal_description'])) . '%\' AND s.STUDENT_ID=g.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>GoalInc Description starts with: </b></font>' . $_REQUEST['goal_description'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>GoalInc Description starts with: </b></font>' . $_REQUEST['goal_description'] . '<BR>';
     }
     if ($_REQUEST['progress_name']) {
         $sql .= ' AND LOWER(p.PROGRESS_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['progress_name'])) . '%\' AND s.STUDENT_ID=p.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(p.PROGRESS_NAME) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['progress_name'])) . '%\' AND s.STUDENT_ID=p.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Progress Period Name starts with: </b></font>' . $_REQUEST['progress_name'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Progress Period Name starts with: </b></font>' . $_REQUEST['progress_name'] . '<BR>';
     }
     if ($_REQUEST['progress_description']) {
         $sql .= ' AND LOWER(p.PROGRESS_DESCRIPTION) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['progress_description'])) . '%\' AND s.STUDENT_ID=p.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(p.PROGRESS_DESCRIPTION) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['progress_description'])) . '%\' AND s.STUDENT_ID=p.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Progress Assessment starts with: </b></font>' . $_REQUEST['progress_description'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Progress Assessment starts with: </b></font>' . $_REQUEST['progress_description'] . '<BR>';
     }
     if ($_REQUEST['doctors_note_comments']) {
         $sql .= ' AND LOWER(smn.DOCTORS_NOTE_COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['doctors_note_comments'])) . '%\' AND s.STUDENT_ID=smn.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(smn.DOCTORS_NOTE_COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['doctors_note_comments'])) . '%\' AND s.STUDENT_ID=smn.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Doctor\'s Note starts with: </b></font>' . $_REQUEST['doctors_note_comments'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Doctor\'s Note starts with: </b></font>' . $_REQUEST['doctors_note_comments'] . '<BR>';
     }
     if ($_REQUEST['type']) {
         $sql .= ' AND LOWER(sm.TYPE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['type'])) . '%\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(sm.TYPE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['type'])) . '%\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Type starts with: </b></font>' . $_REQUEST['type'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Type starts with: </b></font>' . $_REQUEST['type'] . '<BR>';
     }
     if ($_REQUEST['imm_comments']) {
         $sql .= ' AND LOWER(sm.COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['imm_comments'])) . '%\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(sm.COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['imm_comments'])) . '%\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['imm_comments'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Comments starts with: </b></font>' . $_REQUEST['imm_comments'] . '<BR>';
     }
     if ($_REQUEST['imm_day'] && $_REQUEST['imm_month'] && $_REQUEST['imm_year']) {
         $imm_date = $_REQUEST['imm_year'] . '-' . $_REQUEST['imm_month'] . '-' . $_REQUEST['imm_day'];
         $sql .= ' AND sm.MEDICAL_DATE =\'' . date('Y-m-d', strtotime($imm_date)) . '\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND sm.MEDICAL_DATE =\'' . date('Y-m-d', strtotime($imm_date)) . '\' AND s.STUDENT_ID=sm.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
     } elseif ($_REQUEST['imm_day'] || $_REQUEST['imm_month'] || $_REQUEST['imm_year']) {
         if ($_REQUEST['imm_day']) {
             $sql .= ' AND SUBSTR(sm.MEDICAL_DATE,9,2) =\'' . $_REQUEST['imm_day'] . '\' AND s.STUDENT_ID=sm.STUDENT_ID ';
@@ -1883,14 +1883,14 @@ function appendSQL_Absence_Summary($sql, &$extra)
             $imm_date .= " Year :" . $_REQUEST['imm_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Immunization Date: </b></font>' . $imm_date . '<BR>';
     }
     if ($_REQUEST['med_day'] && $_REQUEST['med_month'] && $_REQUEST['med_year']) {
         $med_date = $_REQUEST['med_year'] . '-' . $_REQUEST['med_month'] . '-' . $_REQUEST['med_day'];
         $sql .= ' AND smn.DOCTORS_NOTE_DATE=\'' . date('Y-m-d', strtotime($med_date)) . '\' AND s.STUDENT_ID=smn.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND smn.DOCTORS_NOTE_DATE =\'' . date('Y-m-d', strtotime($med_date)) . '\' AND s.STUDENT_ID=smn.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
     } elseif ($_REQUEST['med_day'] || $_REQUEST['med_month'] || $_REQUEST['med_year']) {
         if ($_REQUEST['med_day']) {
             $sql .= ' AND SUBSTR(smn.DOCTORS_NOTE_DATE,9,2) =\'' . $_REQUEST['med_day'] . '\' AND s.STUDENT_ID=smn.STUDENT_ID ';
@@ -1908,14 +1908,14 @@ function appendSQL_Absence_Summary($sql, &$extra)
             $med_date .= " Year :" . $_REQUEST['med_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Date: </b></font>' . $med_date . '<BR>';
     }
     if ($_REQUEST['ma_day'] && $_REQUEST['ma_month'] && $_REQUEST['ma_year']) {
         $ma_date = $_REQUEST['ma_year'] . '-' . $_REQUEST['ma_month'] . '-' . $_REQUEST['ma_day'];
         $sql .= ' AND sma.ALERT_DATE =\'' . date('Y-m-d', strtotime($ma_date)) . '\' AND s.STUDENT_ID=sma.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND sma.ALERT_DATE =\'' . date('Y-m-d', strtotime($ma_date)) . '\' AND s.STUDENT_ID=sma.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
     } elseif ($_REQUEST['ma_day'] || $_REQUEST['ma_month'] || $_REQUEST['ma_year']) {
         if ($_REQUEST['ma_day']) {
             $sql .= ' AND SUBSTR(sma.ALERT_DATE,9,2) =\'' . $_REQUEST['ma_day'] . '\' AND s.STUDENT_ID=sma.STUDENT_ID ';
@@ -1933,14 +1933,14 @@ function appendSQL_Absence_Summary($sql, &$extra)
             $ma_date .= " Year :" . $_REQUEST['ma_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Medical Alert Date: </b></font>' . $ma_date . '<BR>';
     }
     if ($_REQUEST['nv_day'] && $_REQUEST['nv_month'] && $_REQUEST['nv_year']) {
         $nv_date = $_REQUEST['nv_year'] . '-' . $_REQUEST['nv_month'] . '-' . $_REQUEST['nv_day'];
         $sql .= ' AND smv.SCHOOL_DATE =\'' . date('Y-m-d', strtotime($nv_date)) . '\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND smv.SCHOOL_DATE =\'' . date('Y-m-d', strtotime($nv_date)) . '\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
     } elseif ($_REQUEST['nv_day'] || $_REQUEST['nv_month'] || $_REQUEST['nv_year']) {
         if ($_REQUEST['nv_day']) {
             $sql .= ' AND SUBSTR(smv.SCHOOL_DATE,9,2) =\'' . $_REQUEST['nv_day'] . '\' AND s.STUDENT_ID=smv.STUDENT_ID ';
@@ -1958,7 +1958,7 @@ function appendSQL_Absence_Summary($sql, &$extra)
             $nv_date .= " Year :" . $_REQUEST['nv_year'];
         }
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Nurse Visit Date: </b></font>' . $nv_date . '<BR>';
     }
 
 
@@ -1966,24 +1966,24 @@ function appendSQL_Absence_Summary($sql, &$extra)
         $sql .= ' AND LOWER(sma.TITLE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['med_alrt_title'])) . '%\' AND s.STUDENT_ID=sma.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(sma.TITLE) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['med_alrt_title'])) . '%\' AND s.STUDENT_ID=sma.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Alert starts with: </b></font>' . $_REQUEST['med_alrt_title'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Alert starts with: </b></font>' . $_REQUEST['med_alrt_title'] . '<BR>';
     }
     if ($_REQUEST['reason']) {
         $sql .= ' AND LOWER(smv.REASON) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['reason'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Reason starts with: </b></font>' . $_REQUEST['reason'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Reason starts with: </b></font>' . $_REQUEST['reason'] . '<BR>';
     }
     if ($_REQUEST['result']) {
         $sql .= ' AND LOWER(smv.RESULT) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['result'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(smv.RESULT) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['result'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Result starts with: </b></font>' . $_REQUEST['result'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Result starts with: </b></font>' . $_REQUEST['result'] . '<BR>';
     }
     if ($_REQUEST['med_vist_comments']) {
         $sql .= ' AND LOWER(smv.COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['med_vist_comments'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         $_SESSION['newsql1'] .= ' AND LOWER(smv.COMMENTS) LIKE \'' . singleQuoteReplace("'", "\'", strtolower($_REQUEST['med_vist_comments'])) . '%\' AND s.STUDENT_ID=smv.STUDENT_ID ';
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Nurse Visit Comments starts with: </b></font>' . $_REQUEST['med_vist_comments'] . '<BR>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Nurse Visit Comments starts with: </b></font>' . $_REQUEST['med_vist_comments'] . '<BR>';
     }
     if ($_REQUEST['day_to_birthdate'] && $_REQUEST['month_to_birthdate'] && $_REQUEST['day_from_birthdate'] && $_REQUEST['month_from_birthdate']) {
         $date_to = $_REQUEST['month_to_birthdate'] . '-' . $_REQUEST['day_to_birthdate'];
@@ -1993,7 +1993,7 @@ function appendSQL_Absence_Summary($sql, &$extra)
         $_SESSION['newsql1'] .= ' AND (SUBSTR(s.BIRTHDATE,6) BETWEEN \'' . $date_from . '\' AND \'' . $date_to . '\') ';
 
         if (!$extra['NoSearchTerms'])
-            $_openSIS['SearchTerms'] .= '<font color=gray><b>Birthday Starts from ' . $date_from . ' to ' . $date_to . '</b></font>';
+            $_hcwsms['SearchTerms'] .= '<font color=gray><b>Birthday Starts from ' . $date_from . ' to ' . $date_to . '</b></font>';
     }
     // test cases start
     // test cases end

@@ -142,7 +142,7 @@ if ($_REQUEST['modfunc'] == 'save') {
                 foreach ($RET as $student_id => $course_periods) {
 
                     echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-                    echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . ' (' . $cur_session . ')' . "<div style=\"font-size:12px;\">" . _studentReportCard . "</div></td><td align=right style=\"padding-top:20px\">" . ProperDate(DBDate()) . "<br \>" . _poweredByOpenSis . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+                    echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . ' (' . $cur_session . ')' . "<div style=\"font-size:12px;\">" . _studentReportCard . "</div></td><td align=right style=\"padding-top:20px\">" . ProperDate(DBDate()) . "<br \>" . _poweredByHcwsms . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
                     echo '<!-- MEDIA SIZE 8.5x11in -->';
                     if (!isset($_REQUEST['elements']['percents']) || (isset($_REQUEST['elements']['percents']) && $_REQUEST['elements']['percents'] == 'Y')) {   //when Standard Grade is not selected
                         $comments_arr = array();
@@ -291,7 +291,7 @@ if ($_REQUEST['modfunc'] == 'save') {
                         $addresses = array(0 => array());
 
                         foreach ($addresses as $address) {
-                            unset($_openSIS['DrawHeader']);
+                            unset($_hcwsms['DrawHeader']);
 
                             echo '<table border=0>';
                             if ($_REQUEST['elements']['incl_picture'] == 'Y') {
@@ -421,7 +421,7 @@ if (!$_REQUEST['modfunc']) {
     DrawBC("" . _gradebook . " > " . ProgramTitle());
 
     if ($_REQUEST['search_modfunc'] == 'list') {
-        echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&_openSIS_PDF=true&head_html=Student+Report+Card method=POST target=_blank>";
+        echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&_hcwsms_PDF=true&head_html=Student+Report+Card method=POST target=_blank>";
 
 
         $attendance_codes = DBGet(DBQuery("SELECT SHORT_NAME,ID FROM attendance_codes WHERE SYEAR='" . UserSyear() . "' AND SCHOOL_ID='" . UserSchool() . "' AND (DEFAULT_CODE!='Y' OR DEFAULT_CODE IS NULL) AND TABLE_NAME='0'"));

@@ -80,7 +80,7 @@ if ($_REQUEST['modfunc'] == 'save') {
                 $sql_student = $sql_student[1];
 
                 $bir_dt = $sql_student['BDATE'];
-                unset($_openSIS['DrawHeader']);
+                unset($_hcwsms['DrawHeader']);
 
                 if (!isset($st_dt) && !isset($end_dt)) {
                     $sql_goal = 'SELECT GOAL_ID,GOAL_TITLE,START_DATE,END_DATE,GOAL_DESCRIPTION FROM student_goal WHERE STUDENT_ID=\'' . $_SESSION['student_id'] . '\' AND SYEAR=\'' . UserSyear() . '\' ' . ($_REQUEST['_search_all_schools'] != 'Y' ? 'AND  SCHOOL_ID=' . UserSchool() : '') . ' ORDER BY GOAL_TITLE';
@@ -106,7 +106,7 @@ if ($_REQUEST['modfunc'] == 'save') {
                 if (count($res_goal) != 0) {
                     $error = 'N';
                     echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-                    echo "<tr><td width=105>" . DrawLogoParam($student['SCHOOL_ID']) . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool($student['SCHOOL_ID']) . "</font></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredByOpenSis."</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+                    echo "<tr><td width=105>" . DrawLogoParam($student['SCHOOL_ID']) . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool($student['SCHOOL_ID']) . "</font></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredByHcwsms."</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
                     echo "<table width=100% cellspacing=0 style=\"border-collapse:collapse\">";
 
 
@@ -202,7 +202,7 @@ if (!$_REQUEST['modfunc']) {
     DrawBC(""._students." > " . ProgramTitle());
 
     if ($_REQUEST['search_modfunc'] == 'list') {
-        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_openSIS_PDF=true method=POST target=_blank>";
+        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_hcwsms_PDF=true method=POST target=_blank>";
         echo '<div class="panel panel-default">';
         if ($_REQUEST['_search_all_schools'] == 'Y')
             echo '<input type="hidden" name="_search_all_schools" value="Y" />';

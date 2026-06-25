@@ -31,12 +31,12 @@ include_once('functions/MiscExportFnc.php');
 unset($extra['DATE']);
 $extra['search'] .= '<TR><TD align=center colspan=2><TABLE><TR><TD><DIV id=fields_div></DIV></TD></TR></TABLE></TD></TR>';
 $extra['new'] = true;
-$_openSIS['CustomFields'] = true;
+$_hcwsms['CustomFields'] = true;
 if ($_REQUEST['fields']['PARENTS']) {
     $extra['SELECT'] .= ',ssm.STUDENT_ID AS PARENTS';
     $view_other_RET['ALL_CONTACTS'][1]['VALUE'] = 'Y';
     if ($_REQUEST['relation'] != '') {
-        $_openSIS['makeParents'] = $_REQUEST['relation'];
+        $_hcwsms['makeParents'] = $_REQUEST['relation'];
         $extra['students_join_address'] .= ' AND EXISTS (SELECT \'\' FROM students_join_people sjp WHERE sjp.STUDENT_ID=sa.STUDENT_ID AND LOWER(sjp.RELATIONSHIP) LIKE \'' . strtolower($_REQUEST['relation']) . '%\') ';
     }
 }
@@ -116,7 +116,7 @@ if ($_REQUEST['search_modfunc'] == 'list') {
         }
     }
 
-    if ($openSISModules['Food_Service'] && ($_REQUEST['fields']['FS_ACCOUNT_ID'] == 'Y' || $_REQUEST['fields']['FS_DISCOUNT'] == 'Y' || $_REQUEST['fields']['FS_STATUS'] == 'Y' || $_REQUEST['fields']['FS_BARCODE'] == 'Y' || $_REQUEST['fields']['FS_BALANCE'] == 'Y')) {
+    if ($hcwsmsModules['Food_Service'] && ($_REQUEST['fields']['FS_ACCOUNT_ID'] == 'Y' || $_REQUEST['fields']['FS_DISCOUNT'] == 'Y' || $_REQUEST['fields']['FS_STATUS'] == 'Y' || $_REQUEST['fields']['FS_BARCODE'] == 'Y' || $_REQUEST['fields']['FS_BALANCE'] == 'Y')) {
         $extra['FROM'] = ',FOOD_SERVICE_STUDENT_ACCOUNTS fssa';
         $extra['WHERE'] = ' AND fssa.STUDENT_ID=ssm.STUDENT_ID';
         if ($_REQUEST['fields']['FS_ACCOUNT_ID'] == 'Y')
@@ -402,7 +402,7 @@ if ($_REQUEST['search_modfunc'] == 'list') {
     foreach ($periods_RET as $period)
         $fields_list['Schedule']['PERIOD_' . $period['PERIOD_ID']] = $period['TITLE'] . ' Teacher - Room';
 
-    if ($openSISModules['Food_Service'])
+    if ($hcwsmsModules['Food_Service'])
         $fields_list['Food_Service'] = array('FS_ACCOUNT_ID' => '' . _accountID . '', 'FS_DISCOUNT' => '' . _discount . '', 'FS_STATUS' => '' . _status . '', 'FS_BARCODE' => '' . _barcode . '', 'FS_BALANCE' => '' . _balance . '');
 
     echo '<div class="row">';

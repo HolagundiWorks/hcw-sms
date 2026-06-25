@@ -63,13 +63,13 @@ if ($_REQUEST['modfunc'] == 'save') {
 
         $columns = array('FULL_NAME' =>_student, 'STUDENT_ID' =>_studentId, 'COURSE_TITLE' =>_course, 'TITLE' =>_coursePeriod, 'START_DATE' =>_enrolled, 'END_DATE' =>_dropped);
         if (count($enrollment_RET) > 0)
-            echo "<table width=100%><tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">"._addDropReport."</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredByOpenSis." </td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+            echo "<table width=100%><tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">"._addDropReport."</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredByHcwsms." </td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
 
         ListOutputPrint($enrollment_RET, $columns, _scheduleRecord , _scheduleRecords);
     }
 }
 else {
-    echo "<FORM class=\"no-margin\" name=addr id=addr action='ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&head_html=Add+/+Drop+Report&modfunc=save&sday=$start_date&eday=$end_date&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&_openSIS_PDF=true&flag=list' method=POST target=_blank>";
+    echo "<FORM class=\"no-margin\" name=addr id=addr action='ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&head_html=Add+/+Drop+Report&modfunc=save&sday=$start_date&eday=$end_date&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&_hcwsms_PDF=true&flag=list' method=POST target=_blank>";
     $enrollment_RET1 = DBGet(DBQuery('SELECT se.ID CHECKBOX,c.TITLE AS COURSE_TITLE,cp.TITLE,se.START_DATE AS START_DATE,se.END_DATE AS END_DATE,se.END_DATE AS DATE,se.STUDENT_ID,CONCAT(s.LAST_NAME,\'' . ',' . '\',s.FIRST_NAME) AS FULL_NAME FROM schedule se,students s,courses c,course_periods cp WHERE c.COURSE_ID=se.COURSE_ID AND cp.COURSE_PERIOD_ID=se.COURSE_PERIOD_ID AND cp.COURSE_ID=c.COURSE_ID AND s.STUDENT_ID=se.STUDENT_ID AND se.SCHOOL_ID=\'' . UserSchool() . '\' AND (se.START_DATE BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\' OR se.END_DATE BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\')
 								ORDER BY DATE DESC'), array('START_DATE' => 'ProperDate', 'END_DATE' => 'ProperDate', 'CHECKBOX' => '_makeChooseCheckbox'));
 

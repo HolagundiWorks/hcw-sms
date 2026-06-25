@@ -208,7 +208,7 @@ if ($_REQUEST['modfunc'] != 'remove') {
     echo "<input type=hidden value=" . $max_id . " id=count >";
     if ($_REQUEST['table'] !== 'new' && $_REQUEST['modfunc'] != 'edit') {
         if (count($attendance_codes_RET) == 0) {
-            $_openSIS['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&table=$_REQUEST[table]";
+            $_hcwsms['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&table=$_REQUEST[table]";
             echo "<div id='students' >";
             echo PopTable('header', $tabs);
 
@@ -229,14 +229,14 @@ if ($_REQUEST['modfunc'] != 'remove') {
             PopTable('footer', $btn);
         }
     } elseif ($_REQUEST['table'] == 'new' && $_REQUEST['modfunc'] != 'edit') {
-        $_openSIS['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&table=$_REQUEST[table]";
+        $_hcwsms['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&table=$_REQUEST[table]";
         echo PopTable('header', $tabs);
         echo '<div class="form-group"><label class="control-label col-md-2">'._newCategoryTitle.'</label><div class="col-md-3"><INPUT type=text placeholder="'._newCategoryTitle.'" id=new_category_title name=new_category_title class="form-control"></div><div class="col-md-6">' . SubmitButton(_save, '', 'id="setupAttnCodeBtnThr" class="btn btn-primary" onclick="formcheck_attendance_category(this);"') . '</div></div>';
         echo PopTable('footer');
     } elseif ($_REQUEST['table'] !== 'new' && $_REQUEST['modfunc'] == 'edit') {
         $code_cat = DBGet(DBQuery('SELECT TITLE FROM attendance_code_categories WHERE id=' . $_REQUEST['table']));
         $code_cat = $code_cat[1]['TITLE'];
-        $_openSIS['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&table=$_REQUEST[table]";
+        $_hcwsms['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&table=$_REQUEST[table]";
         echo PopTable('header', $tabs);
         echo '<div class="form-group"><label class="control-label col-md-2">Category Title</label><div class="col-md-3"><INPUT type=text class="form-control" id=new_category_title name=new_category_title value="' . $code_cat . '"></div><div class="col-md-6">';
         echo SubmitButton(_save, '', 'id="setupAttnCodeBtnFou" class="btn btn-primary" onclick="formcheck_attendance_category(this);"') . '</div></div>';

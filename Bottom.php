@@ -41,8 +41,8 @@ if(clean_param($_REQUEST['modfunc'],PARAM_ALPHA)=='print')
 {
     // $connection = new mysqli($DatabaseServer, $DatabaseUsername, $DatabasePassword, $DatabaseName);
 	$_REQUEST = $_SESSION['_REQUEST_vars'];
-	$_REQUEST['_openSIS_PDF'] = true;
-        $_REQUEST['_openSIS_PDF'] = mysqli_real_escape_string($connection,optional_param('_openSIS_PDF', '', PARAM_RAW));
+	$_REQUEST['_hcwsms_PDF'] = true;
+        $_REQUEST['_hcwsms_PDF'] = mysqli_real_escape_string($connection,optional_param('_hcwsms_PDF', '', PARAM_RAW));
         $_REQUEST['modname'] = mysqli_real_escape_string($connection,optional_param('modname', '', PARAM_RAW));
         $_REQUEST['failed_login'] = mysqli_real_escape_string($connection,optional_param('failed_login', '', PARAM_RAW));
 	if(strpos($_REQUEST['modname'],'?')!==false)
@@ -95,7 +95,7 @@ else
 {
 echo "
 	<HTML>
-		<HEAD><TITLE>"._openSisSchoolSoftware."</TITLE>
+		<HEAD><TITLE>"._hcwsmsSchoolSoftware."</TITLE>
 		<SCRIPT>
 		size = 30;
 		function expandFrame()
@@ -123,7 +123,7 @@ echo "
                   if($_REQUEST['modcat'] && $_REQUEST['modname'])
 	{
 		echo '<b>'.str_replace('_',' ',$_REQUEST['modcat']);
-		echo ' : '.$_openSIS['Menu'][$_REQUEST['modcat']][$_REQUEST['modname']];
+		echo ' : '.$_hcwsms['Menu'][$_REQUEST['modcat']][$_REQUEST['modname']];
 		echo '</b>';
 	}
                   if($help[$_REQUEST['modcat']] && !$_REQUEST['modname'])

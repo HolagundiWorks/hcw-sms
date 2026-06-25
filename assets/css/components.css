@@ -17120,22 +17120,22 @@ thead .htCollapseButton:after {
 .dataTables_paginate .paginate_button:first-child {
     margin-left: 0;
 }
-.opensis-dataTable .dataTables_paginate .paginate_button:hover,
-.opensis-dataTable .dataTables_paginate .paginate_button:focus {
+.hcwsms-dataTable .dataTables_paginate .paginate_button:hover,
+.hcwsms-dataTable .dataTables_paginate .paginate_button:focus {
     background-color: #f5f5f5;
     color: #333333 !important;
 }
-.opensis-dataTable .dataTables_paginate .paginate_button:active{
+.hcwsms-dataTable .dataTables_paginate .paginate_button:active{
     background: #f5f5f5;
     color: #333333 !important;
     box-shadow: none;
 }
-.opensis-dataTable .dataTables_filter > label:after{
+.hcwsms-dataTable .dataTables_filter > label:after{
     color: #2196F3;
     right: 1px;
     font-size: 13px;
 }
-.opensis-dataTable .dataTables_filter input:focus{
+.hcwsms-dataTable .dataTables_filter input:focus{
     border-bottom-color: #2196F3;
     box-shadow: 0 1px 0 #2196F3;
 }
@@ -17149,7 +17149,7 @@ thead .htCollapseButton:after {
     color: #ffffff;
     background-color: #5090C1;
 }
-.opensis-dataTable .dataTables_paginate .paginate_button.current:active{
+.hcwsms-dataTable .dataTables_paginate .paginate_button.current:active{
     color: #ffffff;
     background: #5090C1;
     box-shadow: none;

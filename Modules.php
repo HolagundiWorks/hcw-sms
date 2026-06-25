@@ -93,7 +93,7 @@ if ((!$_SESSION['UserMP'] || (optional_param('school', '', PARAM_SPCL) && option
 
 array_rwalk($_REQUEST, 'strip_tags');
 
-if (!isset($_REQUEST['_openSIS_PDF'])) {
+if (!isset($_REQUEST['_hcwsms_PDF'])) {
     Warehouse('header');
     $css = trim(getCSS());
 
@@ -179,7 +179,7 @@ echo '<div id="loading-image"><i class="fa fa-cog fa-spin fa-lg fa-fw"></i> ' . 
 echo '<div class="navbar navbar-inverse bg-white">
             <div class="navbar-header">
                 <a class="sidebar-control sidebar-main-toggle hidden-xs" data-popup="tooltip" data-placement="bottom" data-container="body" data-original-title="Collapse Menu"><i class="icon-paragraph-justify3"></i></a>
-                <a class="navbar-brand" href="javascript:void(0)" onclick="check_content(\'Ajax.php?modname=miscellaneous/Portal.php\');" onmousedown="document.getElementById(\'header\').innerHTML = \'Home\'; document.getElementById(\'cframe\').src = \'Bottom.php?modcat=home\'"><img src="assets/opensis_logo.png" alt=""></a>
+                <a class="navbar-brand" href="javascript:void(0)" onclick="check_content(\'Ajax.php?modname=miscellaneous/Portal.php\');" onmousedown="document.getElementById(\'header\').innerHTML = \'Home\'; document.getElementById(\'cframe\').src = \'Bottom.php?modcat=home\'"><img src="assets/hcwsms_logo.png" alt=""></a>
 
                 <ul class="nav navbar-nav visible-xs-block">
                     <li><a data-toggle="collapse" data-target="#navbar-mobile" data-container="body"><i class="icon-grid2"></i></a></li>
@@ -620,9 +620,9 @@ $menu_icons = array(
 
 //echo "<li><a href='javascript:void(0)' onmouseup='check_content(\"Ajax.php?modname=miscellaneous/Portal.php\");' onmousedown='document.getElementById(\"header\").innerHTML = \"Home\";document.getElementById(\"cframe\").src = \"Bottom.php?modcat=home\"'><i class=\"icon-home4\"></i><span>" . "Home" . "</span></a></li>";
 echo "<li><a href='#' onmouseup='check_content(\"Ajax.php?modname=miscellaneous/Portal.php\");' onmousedown='document.getElementById(\"header\").innerHTML = \"Home\";document.getElementById(\"cframe\").src = \"Bottom.php?modcat=home\"'><i class=\"icon-home4\"></i><span>" . _home . "</span></a></li>";
-foreach ($_openSIS['Menu'] as $modcat => $programs) {
-    if (count($_openSIS['Menu'][$modcat])) {
-        $keys = array_keys($_openSIS['Menu'][$modcat]);
+foreach ($_hcwsms['Menu'] as $modcat => $programs) {
+    if (count($_hcwsms['Menu'][$modcat])) {
+        $keys = array_keys($_hcwsms['Menu'][$modcat]);
         $menu = false;
         foreach ($keys as $key_index => $file) {
             if (!is_numeric($file))
@@ -669,7 +669,7 @@ foreach ($_openSIS['Menu'] as $modcat => $programs) {
 
             $int = $int + 1;
 
-            $title = $_openSIS['Menu'][$modcat][$file];
+            $title = $_hcwsms['Menu'][$modcat][$file];
             if ($mm == 0) {
                 if (substr($file, 0, 7) == 'http://')
                     echo "<li><A HREF=$file  >$title</A>";
@@ -896,7 +896,7 @@ echo "<div id='update_panel'>";
 echo "<div id='divErr' class=\"text-left text-danger\"></div>";
 
 
-if (!isset($_REQUEST['_openSIS_PDF'])) {
+if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
     echo '<DIV id="Migoicons" style="visibility:hidden;position:absolute;z-index:1000;top:-100;"></DIV>';
     //echo "<TABLE width=100% border=0 cellpadding=0><TR><TD valign=top align=center>";
@@ -910,7 +910,7 @@ if ($_REQUEST['modname'] || $_GET['modname']) {
     if ($_REQUEST['bottom_back'] && $_SESSION['student_id'])
         unset($_SESSION['student_id']);
     /*     * ********************************************* */
-    // if ($_REQUEST['_openSIS_PDF'] == 'true')
+    // if ($_REQUEST['_hcwsms_PDF'] == 'true')
     //     ob_start();
     if (strpos($_REQUEST['modname'], '?') !== false) {
 
@@ -927,13 +927,13 @@ if ($_REQUEST['modname'] || $_GET['modname']) {
         $modname = optional_param('modname', '', PARAM_NOTAGS);
 
 
-    if (optional_param('LO_save', '', PARAM_INT) != '1' && !isset($_REQUEST['_openSIS_PDF']) && (strpos($modname, 'miscellaneous/') === false || $modname == 'miscellaneous/Registration.php' || $modname == 'miscellaneous/Export.php' || $modname == 'miscellaneous/Portal.php'))
+    if (optional_param('LO_save', '', PARAM_INT) != '1' && !isset($_REQUEST['_hcwsms_PDF']) && (strpos($modname, 'miscellaneous/') === false || $modname == 'miscellaneous/Registration.php' || $modname == 'miscellaneous/Export.php' || $modname == 'miscellaneous/Portal.php'))
         $_SESSION['_REQUEST_vars'] = $_REQUEST;
 
     $allowed = false;
     include 'Menu.php';
 
-    foreach ($_openSIS['Menu'] as $modcat => $programs) {
+    foreach ($_hcwsms['Menu'] as $modcat => $programs) {
 
         if (optional_param('modname', '', PARAM_NOTAGS) == $modcat . '/Search.php') {
             $allowed = true;
@@ -1008,8 +1008,8 @@ if ($_REQUEST['modname'] || $_GET['modname']) {
                 $ip = $_SERVER['REMOTE_ADDR'];
             }
             $ip = sqlSecurityFilter($ip);
-            if ($openSISNotifyAddress)
-                mail($openSISNotifyAddress, 'HACKING ATTEMPT', "INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$openSISVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','$_REQUEST[modname]','" . User('USERNAME') . "')");
+            if ($hcwsmsNotifyAddress)
+                mail($hcwsmsNotifyAddress, 'HACKING ATTEMPT', "INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$hcwsmsVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','$_REQUEST[modname]','" . User('USERNAME') . "')");
             if (false && function_exists('query')) {
 
                 if ($_SERVER['HTTP_X_FORWARDED_FOR']) {
@@ -1020,7 +1020,7 @@ if ($_REQUEST['modname'] || $_GET['modname']) {
                 $ip = sqlSecurityFilter($ip);
                 $connection = new mysqli('os4ed.com', 'openSIS_log', 'openSIS_log', 'openSIS_log');
 
-                $connection->query("INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$openSISVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','" . optional_param('modname', '', PARAM_CLEAN) . "','" . User('USERNAME') . "')");
+                $connection->query("INSERT INTO hacking_log (HOST_NAME,IP_ADDRESS,LOGIN_DATE,VERSION,PHP_SELF,DOCUMENT_ROOT,SCRIPT_NAME,MODNAME,USERNAME) values('$_SERVER[SERVER_NAME]','$ip','" . date('Y-m-d') . "','$hcwsmsVersion','$_SERVER[PHP_SELF]','$_SERVER[DOCUMENT_ROOT]','$_SERVER[SCRIPT_NAME]','" . optional_param('modname', '', PARAM_CLEAN) . "','" . User('USERNAME') . "')");
                 mysqli_close($link);
             }
         }
@@ -1038,9 +1038,9 @@ if ($_REQUEST['modname'] || $_GET['modname']) {
  * Demo Chart
  */
 
-if (!isset($_REQUEST['_openSIS_PDF'])) {
+if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
-    for ($i = 1; $i <= $_openSIS['PrepareDate']; $i++) {
+    for ($i = 1; $i <= $_hcwsms['PrepareDate']; $i++) {
         echo '<script type="text/javascript">
     Calendar.setup({
         monthField     :    "monthSelect' . $i . '",

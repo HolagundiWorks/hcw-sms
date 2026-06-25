@@ -253,7 +253,7 @@ if (UserStudentID()) {
             $days_RET = DBGet(DBQuery("SELECT DISTINCT DAYS FROM course_period_var"));
             if (count($days_RET) == 1)
                 unset($columns['DAYS']);
-            if ($_REQUEST['_openSIS_PDF'])
+            if ($_REQUEST['_hcwsms_PDF'])
                 unset($columns['SCHEDULER_LOCK']);
             break;
 
@@ -572,7 +572,7 @@ if (UserStudentID()) {
 
     if ($schedule_RET && $_REQUEST['view_mode'] == 'day_view') {
         echo '<hr class="no-margin"/><div class="panel-body pt-10 pb-10">';
-        echo ProgramLinkforExport('scheduling/PrintSchedules.php', '<b><i class="icon-printer4"></i></b>' . _printSchedule . '', '&modfunc=save&st_arr[]=' . UserStudentID() . '&mp_id=' . $mp_id . '&include_inactive=' . $_REQUEST['include_inactive'] . '&date1=' . $date1 . '&_openSIS_PDF=true', 'target="_blank" class="btn btn-success btn-labeled"') . '</div>';
+        echo ProgramLinkforExport('scheduling/PrintSchedules.php', '<b><i class="icon-printer4"></i></b>' . _printSchedule . '', '&modfunc=save&st_arr[]=' . UserStudentID() . '&mp_id=' . $mp_id . '&include_inactive=' . $_REQUEST['include_inactive'] . '&date1=' . $date1 . '&_hcwsms_PDF=true', 'target="_blank" class="btn btn-success btn-labeled"') . '</div>';
         echo '</div>'; //.panel-body
         } elseif ($schedule_RET && ($_REQUEST['view_mode'] == 'week_view' || $_REQUEST['view_mode'] == 'month_view')) {
         echo '<hr class="no-margin"/><div class="panel-body pt-10 pb-10">';
@@ -610,7 +610,7 @@ if (UserStudentID()) {
 
 function _makeTitle($value, $column = '')
 {
-    global $_openSIS, $THIS_RET;
+    global $_hcwsms, $THIS_RET;
     return $value;
 }
 
@@ -627,7 +627,7 @@ function _makeLock($value, $column)
 
 function _makePeriodSelect($course_period_id, $column = '')
 {
-    global $_openSIS, $THIS_RET, $fy_id;
+    global $_hcwsms, $THIS_RET, $fy_id;
     $sql = 'SELECT cp.COURSE_PERIOD_ID,cp.PARENT_ID,cp.TITLE,cp.MARKING_PERIOD_ID,COALESCE(cp.TOTAL_SEATS-cp.FILLED_SEATS,0) AS AVAILABLE_SEATS FROM course_periods cp,school_periods sp,course_period_var cpv WHERE sp.PERIOD_ID=cpv.PERIOD_ID AND cp.COURSE_PERIOD_ID=cpv.COURSE_PERIOD_ID AND cp.COURSE_ID=\'' . $THIS_RET['COURSE_ID'] . '\' ORDER BY sp.SORT_ORDER';
     $QI = DBQuery($sql);
     $orders_RET = DBGet($QI);
@@ -856,7 +856,7 @@ $res = DBGet(DBQuery('SELECT CONCAT(students.LAST_NAME,\', \',coalesce(students.
    
     echo '<div style="display: none;">';
     echo "<table id='_pdf_header' width='100%' style=\" font-family:Arial; font-size:12px; border:none !important\" >";
-    echo "<tr><td style=\"font-size:15px; font-weight:bold;\">" . GetSchool(UserSchool()) . "<br><div style=\"font-size:12px;\">" . _studentSchedulesReport . "</div></td><td style=\"float:right;text-align: right;\">" . ProperDate(DBDate()) . "<br />" . _poweredByOpenSis . "</td></tr><tr><td colspan=2><hr></td></tr></table>";
+    echo "<tr><td style=\"font-size:15px; font-weight:bold;\">" . GetSchool(UserSchool()) . "<br><div style=\"font-size:12px;\">" . _studentSchedulesReport . "</div></td><td style=\"float:right;text-align: right;\">" . ProperDate(DBDate()) . "<br />" . _poweredByHcwsms . "</td></tr><tr><td colspan=2><hr></td></tr></table>";
     echo "<table id='_pdf_header2' width='100%' style=\"font-size:13px; border:none !important\" >";
     echo '<tr><td><div>Student ID: ' . UserStudentID() . '<br>Student Name: ' . $res[1]['FULL_NAME'] . '<br>Student Grade: ' . $res[1]['TITLE'] . '</div></td></tr>';
     echo "</table>";

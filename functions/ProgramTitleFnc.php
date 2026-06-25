@@ -26,10 +26,10 @@
 #
 #***************************************************************************************
 function ProgramTitle()
-{	global $_openSIS;
-	if(!$_openSIS['Menu'])
+{	global $_hcwsms;
+	if(!$_hcwsms['Menu'])
 		include 'Menu.php';
-	foreach($_openSIS['Menu'] as $modcat=>$programs)
+	foreach($_hcwsms['Menu'] as $modcat=>$programs)
 	{
 		if(count($programs))
 		{
@@ -40,6 +40,6 @@ function ProgramTitle()
 			}
 		}
 	}
-	return 'openSIS';
+	return 'HCW School Management System';
 }
 ?>

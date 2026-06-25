@@ -339,7 +339,7 @@ if (!$_REQUEST['modfunc']) {
     DrawBC(""._students." -> " . ProgramTitle());
 
     if ($_REQUEST['search_modfunc'] == 'list') {
-        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_openSIS_PDF=true method=POST target=_blank>";
+        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_search_all_schools=$_REQUEST[_search_all_schools]&_hcwsms_PDF=true method=POST target=_blank>";
 
 
 //        $extra['extra_header_left'] = '<p>Avery Label 15660, 18660, 28660, 5630, 5660, 8660, 5620, 8620 compatible</p>';

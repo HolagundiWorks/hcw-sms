@@ -88,7 +88,7 @@ function _makeViewLock($value, $column) {
 
 function _makePeriodSelect($course_period_id, $column = '')
 {
-    global $_openSIS, $THIS_RET, $fy_id;
+    global $_hcwsms, $THIS_RET, $fy_id;
 
     $sql = 'SELECT sp.TITLE AS PERIOD,cp.COURSE_PERIOD_ID,cp.PARENT_ID,cp.TITLE,cp.MARKING_PERIOD_ID,COALESCE(cp.TOTAL_SEATS-cp.FILLED_SEATS,0) AS AVAILABLE_SEATS FROM course_periods cp,course_period_var cpv,school_periods sp WHERE sp.PERIOD_ID=cpv.PERIOD_ID AND cp.COURSE_PERIOD_ID=cpv.COURSE_PERIOD_ID AND cp.COURSE_ID=\'' . $THIS_RET['COURSE_ID'] . '\' ORDER BY sp.SORT_ORDER';
     $orders_RET = DBGet(DBQuery($sql));

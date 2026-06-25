@@ -101,7 +101,7 @@ if (User('PROFILE') == 'admin') {
         if (!$_REQUEST['next_modname'])
             $_REQUEST['next_modname'] = 'users/User.php';
 
-        if (!isset($_openSIS['DrawHeader']))
+        if (!isset($_hcwsms['DrawHeader']))
             DrawHeader(_pleaseSelectAParent);
         if ($_REQUEST['profile'] != 'none') {
             $staff_RET = GetStaffList($extra);

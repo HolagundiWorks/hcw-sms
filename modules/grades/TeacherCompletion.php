@@ -100,8 +100,8 @@ $RET_gradecompleted = DBGet(DBQuery($sql_gradecompleted));
 if (count($RET)) {
     unset($i);
     // Use plain text for Excel export, Font Awesome icons for web display
-    $checkIcon = isset($_REQUEST['_openSIS_PDF']) ? 'Yes' : '<i class="fa fa-check fa-lg text-success"></i>';
-    $timesIcon = isset($_REQUEST['_openSIS_PDF']) ? 'No' : '<i class="fa fa-times fa-lg text-danger"></i>';
+    $checkIcon = isset($_REQUEST['_hcwsms_PDF']) ? 'Yes' : '<i class="fa fa-check fa-lg text-success"></i>';
+    $timesIcon = isset($_REQUEST['_hcwsms_PDF']) ? 'No' : '<i class="fa fa-times fa-lg text-danger"></i>';
     
     foreach ($RET as $staff_id => $periods) {
         $i++;

@@ -129,7 +129,7 @@ if ($_REQUEST['func'] == 'Basic') {
 if ($_REQUEST['func'] == 'Ins_r') {
     if (clean_param($_REQUEST['modfunc'], PARAM_ALPHAMOD) == 'save') {
         echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-        echo "<tr><td width=105>" . DrawLogo() . "</td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . _instituteReports . "</td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByOpenSis . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+        echo "<tr><td width=105>" . DrawLogo() . "</td><td style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . _instituteReports . "</td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />" . _poweredByHcwsms . "</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
         echo "<table >";
 
         $arr = array();
@@ -229,7 +229,7 @@ if ($_REQUEST['func'] == 'Ins_r') {
             echo "</body></html>";
         }
     } else {
-        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&head_html=Institute+Report&modfunc=save&_openSIS_PDF=true method=POST target=_blank>";
+        echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&head_html=Institute+Report&modfunc=save&_hcwsms_PDF=true method=POST target=_blank>";
         echo '<DIV id=fields_div></DIV>';
         echo '<br/>';
 

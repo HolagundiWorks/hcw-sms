@@ -142,10 +142,10 @@ if (UserStaffID()) {
         }
 
         echo '</FORM>';
-        unset($_openSIS['DrawHeader']);
+        unset($_hcwsms['DrawHeader']);
 
-        $_openSIS['allow_edit'] = AllowEdit($_REQUEST['modname']);
-        $_openSIS['User'] = array(1 => array('STAFF_ID' => UserStaffID(), 'NAME' => GetTeacher(UserStaffID()), 'USERNAME' => GetTeacher(UserStaffID(), '', 'USERNAME'), 'PROFILE' => 'teacher', 'SCHOOLS' => ',' . UserSchool() . ',', 'SYEAR' => UserSyear()));
+        $_hcwsms['allow_edit'] = AllowEdit($_REQUEST['modname']);
+        $_hcwsms['User'] = array(1 => array('STAFF_ID' => UserStaffID(), 'NAME' => GetTeacher(UserStaffID()), 'USERNAME' => GetTeacher(UserStaffID(), '', 'USERNAME'), 'PROFILE' => 'teacher', 'SCHOOLS' => ',' . UserSchool() . ',', 'SYEAR' => UserSyear()));
 
         include('modules/' . $_REQUEST['include']);
     }
@@ -223,10 +223,10 @@ if (UserStaffID()) {
             DrawHeader($period_select);
 
         echo '</FORM>';
-        unset($_openSIS['DrawHeader']);
+        unset($_hcwsms['DrawHeader']);
 
-        $_openSIS['allow_edit'] = AllowEdit($_REQUEST['modname']);
-        $_openSIS['User'] = array(1 => array('STAFF_ID' => UserStaffID(), 'NAME' => GetTeacher(UserStaffID()), 'USERNAME' => GetTeacher(UserStaffID(), '', 'USERNAME'), 'PROFILE' => 'teacher', 'SCHOOLS' => ',' . UserSchool() . ',', 'SYEAR' => UserSyear()));
+        $_hcwsms['allow_edit'] = AllowEdit($_REQUEST['modname']);
+        $_hcwsms['User'] = array(1 => array('STAFF_ID' => UserStaffID(), 'NAME' => GetTeacher(UserStaffID()), 'USERNAME' => GetTeacher(UserStaffID(), '', 'USERNAME'), 'PROFILE' => 'teacher', 'SCHOOLS' => ',' . UserSchool() . ',', 'SYEAR' => UserSyear()));
 
 
         //echo '<div class="panel-body">';

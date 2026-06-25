@@ -26,14 +26,14 @@
 #
 #***************************************************************************************
 function GetPeriod($period_id,$title='')
-{	global $_openSIS;
-	if(!$_openSIS['GetPeriod'])
+{	global $_hcwsms;
+	if(!$_hcwsms['GetPeriod'])
 	{
 		$sql = 'SELECT TITLE, PERIOD_ID FROM school_periods WHERE SYEAR=\''.UserSyear().'\'';
-		$_openSIS['GetPeriod'] = DBGet(DBQuery($sql),array(),array('PERIOD_ID'));
+		$_hcwsms['GetPeriod'] = DBGet(DBQuery($sql),array(),array('PERIOD_ID'));
 	}
 	
-	return $_openSIS['GetPeriod'][$period_id][1]['TITLE'];
+	return $_hcwsms['GetPeriod'][$period_id][1]['TITLE'];
 }
 function GetCpDet($cp_id,$key)
 {	

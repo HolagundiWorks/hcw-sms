@@ -155,7 +155,7 @@ if (clean_param($_REQUEST['values'], PARAM_NOTAGS) && ($_POST['values'] || $_REQ
             }
         }
         // So Preferences() will get the new values
-        unset($_openSIS['Preferences']);
+        unset($_hcwsms['Preferences']);
     }
     unset($_REQUEST['values']);
     unset($_SESSION['_REQUEST_vars']['values']);
@@ -190,7 +190,7 @@ if (!$_REQUEST['modfunc']) {
     else
         $tabs = array(array('title' => ''._displayOptions.'', 'link' => "Modules.php?modname=$_REQUEST[modname]&amp;tab=display_options"), array('title' => ''._password.'', 'link' => "Modules.php?modname=$_REQUEST[modname]&amp;tab=password"), array('title' => _studentFields, 'link' => "Modules.php?modname=$_REQUEST[modname]&amp;tab=student_fields"));
 
-    $_openSIS['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&amp;tab=" . $_REQUEST['tab'];
+    $_hcwsms['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&amp;tab=" . $_REQUEST['tab'];
     PopTable('header', $tabs);
 
 
@@ -220,7 +220,7 @@ if (!$_REQUEST['modfunc']) {
 
 //        echo '<div class="col-md-4">';
 //        echo '<label>Theme</label>';
-//        if ($handle = opendir($openSISPath . 'themes/')) {
+//        if ($handle = opendir($hcwsmsPath . 'themes/')) {
 //            while (false !== ($file = readdir($handle))) {
 //                if ($file != "." && $file != ".." && !in_array($file, $IgnoreFiles)) {
 //                    echo '<label class="radio radio-inline"><INPUT type=radio name=values[Preferences][THEME] value=' . $file . ((Preferences('THEME') == $file) ? ' CHECKED' : '') . '> ' . $file . '</label>';

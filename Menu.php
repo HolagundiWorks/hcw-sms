@@ -29,8 +29,8 @@ if (!$_SESSION['STAFF_ID'] && !$_SESSION['STUDENT_ID'] && (strpos($_SERVER['PHP_
 	header('Location: index.php');
 	exit();
 }
-if (!$_openSIS['Menu']) {
-	foreach ($openSISModules as $module => $include)
+if (!$_hcwsms['Menu']) {
+	foreach ($hcwsmsModules as $module => $include)
 		if ($include) {
 			include "modules/$module/Menu.php";
 		}
@@ -58,13 +58,13 @@ if (!$_openSIS['Menu']) {
 		foreach ($programs as $program => $title) {
 			if (!is_numeric($program)) {
 				if ($can_use_RET[$program] && ($profile != 'admin' || !$exceptions[$modcat][$program] || AllowEdit($program)))
-					$_openSIS['Menu'][$modcat][$program] = $title;
+					$_hcwsms['Menu'][$modcat][$program] = $title;
 			} else {
-				$_openSIS['Menu'][$modcat][$program] = $title;
+				$_hcwsms['Menu'][$modcat][$program] = $title;
 			}
 		}
 	}
 
 	if (User('PROFILE') == 'student')
-		unset($_openSIS['Menu']['users']);
+		unset($_hcwsms['Menu']['users']);
 }

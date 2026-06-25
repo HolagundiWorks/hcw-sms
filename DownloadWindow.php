@@ -93,7 +93,7 @@ if(isset($_REQUEST['down_id']) && $_REQUEST['down_id']!='')
     header("Content-Type: ".$downfile_info[1]['TYPE']."");
     // header("Content-Disposition: attachment; filename=\"".str_replace(' ','_',$downfile_info[1]['NAME'])."\";");
     // header("Content-Disposition: attachment; filename=\"".$downfile_info[1]['NAME']."\";");
-    header("Content-Disposition: attachment; filename=\"".str_replace("opensis_space_here", " ", str_replace($downfile_info[1]['USER_ID']."-","",$downfile_info[1]['NAME']))."\";");
+    header("Content-Disposition: attachment; filename=\"".str_replace("hcwsms_space_here", " ", str_replace($downfile_info[1]['USER_ID']."-","",$downfile_info[1]['NAME']))."\";");
     header("Content-Transfer-Encoding: binary");
     ob_clean();
     flush();

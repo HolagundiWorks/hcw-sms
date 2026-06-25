@@ -72,7 +72,7 @@ if($_REQUEST['modfunc']=='save')
                         $tot_weighted_percent=array();
                            $assignment_type_count=array();
                           
-			unset($_openSIS['DrawHeader']);
+			unset($_hcwsms['DrawHeader']);
 			echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
 			echo "<tr><td width=105>".DrawLogo()."</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">". GetSchool(UserSchool())."<div style=\"font-size:12px;\">"._studentProgressReport."</div></td><td align=right style=\"padding-top:20px;\">". ProperDate(DBDate()) ."<br/>"._studentProgressReport."</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
 			echo '<table border=0 style=\"font-size:12px;\">';
@@ -338,7 +338,7 @@ if(!$_REQUEST['modfunc'])
         }
 	if($_REQUEST['search_modfunc']=='list') 
 	{
-		echo "<FORM id=F1 action=ForExport.php?modname=".strip_tags(trim($_REQUEST[modname]))."&modfunc=save&include_inactive=".strip_tags(trim($_REQUEST['include_inactive']))."&_openSIS_PDF=true method=POST target=_blank>";
+		echo "<FORM id=F1 action=ForExport.php?modname=".strip_tags(trim($_REQUEST[modname]))."&modfunc=save&include_inactive=".strip_tags(trim($_REQUEST['include_inactive']))."&_hcwsms_PDF=true method=POST target=_blank>";
 		
 		$extra['extra_header_left'] = '<div class="checkbox">';
 		$extra['extra_header_left'] .= '<label class="checkbox-inline"><INPUT type=checkbox value=Y name=assigned_date id=assigned_date>'._assignedDate.'</label>';

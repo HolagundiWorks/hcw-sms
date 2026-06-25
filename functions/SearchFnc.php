@@ -30,7 +30,7 @@ include "lang/language.php";
 function Search($type, $extra = array(), $search_from_grade = '')
 {
 
-    global $_openSIS;
+    global $_hcwsms;
     switch ($type) {
         case 'student_id':
             if ($_REQUEST['bottom_back']) {
@@ -49,7 +49,7 @@ function Search($type, $extra = array(), $search_from_grade = '')
                         $_SESSION['UserSchool'] = $_REQUEST['school_id'];
                 } else
                     unset($_SESSION['student_id']);
-                //                if (!$_REQUEST['_openSIS_PDF'])
+                //                if (!$_REQUEST['_hcwsms_PDF'])
                 //                    echo '<script language=JavaScript>parent.side.location="' . $_SESSION['Side_PHP_SELF'] . '?modcat="+parent.side.document.forms[0].modcat.value;</script>';
             }
 
@@ -76,7 +76,7 @@ function Search($type, $extra = array(), $search_from_grade = '')
                         $_SESSION['UserSchool'] = $_REQUEST['school_id'];
                 } else
                     unset($_SESSION['student_id']);
-                //                if (!$_REQUEST['_openSIS_PDF'])
+                //                if (!$_REQUEST['_hcwsms_PDF'])
                 //                    echo '<script language=JavaScript>parent.side.location="' . $_SESSION['Side_PHP_SELF'] . '?modcat="+parent.side.document.forms[0].modcat.value;</script>';
             }
 
@@ -99,7 +99,7 @@ function Search($type, $extra = array(), $search_from_grade = '')
                         $_SESSION['UserSchool'] = $_REQUEST['school_id'];
                 } else
                     unset($_SESSION['staff_id']);
-                //                if (!$_REQUEST['_openSIS_PDF'])
+                //                if (!$_REQUEST['_hcwsms_PDF'])
                 //                    echo '<script language=JavaScript>parent.side.location="' . $_SESSION['Side_PHP_SELF'] . '?modcat="+parent.side.document.forms[0].modcat.value;</script>';
             }
 
@@ -127,7 +127,7 @@ function Search($type, $extra = array(), $search_from_grade = '')
                         $_SESSION['UserSchool'] = $_REQUEST['school_id'];
                 } else
                     unset($_SESSION['staff_id']);
-                //                if (!$_REQUEST['_openSIS_PDF'])
+                //                if (!$_REQUEST['_hcwsms_PDF'])
                 //                    echo '<script language=JavaScript>parent.side.location="' . $_SESSION['Side_PHP_SELF'] . '?modcat="+parent.side.document.forms[0].modcat.value;</script>';
             }
 
@@ -615,7 +615,7 @@ function Search($type, $extra = array(), $search_from_grade = '')
 
 function Search_Miss_Attn($type, $extra = array())
 {
-    global $_openSIS;
+    global $_hcwsms;
 
     switch ($type) {
 
@@ -853,7 +853,7 @@ function Search_GroupSchedule($type, $extra = array())
 
 function Search_absence_summary($type, $extra = array(), $search_from_grade = '')
 {
-    global $_openSIS;
+    global $_hcwsms;
 
     switch ($type) {
         case 'student_id':
@@ -1066,7 +1066,7 @@ function Search_absence_summary($type, $extra = array(), $search_from_grade = ''
 
 function SearchStaff($type, $extra = array())
 {
-    global $_openSIS;
+    global $_hcwsms;
 
     switch ($type) {
         case 'student_id':
@@ -1296,7 +1296,7 @@ function SearchStaff($type, $extra = array())
 function stafflist($type, $extra = array())
 {
 
-    global $_openSIS;
+    global $_hcwsms;
 
     switch ($type) {
         case 'staff_id':
@@ -1322,7 +1322,7 @@ function stafflist($type, $extra = array())
                         $_SESSION['UserSchool'] = $_REQUEST['school_id'];
                 }
 
-                //                if (!$_REQUEST['_openSIS_PDF'])
+                //                if (!$_REQUEST['_hcwsms_PDF'])
                 //                    echo '<script language=JavaScript>parent.side.location="' . $_SESSION['Side_PHP_SELF'] . '?modcat="+parent.side.document.forms[0].modcat.value;</script>';
             }
 

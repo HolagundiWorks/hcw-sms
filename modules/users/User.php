@@ -126,7 +126,7 @@ if ($_REQUEST['modfunc'] == 'remove_stu') {
                 $can_edit_RET = DBGet(DBQuery('SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID=\'' . $profile_id_mod . '\' AND MODNAME=\'' . 'users/User.php&category_id=' . $_REQUEST['category_id'] . '\' AND CAN_EDIT=\'' . 'Y' . '\''), array(), array('MODNAME'));
         }
         if ($can_edit_RET)
-            $_openSIS['allow_edit'] = true;
+            $_hcwsms['allow_edit'] = true;
     }
 
     unset($schools);
@@ -441,12 +441,12 @@ if ($_REQUEST['modfunc'] == 'remove_stu') {
         }
 
 
-        $_openSIS['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&include=$_REQUEST[include]";
+        $_hcwsms['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&include=$_REQUEST[include]";
         if ($_REQUEST['category_id'])
-            $_openSIS['selected_tab'] .= '&category_id=' . $_REQUEST['category_id'];
+            $_hcwsms['selected_tab'] .= '&category_id=' . $_REQUEST['category_id'];
         if (User('PROFILE_ID') != 4)
-            $_openSIS['selected_tab'] .= '&staff_id=' . $_REQUEST['staff_id'];
-        $_openSIS['selected_tab'] .= ($_REQUEST['profile'] == 'none' ? '&profile=none' : '');
+            $_hcwsms['selected_tab'] .= '&staff_id=' . $_REQUEST['staff_id'];
+        $_hcwsms['selected_tab'] .= ($_REQUEST['profile'] == 'none' ? '&profile=none' : '');
 
         //echo '<div class="panel">';
         PopTable('header', $tabs);

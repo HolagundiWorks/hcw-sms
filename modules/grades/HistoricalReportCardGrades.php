@@ -346,7 +346,7 @@ if (UserStudentID()) {
         if ($mp_id != '0') {
             $findMP = DBGet(DBQuery('SELECT mp_source, syear, school_id FROM marking_periods WHERE marking_period_id = ' . $mp_id));
 
-            if ($findMP[1]['MP_SOURCE'] == 'openSIS') {
+            if ($findMP[1]['MP_SOURCE'] == 'HCW-SMS') {
                 $findStudentGradelevel = DBGet(DBQuery('SELECT * FROM enroll_grade WHERE syear = ' . $findMP[1]['SYEAR'] . ' AND school_id = ' . $findMP[1]['SCHOOL_ID'] . ' AND student_id = ' . UserStudentID()));
 
                 if (!empty($findStudentGradelevel)) {

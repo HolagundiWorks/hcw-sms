@@ -147,7 +147,7 @@ if (clean_param($_REQUEST['modfunc'], PARAM_ALPHAMOD) == 'gradebook') {
         else
             $programconfig[User('STAFF_ID')] = true;
 
-        $_openSIS['_makeLetterGrade']['courses'][$course_period_id] = DBGet(DBQuery('SELECT DOES_BREAKOFF,GRADE_SCALE_ID FROM course_periods WHERE COURSE_PERIOD_ID=\'' . $course_period_id . '\''));
+        $_hcwsms['_makeLetterGrade']['courses'][$course_period_id] = DBGet(DBQuery('SELECT DOES_BREAKOFF,GRADE_SCALE_ID FROM course_periods WHERE COURSE_PERIOD_ID=\'' . $course_period_id . '\''));
         $_SESSION['ROUNDING'] = $programconfig[User('STAFF_ID')]['ROUNDING'];
         include '_MakeLetterGradeFnc.php';
         if (false && GetMP($_REQUEST['mp'], 'TABLE') == 'school_semesters')
@@ -1131,10 +1131,10 @@ if ($cp_type != 'custom') {
 }
 $mps_select .= '</SELECT>';
 
-// if running as a teacher program then openSIS[allow_edit] will already be set according to admin permissions
+// if running as a teacher program then HCW-SMS[allow_edit] will already be set according to admin permissions
 
-if (!isset($_openSIS['allow_edit']))
-    $_openSIS['allow_edit'] = $allow_edit;
+if (!isset($_hcwsms['allow_edit']))
+    $_hcwsms['allow_edit'] = $allow_edit;
 
 if ($_REQUEST['use_percents'] != 'true') {
     $extra['SELECT'] = ",'' AS GRADE_PERCENT,'' AS REPORT_CARD_GRADE";
@@ -1178,7 +1178,7 @@ $stu_RET = GetStuList($extra);
 
 echo "<FORM class=\"no-margin\" action=Modules.php?modname=" . strip_tags(trim($_REQUEST[modname])) . " method=POST>";
 
-if (!$_REQUEST['_openSIS_PDF']) {
+if (!$_REQUEST['_hcwsms_PDF']) {
 
     $tmp_REQUEST = $_REQUEST;
     $tmp_REQUEST_mp = $tmp_REQUEST['mp'];
@@ -1357,7 +1357,7 @@ if (substr($_REQUEST['mp'], 0, 1) != 'E' && GetMP($_REQUEST['mp'], 'DOES_COMMENT
         $columns += array('CA' . $value['ID'] => $value['TITLE']);
     for ($i = 1; $i <= $max_current_commentsB; $i++)
         $columns += array('CB' . $i => 'Comment ' . $i);
-    if (count($commentsB_select) && AllowEdit() && !isset($_REQUEST['_openSIS_PDF']))
+    if (count($commentsB_select) && AllowEdit() && !isset($_REQUEST['_hcwsms_PDF']))
         $columns += array('CB' . $i => _addComment);
     $columns += array('COMMENT' => _comment);
 }
@@ -1398,7 +1398,7 @@ function _makeGrade($value, $column)
     $tc_grade = 'n';
     if ($column == 'REPORT_CARD_GRADE') {
 
-        if (!isset($_REQUEST['_openSIS_PDF'])) {
+        if (!isset($_REQUEST['_hcwsms_PDF'])) {
             $student_count++;
             $tabindex = $student_count;
 
@@ -1501,7 +1501,7 @@ function _makePercent($value, $column)
     global $THIS_RET, $current_RET, $grades_RET, $student_count, $tabindex, $import_RET;
 
     if ($column == 'GRADE_PERCENT') {
-        if (!isset($_REQUEST['_openSIS_PDF'])) {
+        if (!isset($_REQUEST['_hcwsms_PDF'])) {
             $student_count++;
             $tabindex = $student_count;
             if ($import_RET[$THIS_RET['STUDENT_ID']])
@@ -1534,7 +1534,7 @@ function _makeComment($value, $column)
         $div = true;
     }
 
-    if (!isset($_REQUEST['_openSIS_PDF'])) {
+    if (!isset($_REQUEST['_hcwsms_PDF'])) {
 
         $return = TextAreaInputInputFinalGrade(str_replace('"', '\"', $select), "values[$THIS_RET[STUDENT_ID]][comment]", '', 'tabindex=' . ($tabindex += 100), $div);
     } else {
@@ -1561,7 +1561,7 @@ function _makeCommentsA($value, $column)
         }
     }
 
-    if (!isset($_REQUEST['_openSIS_PDF']))
+    if (!isset($_REQUEST['_hcwsms_PDF']))
         $return = SelectInput($select, 'values[' . $THIS_RET['STUDENT_ID'] . '][commentsA][' . $value . ']', '', $commentsA_select, 'N/A', 'tabindex=' . ($tabindex += 100), $div);
     else
         $return = $select != ' ' ? $select : 'o';
@@ -1581,7 +1581,7 @@ function _makeCommentsB($value, $column)
         $div = true;
     }
 
-    if (!isset($_REQUEST['_openSIS_PDF']))
+    if (!isset($_REQUEST['_hcwsms_PDF']))
         if ($value > $max_current_commentsB)
             $return = SelectInput('', 'values[' . $THIS_RET['STUDENT_ID'] . '][commentsB][' . $value . ']', '', $commentsB_select, 'N/A', 'tabindex=' . ($tabindex += 100));
         elseif ($import_commentsB_RET[$THIS_RET['STUDENT_ID']][$value] || $current_commentsB_RET[$THIS_RET['STUDENT_ID']][$value])

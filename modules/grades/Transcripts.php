@@ -36,7 +36,7 @@ if(isset($_SESSION['student_id']) && $_SESSION['student_id'] != '')
 $schoolinfo = DBGET(DBQUERY('SELECT * FROM schools WHERE ID = ' . UserSchool()));
 $schoolinfo = $schoolinfo[1];
 $tsyear = UserSyear();
-$tpicturepath = $openSISPath . $StudentPicturesPath;
+$tpicturepath = $hcwsmsPath . $StudentPicturesPath;
 $studataquery = 'select 
 s.first_name
 , s.last_name
@@ -607,7 +607,7 @@ if ($_REQUEST['modfunc'] == 'save') {
 if (!$_REQUEST['modfunc']) {
     DrawBC(""._gradebook." > " . ProgramTitle());
     if ($_REQUEST['search_modfunc'] == 'list') {
-        echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&_openSIS_PDF=true method=POST target=_blank>";
+        echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&_hcwsms_PDF=true method=POST target=_blank>";
 
         $extra['extra_header_left'] = '<div class="form-inline">';
         $extra['extra_header_left'] .= '<div class="form-group"><div class="checkbox checkbox-switch switch-success switch-xs"><label><input type="checkbox" name="show_photo" id="show_photo" /><span></span> '._includeStudentPicture.'</label></div></div>';
@@ -621,7 +621,7 @@ if (!$_REQUEST['modfunc']) {
         $get_sis_gradelevels = DBGet(DBQuery('SELECT ID,TITLE,SHORT_NAME,SORT_ORDER FROM `school_gradelevels` WHERE SCHOOL_ID=\''.UserSchool().'\' ORDER BY SORT_ORDER'));
 
         if (count($get_sis_gradelevels) > 0) {
-            $extra['extra_header_left'] .= '<h6 class="text-primary">'._openSISGradeLevels.':</h6>';
+            $extra['extra_header_left'] .= '<h6 class="text-primary">'._hcwsmsGradeLevels.':</h6>';
             $extra['extra_header_left'] .= '<div class="form-group">';
 
             foreach ($get_sis_gradelevels as $one_gradel) {

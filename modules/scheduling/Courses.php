@@ -38,13 +38,13 @@ if ($_REQUEST['modfunc'] != 'delete' && !$_REQUEST['subject_id']) {
 
 if (User('PROFILE') == 'teacher') {
 	if (isset($_REQUEST['course_period_id']) && $_REQUEST['course_period_id'] != 'new')
-		$_REQUEST['course_period_id'] = OpenSISRequireCoursePeriodAccess($_REQUEST['course_period_id']);
+		$_REQUEST['course_period_id'] = HcwsmsRequireCoursePeriodAccess($_REQUEST['course_period_id']);
 
 	if (isset($_REQUEST['w_course_period_id']) && $_REQUEST['w_course_period_id'] != '')
-		$_REQUEST['w_course_period_id'] = OpenSISRequireCoursePeriodAccess($_REQUEST['w_course_period_id']);
+		$_REQUEST['w_course_period_id'] = HcwsmsRequireCoursePeriodAccess($_REQUEST['w_course_period_id']);
 
 	if (isset($_REQUEST['tables']['parent_id']) && $_REQUEST['tables']['parent_id'] != '')
-		$_REQUEST['tables']['parent_id'] = OpenSISRequireCoursePeriodAccess($_REQUEST['tables']['parent_id']);
+		$_REQUEST['tables']['parent_id'] = HcwsmsRequireCoursePeriodAccess($_REQUEST['tables']['parent_id']);
 }
 
 if ($_REQUEST['course_modfunc'] == 'search') {
@@ -103,10 +103,10 @@ if ($_REQUEST['tables'] && ($_POST['tables'] || $_REQUEST['ajax']) && AllowEdit(
 
 			if ($table_name == 'course_periods' && User('PROFILE') == 'teacher') {
 				if ($id != 'new')
-					$id = OpenSISRequireCoursePeriodAccess($id);
+					$id = HcwsmsRequireCoursePeriodAccess($id);
 
 				if (isset($columns['PARENT_ID']) && $columns['PARENT_ID'] != '')
-					$columns['PARENT_ID'] = OpenSISRequireCoursePeriodAccess($columns['PARENT_ID']);
+					$columns['PARENT_ID'] = HcwsmsRequireCoursePeriodAccess($columns['PARENT_ID']);
 			}
 
 			if ($id != 'new') {

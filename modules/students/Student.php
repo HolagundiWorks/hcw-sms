@@ -36,19 +36,19 @@ unset($flag);
 
 if (User('PROFILE') == 'parent' || User('PROFILE') == 'student') {
     if (isset($_REQUEST['student_id']) && $_REQUEST['student_id'] == 'new') {
-        OpenSISDenyAccess();
+        HcwsmsDenyAccess();
     }
 
-    $resolved_student_id = OpenSISResolveAuthorizedStudentId(isset($_REQUEST['student_id']) ? $_REQUEST['student_id'] : '');
+    $resolved_student_id = HcwsmsResolveAuthorizedStudentId(isset($_REQUEST['student_id']) ? $_REQUEST['student_id'] : '');
 
     if (!$resolved_student_id) {
-        OpenSISDenyAccess();
+        HcwsmsDenyAccess();
     }
 
     $_SESSION['student_id'] = $resolved_student_id;
     $_REQUEST['student_id'] = $resolved_student_id;
 
-    $student_school_id = OpenSISGetStudentCurrentSchool($resolved_student_id);
+    $student_school_id = HcwsmsGetStudentCurrentSchool($resolved_student_id);
 
     if ($student_school_id) {
         $_SESSION['UserSchool'] = $student_school_id;
@@ -541,7 +541,7 @@ if ($_REQUEST['action'] != 'delete' && $_REQUEST['action'] != 'delete_goal') {
             else
                 $can_edit_RET = DBGet(DBQuery("SELECT MODNAME FROM profile_exceptions WHERE PROFILE_ID='3' AND MODNAME='students/Student.php&category_id=$_REQUEST[category_id]' AND CAN_EDIT='Y'"));
             if ($can_edit_RET)
-                $_openSIS['allow_edit'] = true;
+                $_hcwsms['allow_edit'] = true;
         }
 
         if (clean_param($_REQUEST['modfunc'], PARAM_NOTAGS) == 'update' && AllowEdit()) {
@@ -564,16 +564,16 @@ if ($_REQUEST['action'] != 'delete' && $_REQUEST['action'] != 'delete_goal') {
             unset($_REQUEST['year_students']);
             if ($_REQUEST['student_id'] && $_REQUEST['student_id'] != 'new') {
                 if (User('PROFILE') == 'parent' || User('PROFILE') == 'student') {
-                    $resolved_student_id = OpenSISResolveAuthorizedStudentId($_REQUEST['student_id']);
+                    $resolved_student_id = HcwsmsResolveAuthorizedStudentId($_REQUEST['student_id']);
 
                     if (!$resolved_student_id) {
-                        OpenSISDenyAccess();
+                        HcwsmsDenyAccess();
                     }
 
                     $_REQUEST['student_id'] = $resolved_student_id;
                     $_SESSION['student_id'] = $resolved_student_id;
 
-                    $student_school_id = OpenSISGetStudentCurrentSchool($resolved_student_id);
+                    $student_school_id = HcwsmsGetStudentCurrentSchool($resolved_student_id);
 
                     if ($student_school_id) {
                         $_SESSION['UserSchool'] = $student_school_id;
@@ -1272,7 +1272,7 @@ if ($_REQUEST['action'] != 'delete' && $_REQUEST['action'] != 'delete_goal') {
                             $_REQUEST['student_id'] = 'new';
                             unset($value);
                         }
-                        if ($openSISModules['Food_Service']) {
+                        if ($hcwsmsModules['Food_Service']) {
                         }
                         if (!$error_new_student) {
                             if ($un_chl_res != 'exist' && $pass_chl_res != 'exist') {
@@ -1836,9 +1836,9 @@ if ($_REQUEST['action'] != 'delete' && $_REQUEST['action'] != 'delete_goal') {
                     unset($ti);
                     unset($td);
                     $swap_tabs = 'n';
-                    $_openSIS['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&include=$_REQUEST[include]";
+                    $_hcwsms['selected_tab'] = "Modules.php?modname=$_REQUEST[modname]&include=$_REQUEST[include]";
                     if ($_REQUEST['category_id'])
-                        $_openSIS['selected_tab'] .= '&category_id=' . $_REQUEST['category_id'];
+                        $_hcwsms['selected_tab'] .= '&category_id=' . $_REQUEST['category_id'];
 
 
                     //echo '</div>'; //force breaking non ended div

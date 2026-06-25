@@ -27,7 +27,7 @@
 #
 #***************************************************************************************
 include('../../RedirectModulesInc.php');
-if ($_openSIS['modules_search'] && $extra['force_search'])
+if ($_hcwsms['modules_search'] && $extra['force_search'])
     $_REQUEST['search_modfunc'] = '';
 
 if (Preferences('SEARCH') != 'Y' && !$extra['force_search'])
@@ -1176,10 +1176,10 @@ if ($_REQUEST['search_modfunc'] == 'search_fnc' || !$_REQUEST['search_modfunc'])
         unset($tmp_REQUEST['expanded_view']);
         if ($_REQUEST['expanded_view'] != 'true' && !UserStudentID() && count($students_RET) != 0) {
             DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=true><i class=\"icon-square-down-right\"></i> " . _expandedView . "</A>", $extra['header_right']);
-            DrawHeader(str_replace('', '', substr($_openSIS['SearchTerms'], 0, -4)));
+            DrawHeader(str_replace('', '', substr($_hcwsms['SearchTerms'], 0, -4)));
         } elseif (!UserStudentID() && count($students_RET) != 0) {
             DrawHeader("<A HREF=" . PreparePHP_SELF($tmp_REQUEST) . "&expanded_view=false><i class=\"icon-square-up-left\"></i> " . _originalView . "</A>", $extra['header_right']);
-            DrawHeader(str_replace('', '', substr($_openSIS['Search'], 0, -4)));
+            DrawHeader(str_replace('', '', substr($_hcwsms['Search'], 0, -4)));
         }
         DrawHeader($extra['extra_header_left'], $extra['extra_header_right']);
         if ($_REQUEST['LO_save'] != '1' && !$extra['suppress_save']) {

@@ -193,7 +193,7 @@ if ($_REQUEST['modfunc'] == 'choose_course') {
         $message_my_class = 'yes';
         include 'modules/scheduling/CoursesforWindow.php';
     } else {
-        $_REQUEST['course_period_id'] = OpenSISRequireCoursePeriodAccess($_REQUEST['course_period_id']);
+        $_REQUEST['course_period_id'] = HcwsmsRequireCoursePeriodAccess($_REQUEST['course_period_id']);
         $_SESSION['MassSchedule.php']['subject_id'] = $_REQUEST['subject_id'];
         $_SESSION['MassSchedule.php']['course_id'] = $_REQUEST['course_id'];
         $_SESSION['MassSchedule.php']['course_period_id'] = $_REQUEST['course_period_id'];

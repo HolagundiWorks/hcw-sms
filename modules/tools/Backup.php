@@ -99,7 +99,7 @@ if ($print_form > 0 && !$_REQUEST['modfunc'] == 'cancel') {
     ?>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <form id="dataForm" name="dataForm" method="post" action="ForExport.php?modname=tools/Backup.php&action=backup&_openSIS_PDF=true" target=_blank>
+            <form id="dataForm" name="dataForm" method="post" action="ForExport.php?modname=tools/Backup.php&action=backup&_hcwsms_PDF=true" target=_blank>
                 <?php
                 PopTable('header',  _backup);
                 echo '<h4 class="text-danger">'._note.':</h4><p>'._thisBackupUtilityWillCreateABackupOfTheDatabaseAlongWithTheDatabaseStructureYouWillBeAbleToUseThisBackupFileToRestoreTheDatabaseHoweverInOrderToRestoreYouWillNeedToHaveAccessToMySqlAdministrationApplicationLikePhpMyAdminAndTheRootUserIdAndPasswordToMySql.'</p>';
@@ -182,7 +182,7 @@ function EXPORT_TABLES($host, $user, $pass, $name, $tables = false, $backup_name
               --
 
                     CREATE VIEW marking_periods AS
-    SELECT q.marking_period_id, 'openSIS' AS mp_source, q.syear,
+    SELECT q.marking_period_id, 'HCW-SMS' AS mp_source, q.syear,
 	q.school_id, 'quarter' AS mp_type, q.title, q.short_name,
 	q.sort_order, q.semester_id AS parent_id,
 	s.year_id AS grandparent_id, q.start_date,
@@ -192,7 +192,7 @@ function EXPORT_TABLES($host, $user, $pass, $name, $tables = false, $backup_name
     FROM school_quarters q
     JOIN school_semesters s ON q.semester_id = s.marking_period_id
 UNION
-    SELECT marking_period_id, 'openSIS' AS mp_source, syear,
+    SELECT marking_period_id, 'HCW-SMS' AS mp_source, syear,
 	school_id, 'semester' AS mp_type, title, short_name,
 	sort_order, year_id AS parent_id,
 	-1 AS grandparent_id, start_date,
@@ -201,7 +201,7 @@ UNION
 	does_exam, does_comments
     FROM school_semesters
 UNION
-    SELECT marking_period_id, 'openSIS' AS mp_source, syear,
+    SELECT marking_period_id, 'HCW-SMS' AS mp_source, syear,
 	school_id, 'year' AS mp_type, title, short_name,
 	sort_order, -1 AS parent_id,
 	-1 AS grandparent_id, start_date,

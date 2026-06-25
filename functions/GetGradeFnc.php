@@ -26,17 +26,17 @@
 #
 #***************************************************************************************
 function GetGrade($grade,$column='TITLE')
-{	global $_openSIS;
+{	global $_hcwsms;
 		if($column!='TITLE' && $column!='SHORT_NAME' && $column!='SORT_ORDER')
 		$column = 'TITLE';
-	if(!$_openSIS['GetGrade'])
+	if(!$_hcwsms['GetGrade'])
 	{
 		$QI=DBQuery('SELECT ID,TITLE,SORT_ORDER,SHORT_NAME FROM school_gradelevels');
-		$_openSIS['GetGrade'] = DBGet($QI,array(),array('ID'));
+		$_hcwsms['GetGrade'] = DBGet($QI,array(),array('ID'));
 	}
 	if($column=='TITLE')
-		$extra = '<!-- '.$_openSIS['GetGrade'][$grade][1]['SORT_ORDER'].' -->';
+		$extra = '<!-- '.$_hcwsms['GetGrade'][$grade][1]['SORT_ORDER'].' -->';
 
-	return $extra.$_openSIS['GetGrade'][$grade][1][$column];
+	return $extra.$_hcwsms['GetGrade'][$grade][1][$column];
 }
 ?>

@@ -200,9 +200,9 @@ if ($_REQUEST['modfunc'] == 'save') {
 
             foreach ($RET as $student_id => $courses) {
                 echo "<table width=100%  style=\" font-family:Arial; font-size:12px;\" >";
-                echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">"._studentSchedulesReport."</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredByOpenSis."</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
+                echo "<tr><td width=105>" . DrawLogo() . "</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">" . GetSchool(UserSchool()) . "<div style=\"font-size:12px;\">"._studentSchedulesReport."</div></td><td align=right style=\"padding-top:20px;\">" . ProperDate(DBDate()) . "<br />"._poweredByHcwsms."</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
 
-                unset($_openSIS['DrawHeader']);
+                unset($_hcwsms['DrawHeader']);
                 echo '<br>';
                 echo '<table  border=0>';
                 echo '<tr><td>'._studentId.':</td>';
@@ -239,7 +239,7 @@ if (!$_REQUEST['modfunc']) {
             $mp_select .= '<OPTION value=' . $mp['MARKING_PERIOD_ID'] . '>' . $mp['TITLE'];
         $mp_select .= '</SELECT>';
 
-        echo "<FORM class=form-horizontal name=sch id=sch action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&head_html=Student+Schedules+Report&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_openSIS_PDF=true method=POST target=_blank>";
+        echo "<FORM class=form-horizontal name=sch id=sch action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&head_html=Student+Schedules+Report&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_hcwsms_PDF=true method=POST target=_blank>";
 
         Widgets('mailing_labels', true);
         $extra['extra_header_left'] = '<div class="row">';

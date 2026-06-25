@@ -35,13 +35,13 @@ function DrawTab($title, $link = '', $tabcolor = 'tab_header_bg_active', $textco
     if ($link) {
         if (is_array($rollover))
             $rollover = " onmouseover=\"document.getElementById('tab[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.backgroundColor='" . $rollover['tabcolor'] . "';document.getElementById('tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.color='" . $rollover['textcolor'] . "';\" onmouseout=\"document.getElementById('tab[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.backgroundColor='';document.getElementById('tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.color='" . $textcolor . "';\" ";
-        if (!isset($_REQUEST['_openSIS_PDF']))
+        if (!isset($_REQUEST['_hcwsms_PDF']))
             $block_table .= "<A HREF='$link' $rollover id=tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "] onclick='grabA(this); return false;'>$title</A>";
         else
             $block_table .= '<a href="javascript:void(0);">'.$title.'</a>';
     }
     else {
-        if (!isset($_REQUEST['_openSIS_PDF']))
+        if (!isset($_REQUEST['_hcwsms_PDF']))
             $block_table .= '<a href="javascript:void(0);">'.$title.'</a>';
         else
             $block_table .= '<a href="javascript:void(0);">'.$title.'</a>';
@@ -59,13 +59,13 @@ function DrawinactiveTab($title, $link = '', $tabactivecolor = 'tab_header_bg', 
     if ($link) {
         if (is_array($rollover))
             $rollover = " onmouseover=\"document.getElementById('tab[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.backgroundColor='" . $rollover['tabcolor'] . "';document.getElementById('tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.color='" . $rollover['textcolor'] . "';\" onmouseout=\"document.getElementById('tab[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.backgroundColor='';document.getElementById('tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.color='" . $textcolor . "';\" ";
-        if (!isset($_REQUEST['_openSIS_PDF']))
+        if (!isset($_REQUEST['_hcwsms_PDF']))
             $block_table .= "<A HREF='$link' $rollover id=tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "] onclick='grabA(this); return false;'>$title</A>";
         else
             $block_table .= '<a href="javascript:void(0);">'.$title.'</a>';
     }
     else {
-        if (!isset($_REQUEST['_openSIS_PDF']))
+        if (!isset($_REQUEST['_hcwsms_PDF']))
             $block_table .= '<a href="javascript:void(0);">'.$title.'</a>';
         else
             $block_table .= '<a href="javascript:void(0);">'.$title.'</a>';
@@ -84,13 +84,13 @@ function DrawRoundedRect($title, $link = '', $tabcolor = '#333366', $textcolor =
     if ($link) {
         if (is_array($rollover))
             $rollover = " onmouseover=\"document.getElementById('tab[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.backgroundColor='" . $rollover['tabcolor'] . "';document.getElementById('tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.color='" . $rollover['textcolor'] . "';\" onmouseout=\"document.getElementById('tab[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.backgroundColor='$tabcolor';document.getElementById('tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]').style.color='" . $textcolor . "';\" ";
-        if (!isset($_REQUEST['_openSIS_PDF']))
+        if (!isset($_REQUEST['_hcwsms_PDF']))
             $block_table .= "<A HREF='$link' class=BoxHeading style=$rollover id=tab_link[" . par_rep('/[^a-zA-Z0-9]/', '_', $link) . "]>$title</A>";
         else
             $block_table .= "<font color=$textcolor face=Verdana,Arial,sans-serif size=-2><b>$title</b></font>";
     }
     else {
-        if (!isset($_REQUEST['_openSIS_PDF']))
+        if (!isset($_REQUEST['_hcwsms_PDF']))
             $block_table .= "<font color=$textcolor>" . $title . "</font>";
         else
             $block_table .= "<font color=$textcolor><b>" . $title . "</b></font>";

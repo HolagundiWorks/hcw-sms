@@ -198,9 +198,9 @@ if (!$_REQUEST['modfunc']) {
             $mp = $fy;
         }
         if ($_REQUEST['w_course_period_id'])
-            echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&honor_roll=" . strip_tags(trim($_REQUEST['honor_roll'])) . "&mp=$mp&w_course_period_id=" . strip_tags(trim($_REQUEST['w_course_period_id'])) . "&_openSIS_PDF=true method=POST target=_blank>";
+            echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&honor_roll=" . strip_tags(trim($_REQUEST['honor_roll'])) . "&mp=$mp&w_course_period_id=" . strip_tags(trim($_REQUEST['w_course_period_id'])) . "&_hcwsms_PDF=true method=POST target=_blank>";
         else
-            echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&honor_roll=" . strip_tags(trim($_REQUEST['honor_roll'])) . "&mp=$mp&_openSIS_PDF=true method=POST target=_blank>";
+            echo "<FORM action=ForExport.php?modname=" . strip_tags(trim($_REQUEST[modname])) . "&modfunc=save&include_inactive=" . strip_tags(trim($_REQUEST['include_inactive'])) . "&honor_roll=" . strip_tags(trim($_REQUEST['honor_roll'])) . "&mp=$mp&_hcwsms_PDF=true method=POST target=_blank>";
         $extra['header_right'] = SubmitButton(_createHonorRollForSelectedStudents, '', 'class="btn btn-primary"');
 
         $extra['extra_header_left'] = '<div>';
@@ -210,7 +210,7 @@ if (!$_REQUEST['modfunc']) {
 
         $extra['extra_header_left'] .= '</div>';
     }
-    if (!isset($_REQUEST['_openSIS_PDF'])) {
+    if (!isset($_REQUEST['_hcwsms_PDF'])) {
         $extra['SELECT'] = ",s.STUDENT_ID AS CHECKBOX";
         $extra['functions'] = array('CHECKBOX' => '_makeChooseCheckbox');
         // $extra['columns_before'] = array('CHECKBOX' => '</A><INPUT type=checkbox value=Y name=controller checked onclick="checkAll(this.form,this.form.controller.checked,\'st_arr\');"><A>');

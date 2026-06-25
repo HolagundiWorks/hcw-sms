@@ -65,7 +65,7 @@ if (!$connection) {
 //		ie, $processable_results = DBQuery("select * from students");
 function DBQuery($sql)
 {
-	global $DatabaseType, $_openSIS, $connection;
+	global $DatabaseType, $_hcwsms, $connection;
 
 	// $connection = db_start();
 
@@ -193,7 +193,7 @@ function db_properties($table)
 
 function db_show_error($sql, $failnote, $additional = '')
 {
-	global $openSISTitle, $openSISVersion, $openSISNotifyAddress, $openSISMode;
+	global $hcwsmsTitle, $hcwsmsVersion, $hcwsmsNotifyAddress, $hcwsmsMode;
 
 
 	$tb = debug_backtrace();
@@ -226,7 +226,7 @@ function db_show_error($sql, $failnote, $additional = '')
 			<TD><pre>" . date("m/d/Y h:i:s") . "</pre></TD>
 		</TR><TR>
 			<TD align=right></TD>
-			<TD>openSIS has encountered an error that could have resulted from any of the following:
+			<TD>HCW-SMS has encountered an error that could have resulted from any of the following:
 			<br/>
 			<ul>
 			<li>Invalid data input</li>
@@ -234,7 +234,7 @@ function db_show_error($sql, $failnote, $additional = '')
 			<li>Program error</li>
 			</ul>
 			
-			Please take this screen shot and send it to your openSIS representative for debugging and resolution.
+			Please take this screen shot and send it to your HCW-SMS representative for debugging and resolution.
 			</TD>
 		</TR>
 		
@@ -242,8 +242,8 @@ function db_show_error($sql, $failnote, $additional = '')
 
 	echo "<!-- SQL STATEMENT: \n\n $sql \n\n -->";
 
-	if ($openSISNotifyAddress) {
-		$message = "System: $openSISTitle \n";
+	if ($hcwsmsNotifyAddress) {
+		$message = "System: $hcwsmsTitle \n";
 		$message .= "Date: " . date("m/d/Y h:i:s") . "\n";
 		$message .= "Page: " . $_SERVER['PHP_SELF'] . ' ' . ProgramTitle() . " \n\n";
 		$message .= "Failure Notice:  $failnote \n";
@@ -251,7 +251,7 @@ function db_show_error($sql, $failnote, $additional = '')
 		$message .= "\n $sql \n";
 		$message .= "Request Array: \n" . ShowVar($_REQUEST, 'Y', 'N');
 		$message .= "\n\nSession Array: \n" . ShowVar($_SESSION, 'Y', 'N');
-		mail($openSISNotifyAddress, 'openSIS Database Error', $message);
+		mail($hcwsmsNotifyAddress, 'HCW-SMS Database Error', $message);
 	}
 
 	die();

@@ -68,7 +68,7 @@ if($_REQUEST['modfunc']=='save')
 			echo "<tr><td width=105>".DrawLogo()."</td><td  style=\"font-size:15px; font-weight:bold; padding-top:20px;\">". GetSchool(UserSchool()).' ('.$cur_session.')'."<div style=\"font-size:12px;\">"._studentEnrollmentReport."</div></td><td align=right style=\"padding-top:20px\">". ProperDate(DBDate()) ."<br \>"._studentEnrollmentReport."</td></tr><tr><td colspan=3 style=\"border-top:1px solid #333;\">&nbsp;</td></tr></table>";
 			echo '<!-- MEDIA SIZE 8.5x11in -->';
 			
-				unset($_openSIS['DrawHeader']);
+				unset($_hcwsms['DrawHeader']);
                             unset($enroll_RET);
                             $i = 0;
                             foreach($value as $key=>$enrollment)
@@ -111,7 +111,7 @@ if(!$_REQUEST['modfunc'])
 
 	if($_REQUEST['search_modfunc']=='list')
 	{
-		echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_openSIS_PDF=true&head_html=Student+Report+Card method=POST target=_blank>";
+		echo "<FORM action=ForExport.php?modname=$_REQUEST[modname]&modfunc=save&include_inactive=$_REQUEST[include_inactive]&_hcwsms_PDF=true&head_html=Student+Report+Card method=POST target=_blank>";
 	}
 
 	$extra['link'] = array('FULL_NAME'=>false);

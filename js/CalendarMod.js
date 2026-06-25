@@ -98,7 +98,7 @@ calendar = {
 		}
 		
 		this.wrt("<table style='width:100%; margin-top:5px;' cellpadding='0' cellspacing='0'>");
-                this.wrt("<tr><th colspan='7' bgcolor='000'><font color='white'>openSIS Calendar</font></th></tr>");
+                this.wrt("<tr><th colspan='7' bgcolor='000'><font color='white'>HCW-SMS Calendar</font></th></tr>");
 		this.wrt("<tr><th><a href='javascript:calendar.makeCalendar("+(previous_month_year)+","+(previous_month)+");' title='"+this.month_names[previous_month]+" "+(previous_month_year)+"'>&lt;</a></th>");
 		this.wrt("<th colspan='5' class='calendar-title'><select name='calendar-month' class='calendar-month' onChange='calendar.makeCalendar("+year+",this.value);'>");
                 for(var i=0;i<12;i++) {

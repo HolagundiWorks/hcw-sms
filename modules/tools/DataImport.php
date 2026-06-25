@@ -110,14 +110,14 @@ if (clean_param($_REQUEST['page_display'], PARAM_ALPHAMOD) == 'STUDENT_INFO') {
         echo '<form action="Modules.php?modname=' . $_REQUEST['modname'] . '&action=display&page_display=STUDENT_INFO" name="student_form"  method="POST">';
         echo '<div class="panel panel-default">';
         echo '<div class="panel-heading">';
-        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheOpenSisDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickMapIt.'.</h4>';
+        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheHcwsmsDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickMapIt.'.</h4>';
         echo '</div>'; //.panel-heading
 
         echo '<div class="panel-body p-0">';
         echo '<div class="table-responsive">';
         echo '<table class="table table-striped">';
         echo '<thead>';
-        echo '<tr class="bg-grey-200"><th width="260">'._theseFieldsAreInYourExcelSpreadSheet.'</td><td width="200">&nbsp;</td><td>'._theseAreAvailableFieldsInOpenSis.'</td></tr>';
+        echo '<tr class="bg-grey-200"><th width="260">'._theseFieldsAreInYourExcelSpreadSheet.'</td><td width="200">&nbsp;</td><td>'._theseAreAvailableFieldsInHcwsms.'</td></tr>';
         echo '</thead>';
         $inputFileName = $_FILES['file']['tmp_name'];
         //        $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
@@ -244,14 +244,14 @@ if (clean_param($_REQUEST['page_display'], PARAM_ALPHAMOD) == 'STUDENT_INFO') {
         echo '<div class="panel panel-default">';
         
         echo '<div class="panel-heading">';
-        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheOpenSisDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickConfirm.'.</h4>';
+        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheHcwsmsDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickConfirm.'.</h4>';
         echo '</div>'; //.panel-body
         
         echo '<div class="panel-body p-0">';
         echo '<div class="table-responsive">';
         echo '<table class="table table-striped">';
     echo '<thead>';
-        echo '<tr class="bg-grey-200"><th style="word-wrap: break-word;">'._theseFieldsAreInYourExcelSpreadSheet.'</th><th width="200">&nbsp;</th><th>'._theseAreAvailableFieldsInOpenSis.'</th></tr>';
+        echo '<tr class="bg-grey-200"><th style="word-wrap: break-word;">'._theseFieldsAreInYourExcelSpreadSheet.'</th><th width="200">&nbsp;</th><th>'._theseAreAvailableFieldsInHcwsms.'</th></tr>';
     echo '</thead>';
         echo '<tbody>';
 
@@ -402,14 +402,14 @@ elseif (clean_param($_REQUEST['page_display'], PARAM_ALPHAMOD) == 'STAFF_INFO') 
         echo '<form action="Modules.php?modname=' . $_REQUEST['modname'] . '&action=display&page_display=STAFF_INFO" name="staff_form"  method="POST">';
         echo '<div class="panel panel-default">';
         echo '<div class="panel-heading">';
-        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheOpenSisDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickMapIt.'.</h4>';
+        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheHcwsmsDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickMapIt.'.</h4>';
         echo '</div>'; //.panel-heading
 
         echo '<div class="panel-body p-0">';
         echo '<div class="table-responsive">';
         echo '<table class="table table-striped">';
         echo '<thead>';
-        echo '<tr class="bg-grey-200"><th width="260">'._theseFieldsAreInYourExcelSpreadSheet.'</td><td width="200">&nbsp;</td><td>'._theseAreAvailableFieldsInOpenSis.'</td></tr>';
+        echo '<tr class="bg-grey-200"><th width="260">'._theseFieldsAreInYourExcelSpreadSheet.'</td><td width="200">&nbsp;</td><td>'._theseAreAvailableFieldsInHcwsms.'</td></tr>';
         echo '</thead>';
         $inputFileName = $_FILES['file']['tmp_name'];
         // $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
@@ -513,14 +513,14 @@ elseif (clean_param($_REQUEST['page_display'], PARAM_ALPHAMOD) == 'STAFF_INFO') 
         echo '<div class="panel panel-default">';
         
         echo '<div class="panel-heading">';
-        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheOpenSisDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickConfirm.'.</h4>';
+        echo '<h4 class="text-center">'._pleaseCreateAOneToOneRelationshipBetweenTheFieldsInYourSpreadsheetAndTheFieldsInTheHcwsmsDatabaseBySelectingTheAppropriateFieldsFromTheRightColumn.'. '._afterYouAreDoneClickConfirm.'.</h4>';
         echo '</div>'; //.panel-body
         
         echo '<div class="panel-body p-0">';
         echo '<div class="table-responsive">';
         echo '<table class="table table-striped">';
     echo '<thead>';
-        echo '<tr class="bg-grey-200"><th width="260">'._theseFieldsAreInYourExcelSpreadSheet.'</th><th width="200">&nbsp;</th><th>'._theseAreAvailableFieldsInOpenSis.' (Click to change the field values)</th></tr>';
+        echo '<tr class="bg-grey-200"><th width="260">'._theseFieldsAreInYourExcelSpreadSheet.'</th><th width="200">&nbsp;</th><th>'._theseAreAvailableFieldsInHcwsms.' (Click to change the field values)</th></tr>';
     echo '</thead>';
         echo '<tbody>';
         

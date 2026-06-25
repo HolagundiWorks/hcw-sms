@@ -95,7 +95,7 @@ if (!$connection)
 // Not receiving the return == unusable search.
 //		ie, $processable_results = DBQuery("select * from students");
 function DBQuery($sql) {
-    global $DatabaseType, $_openSIS, $connection;
+    global $DatabaseType, $_hcwsms, $connection;
 
     // $connection = db_start();
 
@@ -219,7 +219,7 @@ function db_properties($table) {
 }
 
 function db_show_error($sql, $failnote, $additional = '') {
-    global $openSISTitle, $openSISVersion, $openSISNotifyAddress, $openSISMode;
+    global $hcwsmsTitle, $hcwsmsVersion, $hcwsmsNotifyAddress, $hcwsmsMode;
 
     $tb = debug_backtrace();
     $error = $tb[1]['file'] . " at " . $tb[1]['line'];
@@ -251,7 +251,7 @@ function db_show_error($sql, $failnote, $additional = '') {
 			<TD><pre>" . date("m/d/Y h:i:s") . "</pre></TD>
 		</TR><TR>
 			<TD align=right></TD>
-			<TD>"._openSisHasEncounteredAnErrorThatCouldHaveResultedFromAnyOfTheFollowing.":
+			<TD>"._hcwsmsHasEncounteredAnErrorThatCouldHaveResultedFromAnyOfTheFollowing.":
 			<br/>
 			<ul>
 			<li>"._invalidDataInput."</li>
@@ -259,7 +259,7 @@ function db_show_error($sql, $failnote, $additional = '') {
 			<li>"._programError."</li>
 			</ul>
 			
-			"._pleaseTakeThisScreenShotAndSendItToYourOpenSisRepresentativeForDebuggingAndResolution.".
+			"._pleaseTakeThisScreenShotAndSendItToYourHcwsmsRepresentativeForDebuggingAndResolution.".
 			</TD>
 		</TR>
 		
@@ -267,8 +267,8 @@ function db_show_error($sql, $failnote, $additional = '') {
 
     echo "<!-- SQL STATEMENT: \n\n $sql \n\n -->";
 
-    if ($openSISNotifyAddress) {
-        $message = "System: $openSISTitle \n";
+    if ($hcwsmsNotifyAddress) {
+        $message = "System: $hcwsmsTitle \n";
         $message .= "Date: " . date("m/d/Y h:i:s") . "\n";
         $message .= "Page: " . $_SERVER['PHP_SELF'] . ' ' . ProgramTitle() . " \n\n";
         $message .= "Failure Notice:  $failnote \n";
@@ -276,7 +276,7 @@ function db_show_error($sql, $failnote, $additional = '') {
         $message .= "\n $sql \n";
         $message .= "Request Array: \n" . ShowVar($_REQUEST, 'Y', 'N');
         $message .= "\n\nSession Array: \n" . ShowVar($_SESSION, 'Y', 'N');
-        mail($openSISNotifyAddress, 'openSIS Database Error', $message);
+        mail($hcwsmsNotifyAddress, 'HCW-SMS Database Error', $message);
     }
 
     die();
@@ -295,7 +295,7 @@ if(langDirection()=='rtl') { $dir="rtl"; }else{ $dir="ltr"; }
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>openSIS Student Information System</title>
+        <title>HCW-SMS Student Information System</title>
         <link rel="shortcut icon" href="favicon.ico">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link href="assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
@@ -384,7 +384,7 @@ if(langDirection()=='rtl') { $dir="rtl"; }else{ $dir="ltr"; }
 
                     <div class="panel-heading">
                         <div class="logo">
-                            <img src="assets/images/opensis_logo.png" alt="openSIS" />
+                            <img src="assets/images/hcwsms_logo.png" alt="HCW-SMS" />
                         </div>
                     </div>
 

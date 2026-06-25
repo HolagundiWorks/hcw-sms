@@ -32,7 +32,7 @@
 */
 function CustomFields($location, $table_arr = '', $exp = 0)
 {
-	global $_openSIS, $string;
+	global $_hcwsms, $string;
 	if (!empty($_REQUEST['month__cust_begin'])) {
 		foreach ($_REQUEST['month__cust_begin'] as $field_name => $month) {
 			$_REQUEST['cust_begin'][$field_name] = $_REQUEST['day__cust_begin'][$field_name] . '-' . $_REQUEST['month__cust_begin'][$field_name] . '-' . $_REQUEST['year__cust_begin'][$field_name];
@@ -72,80 +72,80 @@ function CustomFields($location, $table_arr = '', $exp = 0)
 					if ($value != '') {
 						switch ($fields[$id][1]['TYPE']) {
 							case 'radio':
-								$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
+								$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
 								if ($value == 'Y') {
 									$string .= ' and s.' . $field_name . '=\'' . $value . '\' ';
-									$_openSIS['SearchTerms'] .= 'Yes';
+									$_hcwsms['SearchTerms'] .= 'Yes';
 								} elseif ($value == 'N') {
 									$string .= ' and (s.' . $field_name . '!=\'Y\' OR s.' . $field_name . ' IS NULL) ';
-									$_openSIS['SearchTerms'] .= 'No';
+									$_hcwsms['SearchTerms'] .= 'No';
 								}
-								$_openSIS['SearchTerms'] .= '<BR>';
+								$_hcwsms['SearchTerms'] .= '<BR>';
 								break;
 
 							case 'codeds':
-								$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
+								$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
 								if ($value == '!') {
 									$string .= ' and (s.' . $field_name . '=\'\' OR s.' . $field_name . ' IS NULL) ';
-									$_openSIS['SearchTerms'] .= 'No Value';
+									$_hcwsms['SearchTerms'] .= 'No Value';
 								} else {
 									$string .= ' and s.' . $field_name . '=\'' . $value . '\' ';
-									$_openSIS['SearchTerms'] .= $value;
+									$_hcwsms['SearchTerms'] .= $value;
 								}
-								$_openSIS['SearchTerms'] .= '<BR>';
+								$_hcwsms['SearchTerms'] .= '<BR>';
 								break;
 
 							case 'select':
-								$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
+								$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
 								if ($value == '!') {
 									$string .= ' and (s.' . $field_name . '=\'\' OR s.' . $field_name . ' IS NULL) ';
-									$_openSIS['SearchTerms'] .= 'No Value';
+									$_hcwsms['SearchTerms'] .= 'No Value';
 								} else {
 									$string .= ' and s.' . $field_name . '=\'' . $value . '\' ';
-									$_openSIS['SearchTerms'] .= $value;
+									$_hcwsms['SearchTerms'] .= $value;
 								}
-								$_openSIS['SearchTerms'] .= '<BR>';
+								$_hcwsms['SearchTerms'] .= '<BR>';
 								break;
 
 							case 'autos':
-								$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
+								$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
 								if ($value == '!') {
 									$string .= ' and (s.' . $field_name . '=\'\' OR s.' . $field_name . ' IS NULL) ';
-									$_openSIS['SearchTerms'] .= 'No Value';
+									$_hcwsms['SearchTerms'] .= 'No Value';
 								} else {
 									$string .= ' and s.' . $field_name . '=\'' . $value . '\' ';
-									$_openSIS['SearchTerms'] .= $value;
+									$_hcwsms['SearchTerms'] .= $value;
 								}
-								$_openSIS['SearchTerms'] .= '<BR>';
+								$_hcwsms['SearchTerms'] .= '<BR>';
 								break;
 
 							case 'edits':
-								$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
+								$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>';
 								if ($value == '!') {
 									$string .= ' and (s.' . $field_name . '=\'\' OR s.' . $field_name . ' IS NULL) ';
-									$_openSIS['SearchTerms'] .= 'No Value';
+									$_hcwsms['SearchTerms'] .= 'No Value';
 								} elseif ($value == '~') {
 									$string .= " and position('\n'||s.$field_name||'\r' IN '\n'||(SELECT SELECT_OPTIONS FROM custom_fields WHERE ID='" . $id . "')||'\r')=0 ";
-									$_openSIS['SearchTerms'] .= 'Other';
+									$_hcwsms['SearchTerms'] .= 'Other';
 								} else {
 									$string .= ' and s.' . $field_name . '=\'' . $value . '\' ';
-									$_openSIS['SearchTerms'] .= $value;
+									$_hcwsms['SearchTerms'] .= $value;
 								}
-								$_openSIS['SearchTerms'] .= '<BR>';
+								$_hcwsms['SearchTerms'] .= '<BR>';
 								break;
 
 							case 'text':
 								if (substr($value, 0, 2) == '\"' && substr($value, -2) == '\"') {
 									$string .= ' and s.' . $field_name . '=\'' . substr($value, 2, -2) . '\' ';
-									$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>' . substr($value, 2, -2) . '<BR>';
+									$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ': </b></font>' . substr($value, 2, -2) . '<BR>';
 								} else {
 									$string .= ' and LOWER(s.' . $field_name . ') LIKE \'' . strtolower($value) . '%\' ';
 									if ($exp == 1)
-										$_openSIS['Search'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' starts with: </b></font>' . $value . '<BR>';
+										$_hcwsms['Search'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' starts with: </b></font>' . $value . '<BR>';
 									elseif ($exp == 2) {
-										$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' starts with: </b></font>' . $value . '<BR>';
+										$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' starts with: </b></font>' . $value . '<BR>';
 									} else {
-										$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' starts with: </b></font>' . $value . '<BR>';
+										$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' starts with: </b></font>' . $value . '<BR>';
 									}
 								}
 								break;
@@ -173,9 +173,9 @@ function CustomFields($location, $table_arr = '', $exp = 0)
 						}
 						$string .= ' and s.' . $column_name . ' BETWEEN \'' . date('Y-m-d', strtotime($value)) . '\' AND \'' . date('Y-m-d', strtotime($_REQUEST['cust_end'][$field_name])) . '\' ';
 						if ($fields[$id][1]['TYPE'] == 'date')
-							$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' between: </b></font>' . date('M/d/Y', strtotime($value)) . ' &amp; ' . date('M/d/Y', strtotime($_REQUEST['cust_end'][$field_name])) . '<BR>';
+							$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' between: </b></font>' . date('M/d/Y', strtotime($value)) . ' &amp; ' . date('M/d/Y', strtotime($_REQUEST['cust_end'][$field_name])) . '<BR>';
 						else
-							$_openSIS['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' between: </b></font>' . $value . ' &amp; ' . $_REQUEST['cust_end'][$field_name] . '<BR>';
+							$_hcwsms['SearchTerms'] .= '<font color=gray><b>' . $fields[$id][1]['TITLE'] . ' between: </b></font>' . $value . ' &amp; ' . $_REQUEST['cust_end'][$field_name] . '<BR>';
 					}
 				}
 			}
