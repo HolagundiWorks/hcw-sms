@@ -1,8 +1,8 @@
-# openSIS Classic — PHP 8.2 + Apache
-# Build:  podman build -t opensis-web -f Containerfile .
+# HCW-SMS (HCW School Management System) — PHP 8.2 + Apache
+# Build:  podman build -t hcwsms-web -f Containerfile .
 FROM docker.io/library/php:8.2-apache
 
-# System libraries needed to build the PHP extensions openSIS (and its
+# System libraries needed to build the PHP extensions HCW-SMS (and its
 # bundled PhpSpreadsheet) rely on: gd, zip, intl, mbstring, mysqli.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev \
@@ -27,9 +27,9 @@ RUN { \
         echo 'max_input_vars = 10000'; \
         echo 'date.timezone = UTC'; \
         echo 'display_errors = Off'; \
-    } > /usr/local/etc/php/conf.d/opensis.ini
+    } > /usr/local/etc/php/conf.d/hcwsms.ini
 
-# openSIS ships a .htaccess; allow it to take effect.
+# HCW-SMS ships a .htaccess; allow it to take effect.
 RUN sed -ri 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 WORKDIR /var/www/html
