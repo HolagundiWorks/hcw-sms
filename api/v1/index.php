@@ -48,6 +48,20 @@ switch ("$method $route") {
         require_user();
         json_out(['summary' => dashboard_summary()]);
 
+    case 'GET students':
+        require_user();
+        $q = trim((string) ($_GET['q'] ?? ''));
+        $limit = max(1, min(200, (int) ($_GET['limit'] ?? 50)));
+        $offset = max(0, (int) ($_GET['offset'] ?? 0));
+        json_out(students_list($q, $limit, $offset));
+
+    case 'GET staff':
+        require_user();
+        $q = trim((string) ($_GET['q'] ?? ''));
+        $limit = max(1, min(200, (int) ($_GET['limit'] ?? 50)));
+        $offset = max(0, (int) ($_GET['offset'] ?? 0));
+        json_out(staff_list($q, $limit, $offset));
+
     default:
         fail('not found: ' . $method . ' ' . $route, 404);
 }
@@ -60,4 +74,46 @@ function dashboard_summary(): array
         'schools'  => (int) db_scalar('SELECT COUNT(*) FROM schools'),
         'courses'  => (int) db_scalar('SELECT COUNT(DISTINCT COURSE_ID) FROM courses'),
     ];
+}
+
+function students_list(string $q, int $limit, int $offset): array
+{
+    $where = '';
+    $params = [];
+    if ($q !== '') {
+        $where = "WHERE CONCAT(first_name, ' ', last_name) LIKE ? OR email LIKE ?";
+        $like = '%' . $q . '%';
+        $params = [$like, $like];
+    }
+    $total = (int) db_scalar("SELECT COUNT(*) FROM students $where", $params);
+    // $limit/$offset are clamped ints above, so inlining them is injection-safe
+    // (mysqli can't bind LIMIT/OFFSET placeholders portably).
+    $rows = db_rows(
+        "SELECT student_id AS id, first_name, last_name, email, phone, gender, birthdate
+           FROM students $where
+           ORDER BY first_name, last_name
+           LIMIT $limit OFFSET $offset",
+        $params
+    );
+    return ['students' => $rows, 'total' => $total];
+}
+
+function staff_list(string $q, int $limit, int $offset): array
+{
+    $where = '';
+    $params = [];
+    if ($q !== '') {
+        $where = "WHERE CONCAT(first_name, ' ', last_name) LIKE ? OR email LIKE ? OR title LIKE ?";
+        $like = '%' . $q . '%';
+        $params = [$like, $like, $like];
+    }
+    $total = (int) db_scalar("SELECT COUNT(*) FROM staff $where", $params);
+    $rows = db_rows(
+        "SELECT staff_id AS id, first_name, last_name, email, phone, profile, title
+           FROM staff $where
+           ORDER BY first_name, last_name
+           LIMIT $limit OFFSET $offset",
+        $params
+    );
+    return ['staff' => $rows, 'total' => $total];
 }
