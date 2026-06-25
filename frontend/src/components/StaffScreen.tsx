@@ -11,7 +11,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { Search } from 'lucide-react';
 import type { Staff } from '../api/client';
 import { useStaff } from '../hooks/useStaff';
 import { initials } from '../types';
@@ -75,7 +75,7 @@ export function StaffScreen() {
           </div>
           <TextInput
             w={260}
-            leftSection={<IconSearch size={16} />}
+            leftSection={<Search size={16} />}
             placeholder="Search staff"
             value={q}
             onChange={(e) => setQ(e.currentTarget.value)}

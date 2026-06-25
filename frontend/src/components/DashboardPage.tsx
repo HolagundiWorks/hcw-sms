@@ -14,7 +14,7 @@ import {
   Title,
 } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
-import { IconBook2, IconId, IconSchool, IconUsers } from '@tabler/icons-react';
+import { BookOpen, IdCard, School, Users } from 'lucide-react';
 import dayjs from 'dayjs';
 import type { IconComponent } from '../icons';
 import type { AccentColor } from '../theme';
@@ -61,7 +61,7 @@ function StatCard({ stat, loading }: { stat: Stat; loading: boolean }) {
           )}
         </div>
         <ThemeIcon size={48} radius="lg" variant="light" color={stat.color}>
-          <Icon size={26} stroke={1.6} />
+          <Icon size={24} strokeWidth={1.8} />
         </ThemeIcon>
       </Group>
     </Card>
@@ -104,10 +104,10 @@ export function DashboardScreen({ user }: { user: SessionUser }) {
   const { data, isLoading } = useDashboardSummary();
 
   const stats: Stat[] = [
-    { label: 'Students', value: data?.students, icon: IconUsers, color: 'brand' },
-    { label: 'Staff', value: data?.staff, icon: IconId, color: 'mint' },
-    { label: 'Schools', value: data?.schools, icon: IconSchool, color: 'lavender' },
-    { label: 'Courses', value: data?.courses, icon: IconBook2, color: 'peach' },
+    { label: 'Students', value: data?.students, icon: Users, color: 'brand' },
+    { label: 'Staff', value: data?.staff, icon: IdCard, color: 'mint' },
+    { label: 'Schools', value: data?.schools, icon: School, color: 'lavender' },
+    { label: 'Courses', value: data?.courses, icon: BookOpen, color: 'peach' },
   ];
 
   return (

@@ -2,14 +2,13 @@ import { useState } from 'react';
 import type { SessionUser } from './types';
 import { useAuth } from './stores/auth';
 import { LoginPage } from './components/LoginPage';
-import { AppShellLayout } from './components/AppShellLayout';
+import { CockpitShell } from './components/cockpit/CockpitShell';
 import { DashboardScreen } from './components/DashboardPage';
 import { StudentsScreen } from './components/StudentsScreen';
 import { StaffScreen } from './components/StaffScreen';
 import { Placeholder } from './components/Placeholder';
 
-// Auth gate + simple nav. The shell lives here so screens are just content;
-// a router can replace the switch as the app grows.
+// Auth gate + cockpit shell. Active module drives the workspace + ribbon.
 export function App() {
   const token = useAuth((s) => s.token);
   const user = useAuth((s) => s.user);
@@ -25,7 +24,7 @@ export function App() {
   };
 
   return (
-    <AppShellLayout user={sessionUser} activeKey={active} onNavigate={setActive}>
+    <CockpitShell user={sessionUser} active={active} onNavigate={setActive}>
       {active === 'dashboard' ? (
         <DashboardScreen user={sessionUser} />
       ) : active === 'students' ? (
@@ -35,6 +34,6 @@ export function App() {
       ) : (
         <Placeholder screenKey={active} />
       )}
-    </AppShellLayout>
+    </CockpitShell>
   );
 }

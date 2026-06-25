@@ -1,5 +1,6 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
+import '@mantine/spotlight/styles.css';
 import './theme.css';
 
 import type { ReactNode } from 'react';

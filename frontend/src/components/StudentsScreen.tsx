@@ -11,7 +11,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { Search } from 'lucide-react';
 import type { Student } from '../api/client';
 import { useStudents } from '../hooks/useStudents';
 import { initials } from '../types';
@@ -68,7 +68,7 @@ export function StudentsScreen() {
           </div>
           <TextInput
             w={260}
-            leftSection={<IconSearch size={16} />}
+            leftSection={<Search size={16} />}
             placeholder="Search students"
             value={q}
             onChange={(e) => setQ(e.currentTarget.value)}

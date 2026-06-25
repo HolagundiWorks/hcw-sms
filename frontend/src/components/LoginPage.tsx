@@ -11,7 +11,7 @@ import {
   ThemeIcon,
   Title,
 } from '@mantine/core';
-import { IconAlertCircle, IconSchool } from '@tabler/icons-react';
+import { CircleAlert, School } from 'lucide-react';
 import { ApiError } from '../api/client';
 import { useAuth } from '../stores/auth';
 
@@ -41,7 +41,7 @@ export function LoginPage() {
         <Stack gap="lg">
           <Stack gap={6} align="center">
             <ThemeIcon size={52} radius="lg" variant="light" color="brand">
-              <IconSchool size={30} stroke={1.6} />
+              <School size={28} strokeWidth={1.6} />
             </ThemeIcon>
             <Title order={3} ta="center">
               HCW School Management System
@@ -54,7 +54,7 @@ export function LoginPage() {
           <form onSubmit={submit}>
             <Stack gap="md">
               {error && (
-                <Alert color="peach" radius="md" icon={<IconAlertCircle size={16} />}>
+                <Alert color="peach" radius="md" icon={<CircleAlert size={16} />}>
                   {error}
                 </Alert>
               )}
