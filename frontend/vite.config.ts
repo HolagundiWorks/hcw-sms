@@ -1,33 +1,21 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// HCW-SMS UI build.
-//
-// dev   : `npm run dev` serves an HMR dev server on :5173 and a standalone
-//         playground at http://localhost:5173/ (index.html). The PHP app loads
-//         the same modules from this dev server when HCW_UI_DEV=1 (see
-//         functions/ReactAssets.php).
-// build : emits a manifest + hashed assets into ../assets/hcw-ui so the PHP
-//         pages can serve the islands bundle. Only the `embed` entry is built;
-//         index.html is a dev-only playground.
-export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/assets/hcw-ui/' : '/',
+// HCW-SMS desktop frontend (Vite + React + Mantine), loaded by the Tauri shell.
+//   dev:   `npm run dev` serves on :5174 (host 5173 is taken by another project);
+//          Tauri's devUrl points here.
+//   build: outputs to ./dist for `cargo tauri build` (tauri frontendDist).
+// base "./" keeps asset URLs relative so the Tauri custom protocol resolves them.
+export default defineConfig({
+  base: './',
   plugins: [react()],
   server: {
     host: true,
     port: 5174,
     strictPort: true,
-    cors: true,
-    origin: 'http://localhost:5174',
   },
   build: {
-    outDir: '../assets/hcw-ui',
+    outDir: 'dist',
     emptyOutDir: true,
-    manifest: true,
-    rollupOptions: {
-      input: {
-        embed: 'src/embed.tsx',
-      },
-    },
   },
-}));
+});

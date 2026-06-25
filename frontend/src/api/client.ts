@@ -75,3 +75,57 @@ export async function fetchDashboardSummary(token: string) {
   );
   return summary;
 }
+
+export interface Student {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string | null;
+  phone: string | null;
+  gender: string | null;
+  birthdate: string | null;
+}
+
+export interface StudentsResponse {
+  students: Student[];
+  total: number;
+}
+
+export function fetchStudents(
+  token: string,
+  params: { q?: string; limit?: number; offset?: number } = {},
+) {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set('q', params.q);
+  if (params.limit != null) qs.set('limit', String(params.limit));
+  if (params.offset != null) qs.set('offset', String(params.offset));
+  const suffix = qs.toString() ? `?${qs}` : '';
+  return req<StudentsResponse>(`/students${suffix}`, { token });
+}
+
+export interface Staff {
+  id: number;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  profile: string | null;
+  title: string | null;
+}
+
+export interface StaffResponse {
+  staff: Staff[];
+  total: number;
+}
+
+export function fetchStaff(
+  token: string,
+  params: { q?: string; limit?: number; offset?: number } = {},
+) {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set('q', params.q);
+  if (params.limit != null) qs.set('limit', String(params.limit));
+  if (params.offset != null) qs.set('offset', String(params.offset));
+  const suffix = qs.toString() ? `?${qs}` : '';
+  return req<StaffResponse>(`/staff${suffix}`, { token });
+}

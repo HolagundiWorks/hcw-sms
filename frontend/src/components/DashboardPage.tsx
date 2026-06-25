@@ -14,18 +14,12 @@ import {
   Title,
 } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
-import {
-  IconBook2,
-  IconId,
-  IconSchool,
-  IconUsers,
-} from '@tabler/icons-react';
+import { IconBook2, IconId, IconSchool, IconUsers } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import type { IconComponent } from '../icons';
 import type { AccentColor } from '../theme';
 import type { SessionUser } from '../types';
 import { useDashboardSummary } from '../hooks/useDashboardSummary';
-import { AppShellLayout } from './AppShellLayout';
 
 interface Stat {
   label: string;
@@ -104,8 +98,8 @@ function AgendaRow({ item }: { item: AgendaItem }) {
   );
 }
 
-/** Calendar-first dashboard. Stat cards are live from /api/v1/dashboard/summary. */
-export function DashboardPage({ user }: { user: SessionUser }) {
+/** Calendar-first dashboard content (no shell). Stat cards are live. */
+export function DashboardScreen({ user }: { user: SessionUser }) {
   const [selected, setSelected] = useState<Date>(new Date());
   const { data, isLoading } = useDashboardSummary();
 
@@ -117,59 +111,57 @@ export function DashboardPage({ user }: { user: SessionUser }) {
   ];
 
   return (
-    <AppShellLayout user={user}>
-      <Container size="xl" px={0}>
-        <Stack gap="lg">
-          <div>
-            <Title order={2}>Good morning, {user.name.split(' ')[0]} 👋</Title>
-            <Text c="dimmed">
-              {dayjs().format('dddd, D MMMM YYYY')} · here's your day at a glance.
-            </Text>
-          </div>
+    <Container size="xl" px={0}>
+      <Stack gap="lg">
+        <div>
+          <Title order={2}>Good morning, {user.name.split(' ')[0]} 👋</Title>
+          <Text c="dimmed">
+            {dayjs().format('dddd, D MMMM YYYY')} · here's your day at a glance.
+          </Text>
+        </div>
 
-          <SimpleGrid cols={{ base: 1, xs: 2, md: 4 }} spacing="md">
-            {stats.map((s) => (
-              <StatCard key={s.label} stat={s} loading={isLoading} />
-            ))}
-          </SimpleGrid>
+        <SimpleGrid cols={{ base: 1, xs: 2, md: 4 }} spacing="md">
+          {stats.map((s) => (
+            <StatCard key={s.label} stat={s} loading={isLoading} />
+          ))}
+        </SimpleGrid>
 
-          <Grid gutter="md">
-            <Grid.Col span={{ base: 12, md: 5 }}>
-              <Card h="100%">
-                <Group justify="space-between" mb="sm">
-                  <Text fw={650}>Calendar</Text>
-                  <Badge variant="light" color="brand">
-                    {dayjs(selected).format('MMM D')}
-                  </Badge>
-                </Group>
-                <Calendar
-                  size="md"
-                  getDayProps={(date) => ({
-                    selected: dayjs(date).isSame(selected, 'day'),
-                    onClick: () => setSelected(date),
-                  })}
-                />
-              </Card>
-            </Grid.Col>
+        <Grid gutter="md">
+          <Grid.Col span={{ base: 12, md: 5 }}>
+            <Card h="100%">
+              <Group justify="space-between" mb="sm">
+                <Text fw={650}>Calendar</Text>
+                <Badge variant="light" color="brand">
+                  {dayjs(selected).format('MMM D')}
+                </Badge>
+              </Group>
+              <Calendar
+                size="md"
+                getDayProps={(date) => ({
+                  selected: dayjs(date).isSame(selected, 'day'),
+                  onClick: () => setSelected(date),
+                })}
+              />
+            </Card>
+          </Grid.Col>
 
-            <Grid.Col span={{ base: 12, md: 7 }}>
-              <Card h="100%">
-                <Group justify="space-between" mb="md">
-                  <Text fw={650}>Today's schedule</Text>
-                  <Badge variant="light" color="mint">
-                    {agenda.length} events
-                  </Badge>
-                </Group>
-                <Stack gap="xs">
-                  {agenda.map((item) => (
-                    <AgendaRow key={item.time} item={item} />
-                  ))}
-                </Stack>
-              </Card>
-            </Grid.Col>
-          </Grid>
-        </Stack>
-      </Container>
-    </AppShellLayout>
+          <Grid.Col span={{ base: 12, md: 7 }}>
+            <Card h="100%">
+              <Group justify="space-between" mb="md">
+                <Text fw={650}>Today's schedule</Text>
+                <Badge variant="light" color="mint">
+                  {agenda.length} events
+                </Badge>
+              </Group>
+              <Stack gap="xs">
+                {agenda.map((item) => (
+                  <AgendaRow key={item.time} item={item} />
+                ))}
+              </Stack>
+            </Card>
+          </Grid.Col>
+        </Grid>
+      </Stack>
+    </Container>
   );
 }
