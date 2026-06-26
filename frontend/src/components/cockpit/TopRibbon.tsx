@@ -31,9 +31,7 @@ export function TopRibbon({ active, onSelect, userName }: TopRibbonProps) {
             <div className={classes.greetTitle}>
               {greetingWord()}, {firstName} 👋
             </div>
-            <div className={classes.greetSub}>
-              {dayjs().format('dddd, D MMMM YYYY')} · here's what needs your attention.
-            </div>
+            <div className={classes.greetSub}>{dayjs().format('dddd, D MMMM YYYY')}</div>
           </div>
         )}
       </div>
