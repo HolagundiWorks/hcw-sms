@@ -1,6 +1,6 @@
 .ribbon {
   height: 100%;
-  background: rgba(105, 41, 196, 0.1); /* Carbon Purple 70, 90% transparent */
+  background: rgba(73, 29, 139, 0.68); /* Carbon Purple 80, translucent */
   -webkit-backdrop-filter: blur(22px) saturate(150%);
   backdrop-filter: blur(22px) saturate(150%);
   display: flex;
@@ -13,7 +13,7 @@
   height: 6px;
 }
 .ribbon::-webkit-scrollbar-thumb {
-  background: rgba(105, 41, 196, 0.35);
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
 }
 
@@ -38,7 +38,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.25;
-  color: var(--mantine-color-gray-8);
+  color: #ffffff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -46,7 +46,7 @@
 .greetSub {
   font-size: 11.5px;
   line-height: 1.25;
-  color: var(--mantine-color-gray-6);
+  color: rgba(255, 255, 255, 0.75);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -80,7 +80,7 @@
   line-height: 1;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--mantine-color-lavender-6);
+  color: rgba(255, 255, 255, 0.62);
   margin-top: 3px;
 }
 
@@ -95,20 +95,20 @@
   border: none;
   border-radius: var(--mantine-radius-md);
   background: transparent;
-  color: var(--mantine-color-lavender-7);
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease;
 }
 
 .btn:hover {
-  background: rgba(105, 41, 196, 0.12);
-  color: var(--mantine-color-lavender-8);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
-/* Active module → contrasting teal accent. */
+/* Active module → white pill with purple text. */
 .btn[data-active='true'] {
-  background: var(--mantine-color-mint-2);
-  color: var(--mantine-color-mint-9);
+  background: #ffffff;
+  color: var(--mantine-color-lavender-7);
 }
 
 .btnLabel {
@@ -121,6 +121,6 @@
 .divider {
   width: 1px;
   align-self: stretch;
-  background: rgba(105, 41, 196, 0.2);
+  background: rgba(255, 255, 255, 0.22);
   margin: 4px 6px;
 }
