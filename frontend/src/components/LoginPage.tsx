@@ -14,6 +14,7 @@ import {
 import { CircleAlert, School } from 'lucide-react';
 import { ApiError } from '../api/client';
 import { useAuth } from '../stores/auth';
+import { BrandWatermark } from './brand/BrandWatermark';
 
 export function LoginPage() {
   const signIn = useAuth((s) => s.signIn);
@@ -37,6 +38,7 @@ export function LoginPage() {
 
   return (
     <Center mih="100vh" className="hcw-ui hcw-ui--fullscreen" p="md">
+      <BrandWatermark bottom={20} />
       <Card w={380} withBorder shadow="sm" radius="lg" p="xl">
         <Stack gap="lg">
           <Stack gap={6} align="center">

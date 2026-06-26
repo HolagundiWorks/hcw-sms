@@ -6,6 +6,7 @@ import { UtilityStrip } from './UtilityStrip';
 import { IconRail } from './IconRail';
 import { ContextRibbon } from './ContextRibbon';
 import { CommandPalette } from './CommandPalette';
+import { BrandWatermark } from '../brand/BrandWatermark';
 
 interface CockpitShellProps {
   user: SessionUser;
@@ -61,6 +62,7 @@ export function CockpitShell({
           <ContextRibbon active={active} onViewStudent={onViewStudent} />
         </AppShell.Footer>
       </AppShell>
+      <BrandWatermark />
     </>
   );
 }
