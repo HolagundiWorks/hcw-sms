@@ -1,19 +1,26 @@
 import { Spotlight, type SpotlightActionData } from '@mantine/spotlight';
 import { Search } from 'lucide-react';
-import { modules } from '../../modules';
+import { ribbonTabs } from '../../ribbon.config';
 
-/** Ctrl-K command palette: jump to any module. */
+/** Ctrl-K command palette: jump to any non-placeholder action in the ribbon. */
 export function CommandPalette({ onNavigate }: { onNavigate: (key: string) => void }) {
-  const actions: SpotlightActionData[] = modules.map((m) => {
-    const Icon = m.icon;
-    return {
-      id: `nav-${m.key}`,
-      label: m.label,
-      description: `Go to ${m.label}`,
-      onClick: () => onNavigate(m.key),
-      leftSection: <Icon size={18} strokeWidth={1.8} />,
-    };
-  });
+  const actions: SpotlightActionData[] = [];
+
+  for (const tab of ribbonTabs) {
+    for (const group of tab.groups) {
+      for (const action of group.actions) {
+        if (action.placeholder) continue;
+        const Icon = action.icon;
+        actions.push({
+          id: `nav-${action.key}`,
+          label: action.label,
+          description: `${tab.label} → ${group.label}`,
+          onClick: () => onNavigate(action.key),
+          leftSection: <Icon size={18} strokeWidth={1.8} />,
+        });
+      }
+    }
+  }
 
   return (
     <Spotlight

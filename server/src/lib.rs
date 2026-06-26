@@ -271,6 +271,27 @@ fn dispatch(
     if method == &Method::Post && path == "/substitutions/resolve" {
         return with_auth(state, token, |_| substitution_resolve(state, body));
     }
+    // Tech Admin Panel
+    if method == &Method::Get && path == "/admin/system-info" {
+        return with_auth(state, token, |_| admin_system_info(state));
+    }
+    if method == &Method::Get && path == "/admin/modules" {
+        return with_auth(state, token, |_| admin_modules_list(state));
+    }
+    if method == &Method::Post && path.starts_with("/admin/modules/") && path.ends_with("/toggle") {
+        let key = &path["/admin/modules/".len()..path.len() - "/toggle".len()];
+        let key_owned = key.to_string();
+        return with_auth(state, token, |_| admin_module_toggle(state, &key_owned));
+    }
+    if method == &Method::Get && path == "/admin/users/levels" {
+        return with_auth(state, token, |_| admin_users_levels(state));
+    }
+    if method == &Method::Post && path.starts_with("/admin/users/") && path.ends_with("/level") {
+        let id_str = &path["/admin/users/".len()..path.len() - "/level".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| admin_user_set_level(state, id, body));
+        }
+    }
     // Design Connect (P14)
     if method == &Method::Get && path == "/design/connection" {
         return with_auth(state, token, |_| design_connection_get(state));
@@ -1164,6 +1185,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS exam_marks(id INTEGER PRIMARY KEY AUTOINCREMENT, exam_id INTEGER NOT NULL, student_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, marks_obtained REAL, max_marks REAL DEFAULT 100, grade TEXT, remarks TEXT, UNIQUE(exam_id, student_id, subject_id));
          CREATE TABLE IF NOT EXISTS salary_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL UNIQUE, basic REAL DEFAULT 0, hra REAL DEFAULT 0, da REAL DEFAULT 0, ta REAL DEFAULT 0, other_allowances REAL DEFAULT 0, pf_deduction REAL DEFAULT 0, pt_deduction REAL DEFAULT 0, other_deductions REAL DEFAULT 0, effective_from TEXT, updated_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS payslips(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, month TEXT NOT NULL, basic REAL, hra REAL, da REAL, ta REAL, other_allowances REAL, pf_deduction REAL, pt_deduction REAL, other_deductions REAL, gross REAL, net REAL, working_days INTEGER, paid_days INTEGER, generated_at TEXT DEFAULT (datetime('now')), UNIQUE(staff_id, month));
+         CREATE TABLE IF NOT EXISTS module_settings(key TEXT PRIMARY KEY, display_name TEXT NOT NULL, enabled INTEGER DEFAULT 1, min_level INTEGER DEFAULT 5);
          CREATE TABLE IF NOT EXISTS design_connections(id INTEGER PRIMARY KEY AUTOINCREMENT, provider TEXT NOT NULL DEFAULT 'canva', account_email TEXT, access_token_enc TEXT, refresh_token_enc TEXT, token_expiry TEXT, scopes TEXT, last_sync TEXT, connected_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS design_templates(id INTEGER PRIMARY KEY AUTOINCREMENT, connection_id INTEGER, template_id TEXT NOT NULL, template_name TEXT, thumbnail_url TEXT, category TEXT DEFAULT 'id_card', field_map TEXT DEFAULT '{}', last_fetched TEXT);
          CREATE TABLE IF NOT EXISTS design_jobs(id INTEGER PRIMARY KEY AUTOINCREMENT, template_id INTEGER, job_type TEXT DEFAULT 'batch', entity_type TEXT DEFAULT 'students', entity_ids TEXT DEFAULT '[]', status TEXT DEFAULT 'pending', output_path TEXT, approved_by INTEGER, approved_at TEXT, created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
@@ -1202,6 +1224,28 @@ fn init_db(conn: &Connection) {
     let _ = conn.execute("ALTER TABLE staff ADD COLUMN department_id INTEGER", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN card_uid TEXT", []);
     let _ = conn.execute("ALTER TABLE users ADD COLUMN role_id INTEGER", []);
+    let _ = conn.execute("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 3", []);
+
+    // Seed module settings (idempotent)
+    let modules_seed = [
+        ("students","Students",1,3), ("staff","Staff",1,2), ("courses","Courses",1,2),
+        ("subjects","Subjects",1,2), ("classes","Classes",1,2), ("classrooms","Classrooms",1,2),
+        ("teacher-subjects","Teacher Map",1,2), ("timetable","Timetable",1,3),
+        ("timings","Timings",1,2), ("substitution","Substitution",1,2),
+        ("attendance","Attendance",1,3), ("exams","Exams",1,2), ("fees","Fees",1,2),
+        ("payroll","Payroll",1,2), ("staff-os","HR & Leave",1,2),
+        ("events","Events",1,3), ("activities","Activities",1,2),
+        ("backup","Backup",1,1), ("import","DB Connector",1,1), ("hardware","Hardware",1,2),
+        ("design","Design Connect",1,2), ("security","Security",1,1),
+        ("settings","Settings",1,2), ("academic-year","Academic Year",1,2),
+        ("floorplan","Floor Plan",1,2), ("tech-admin","Tech Admin",1,1),
+    ];
+    for (key, name, enabled, min_level) in modules_seed {
+        let _ = conn.execute(
+            "INSERT OR IGNORE INTO module_settings(key, display_name, enabled, min_level) VALUES(?1,?2,?3,?4)",
+            params![key, name, enabled, min_level],
+        );
+    }
 
     // Seed default roles (idempotent)
     let default_roles = [
@@ -1511,6 +1555,84 @@ fn substitution_resolve(state: &AppState, body: &str) -> (u16, Value) {
     ) {
         Ok(n) if n > 0 => (200, json!({"ok": true})),
         Ok(_) => (404, json!({"error": "substitution not found"})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+// ---- Tech Admin Panel ----
+
+fn admin_system_info(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let user_count: i64 = count(&conn, "SELECT COUNT(*) FROM users");
+    let student_count: i64 = count(&conn, "SELECT COUNT(*) FROM students");
+    let staff_count: i64 = count(&conn, "SELECT COUNT(*) FROM staff");
+    let backup_last: Option<String> = conn.query_row(
+        "SELECT completed_at FROM backup_log ORDER BY id DESC LIMIT 1", [], |r| r.get(0)
+    ).ok();
+    let db_page_count: i64 = conn.query_row("PRAGMA page_count", [], |r| r.get(0)).unwrap_or(0);
+    let db_page_size: i64 = conn.query_row("PRAGMA page_size", [], |r| r.get(0)).unwrap_or(4096);
+    let db_size_kb = (db_page_count * db_page_size) / 1024;
+    (200, json!({
+        "users": user_count,
+        "students": student_count,
+        "staff": staff_count,
+        "db_size_kb": db_size_kb,
+        "last_backup": backup_last,
+        "server_version": env!("CARGO_PKG_VERSION"),
+    }))
+}
+
+fn admin_modules_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare("SELECT key, display_name, enabled, min_level FROM module_settings ORDER BY display_name") {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({ "key": r.get::<_, String>(0)?, "display_name": r.get::<_, String>(1)?, "enabled": r.get::<_, i64>(2)? != 0, "min_level": r.get::<_, i64>(3)? }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    (200, json!({"modules": rows, "total": rows.len()}))
+}
+
+fn admin_module_toggle(state: &AppState, key: &str) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    match conn.execute("UPDATE module_settings SET enabled = CASE WHEN enabled=1 THEN 0 ELSE 1 END WHERE key=?1", params![key]) {
+        Ok(0) => (404, json!({"error": "module not found"})),
+        Ok(_) => {
+            let enabled: i64 = conn.query_row("SELECT enabled FROM module_settings WHERE key=?1", params![key], |r| r.get(0)).unwrap_or(1);
+            (200, json!({"ok": true, "enabled": enabled != 0}))
+        }
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn admin_users_levels(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT u.id, u.username, u.name, u.profile, u.level, r.name as role_name FROM users u LEFT JOIN roles r ON r.id=u.role_id ORDER BY u.level, u.name"
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({ "id": r.get::<_, i64>(0)?, "username": r.get::<_, String>(1)?, "name": r.get::<_, Option<String>>(2)?, "profile": r.get::<_, Option<String>>(3)?, "level": r.get::<_, Option<i64>>(4)?.unwrap_or(3), "role_name": r.get::<_, Option<String>>(5)? }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    (200, json!({"users": rows, "total": rows.len()}))
+}
+
+fn admin_user_set_level(state: &AppState, user_id: i64, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let level = match v["level"].as_i64() { Some(l) if (1..=5).contains(&l) => l, _ => return (422, json!({"error": "level must be 1-5"})) };
+    let conn = state.conn.lock().unwrap();
+    match conn.execute("UPDATE users SET level=?1 WHERE id=?2", params![level, user_id]) {
+        Ok(0) => (404, json!({"error": "user not found"})),
+        Ok(_) => (200, json!({"ok": true, "level": level})),
         Err(e) => (500, json!({"error": format!("{e}")})),
     }
 }

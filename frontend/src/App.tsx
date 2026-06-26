@@ -5,7 +5,6 @@ import { useSelection } from './stores/selection';
 import { BackgroundLayer } from './components/BackgroundLayer';
 import { LoginPage } from './components/LoginPage';
 import { CockpitShell } from './components/cockpit/CockpitShell';
-import { DashboardScreen } from './components/DashboardPage';
 import { StudentsScreen } from './components/StudentsScreen';
 import { StudentProfileScreen } from './components/StudentProfileScreen';
 import { StaffScreen } from './components/StaffScreen';
@@ -33,6 +32,8 @@ import { SecurityScreen } from './components/SecurityScreen';
 import { ImportScreen } from './components/ImportScreen';
 import { HardwareScreen } from './components/HardwareScreen';
 import { DesignScreen } from './components/DesignScreen';
+import { TechAdminScreen } from './components/TechAdminScreen';
+import { RoleDashboard } from './components/RoleDashboard';
 import { Placeholder } from './components/Placeholder';
 
 // Auth gate + cockpit shell. Active module drives the workspace + ribbon;
@@ -65,7 +66,7 @@ export function App() {
 
   let screen: ReactNode;
   if (active === 'dashboard') {
-    screen = <DashboardScreen onNavigate={navigate} />;
+    screen = <RoleDashboard onNavigate={navigate} />;
   } else if (active === 'students') {
     screen =
       studentId != null ? (
@@ -117,6 +118,8 @@ export function App() {
     screen = <HardwareScreen />;
   } else if (active === 'design') {
     screen = <DesignScreen />;
+  } else if (active === 'tech-admin') {
+    screen = <TechAdminScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'academic-year') {
