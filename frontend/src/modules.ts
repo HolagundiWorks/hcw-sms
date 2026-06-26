@@ -10,6 +10,7 @@ import {
   Bus,
   CalendarCheck,
   CalendarDays,
+  CalendarRange,
   Layers,
   CalendarClock,
   CalendarOff,
@@ -220,6 +221,14 @@ export const modules: ModuleDef[] = [
     ],
   },
   { key: 'transport', label: 'Transport', icon: Bus, actions: [] },
+  {
+    key: 'academic-year',
+    label: 'Academic Year',
+    icon: CalendarRange,
+    actions: [
+      { key: 'add', label: 'New Year', icon: Plus, shortcut: 'Ctrl N' },
+    ],
+  },
   { key: 'settings', label: 'Settings', icon: Settings, actions: [] },
 ];
 
@@ -238,5 +247,5 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
   { label: 'Schedule', keys: ['timetable', 'timings'] },
   { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport'] },
-  { label: 'System', keys: ['settings'] },
+  { label: 'System', keys: ['academic-year', 'settings'] },
 ];

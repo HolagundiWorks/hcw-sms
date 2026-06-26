@@ -171,6 +171,30 @@ fn dispatch(
     if method == &Method::Post && path == "/schooldb/open" {
         return with_auth(state, token, |_| schooldb_open(state, body));
     }
+    if method == &Method::Get && path == "/academic-years" {
+        return with_auth(state, token, |_| academic_years_list(state));
+    }
+    if method == &Method::Get && path == "/academic-years/active" {
+        return with_auth(state, token, |_| academic_year_active(state));
+    }
+    if method == &Method::Post && path == "/academic-years" {
+        return with_auth(state, token, |_| academic_year_create(state, body));
+    }
+    if method == &Method::Post && path == "/academic-years/activate" {
+        return with_auth(state, token, |_| academic_year_activate(state, body));
+    }
+    if method == &Method::Post && path == "/academic-years/close" {
+        return with_auth(state, token, |_| academic_year_close(state, body));
+    }
+    if method == &Method::Post && path == "/terms" {
+        return with_auth(state, token, |_| term_create(state, body));
+    }
+    if method == &Method::Post && path == "/terms/delete" {
+        return with_auth(state, token, |_| term_delete(state, body));
+    }
+    if method == &Method::Post && path == "/terms/activate" {
+        return with_auth(state, token, |_| term_activate(state, body));
+    }
     (404, json!({"error": "not found"}))
 }
 
@@ -447,11 +471,13 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS teacher_subjects(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, priority INTEGER DEFAULT 1, UNIQUE(staff_id, subject_id));
          CREATE TABLE IF NOT EXISTS periods(id INTEGER PRIMARY KEY AUTOINCREMENT, label TEXT NOT NULL, period_type TEXT DEFAULT 'period', start_time TEXT NOT NULL, end_time TEXT NOT NULL, sort_order INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS timetable_entries(id INTEGER PRIMARY KEY AUTOINCREMENT, section_id INTEGER NOT NULL, period_id INTEGER NOT NULL, day_of_week INTEGER NOT NULL, subject_id INTEGER, staff_id INTEGER, room_id INTEGER, UNIQUE(section_id, period_id, day_of_week));
-         CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);",
+         CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);
+         CREATE TABLE IF NOT EXISTS academic_years(id INTEGER PRIMARY KEY AUTOINCREMENT, label TEXT NOT NULL, start_date TEXT, end_date TEXT, is_active INTEGER DEFAULT 0, is_closed INTEGER DEFAULT 0);
+         CREATE TABLE IF NOT EXISTS terms(id INTEGER PRIMARY KEY AUTOINCREMENT, year_id INTEGER NOT NULL REFERENCES academic_years(id) ON DELETE CASCADE, label TEXT NOT NULL, start_date TEXT, end_date TEXT, is_active INTEGER DEFAULT 0);",
     )
     .expect("create schema");
 
-    // Migrate older DBs: add institution type if missing, default to 'school'.
+    // Migrate older DBs.
     let _ = conn.execute("ALTER TABLE schools ADD COLUMN type TEXT", []);
     let _ = conn.execute("UPDATE schools SET type='school' WHERE type IS NULL OR type=''", []);
 
@@ -474,6 +500,9 @@ fn init_db(conn: &Connection) {
     }
     if count(conn, "SELECT COUNT(*) FROM periods") == 0 {
         seed_periods(conn);
+    }
+    if count(conn, "SELECT COUNT(*) FROM academic_years") == 0 {
+        seed_academic_year(conn);
     }
 }
 
@@ -1073,6 +1102,197 @@ fn timetable_teacher_load(state: &AppState) -> (u16, Value) {
             (200, json!({"teachers": teachers, "total": total}))
         }
         Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+// ---- academic year engine ----
+
+fn year_with_terms(conn: &rusqlite::Connection, id: i64) -> rusqlite::Result<Value> {
+    let year = conn.query_row(
+        "SELECT id, label, start_date, end_date, is_active, is_closed FROM academic_years WHERE id=?1",
+        params![id],
+        |r| {
+            Ok(json!({
+                "id": r.get::<_, i64>(0)?,
+                "label": r.get::<_, String>(1)?,
+                "start_date": r.get::<_, Option<String>>(2)?,
+                "end_date": r.get::<_, Option<String>>(3)?,
+                "is_active": r.get::<_, i64>(4)? == 1,
+                "is_closed": r.get::<_, i64>(5)? == 1,
+            }))
+        },
+    )?;
+    let mut terms: Vec<Value> = Vec::new();
+    let mut stmt = conn.prepare(
+        "SELECT id, year_id, label, start_date, end_date, is_active FROM terms WHERE year_id=?1 ORDER BY start_date, id",
+    )?;
+    let mut rows = stmt.query(params![id])?;
+    while let Some(r) = rows.next()? {
+        terms.push(json!({
+            "id": r.get::<_, i64>(0)?,
+            "year_id": r.get::<_, i64>(1)?,
+            "label": r.get::<_, String>(2)?,
+            "start_date": r.get::<_, Option<String>>(3)?,
+            "end_date": r.get::<_, Option<String>>(4)?,
+            "is_active": r.get::<_, i64>(5)? == 1,
+        }));
+    }
+    let mut obj = year.as_object().unwrap().clone();
+    obj.insert("terms".to_string(), Value::Array(terms));
+    Ok(Value::Object(obj))
+}
+
+fn academic_years_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let ids: Vec<i64> = {
+        let mut stmt = conn.prepare("SELECT id FROM academic_years ORDER BY start_date DESC, id DESC").unwrap();
+        let mut rows = stmt.query([]).unwrap();
+        let mut v = Vec::new();
+        while let Some(r) = rows.next().unwrap() {
+            v.push(r.get::<_, i64>(0).unwrap());
+        }
+        v
+    };
+    let years: Vec<Value> = ids.iter().filter_map(|&id| year_with_terms(&conn, id).ok()).collect();
+    let total = years.len();
+    (200, json!({"years": years, "total": total}))
+}
+
+fn academic_year_active(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let id: Option<i64> = conn
+        .query_row("SELECT id FROM academic_years WHERE is_active=1 LIMIT 1", [], |r| r.get(0))
+        .ok();
+    match id {
+        None => (200, json!({"year": null})),
+        Some(id) => match year_with_terms(&conn, id) {
+            Ok(y) => (200, json!({"year": y})),
+            Err(e) => (500, json!({"error": format!("{e}")})),
+        },
+    }
+}
+
+fn academic_year_create(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let label = match v["label"].as_str().filter(|s| !s.is_empty()) {
+        Some(l) => l.to_string(),
+        None => return (422, json!({"error": "label required"})),
+    };
+    let start_date = v["start_date"].as_str().map(str::to_string);
+    let end_date = v["end_date"].as_str().map(str::to_string);
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO academic_years(label, start_date, end_date, is_active, is_closed) VALUES(?1,?2,?3,0,0)",
+        params![label, start_date, end_date],
+    ) {
+        Ok(_) => {
+            let id = conn.last_insert_rowid();
+            (201, json!({"ok": true, "id": id}))
+        }
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn academic_year_activate(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let id = match v["id"].as_i64() {
+        Some(i) => i,
+        None => return (422, json!({"error": "id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let closed: i64 = conn.query_row(
+        "SELECT is_closed FROM academic_years WHERE id=?1", params![id], |r| r.get(0)
+    ).unwrap_or(0);
+    if closed == 1 {
+        return (409, json!({"error": "Cannot activate a closed academic year"}));
+    }
+    conn.execute("UPDATE academic_years SET is_active=0", []).ok();
+    conn.execute("UPDATE academic_years SET is_active=1 WHERE id=?1", params![id]).ok();
+    (200, json!({"ok": true}))
+}
+
+fn academic_year_close(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let id = match v["id"].as_i64() {
+        Some(i) => i,
+        None => return (422, json!({"error": "id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    conn.execute(
+        "UPDATE academic_years SET is_closed=1, is_active=0 WHERE id=?1",
+        params![id],
+    ).ok();
+    (200, json!({"ok": true}))
+}
+
+fn term_create(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let year_id = match v["year_id"].as_i64() {
+        Some(i) => i,
+        None => return (422, json!({"error": "year_id required"})),
+    };
+    let label = match v["label"].as_str().filter(|s| !s.is_empty()) {
+        Some(l) => l.to_string(),
+        None => return (422, json!({"error": "label required"})),
+    };
+    let start_date = v["start_date"].as_str().map(str::to_string);
+    let end_date = v["end_date"].as_str().map(str::to_string);
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO terms(year_id, label, start_date, end_date, is_active) VALUES(?1,?2,?3,?4,0)",
+        params![year_id, label, start_date, end_date],
+    ) {
+        Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn term_delete(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let id = match v["id"].as_i64() {
+        Some(i) => i,
+        None => return (422, json!({"error": "id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    conn.execute("DELETE FROM terms WHERE id=?1", params![id]).ok();
+    (200, json!({"ok": true}))
+}
+
+fn term_activate(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let id = match v["id"].as_i64() {
+        Some(i) => i,
+        None => return (422, json!({"error": "id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    // Deactivate all terms in the same year, then activate this one.
+    let year_id: Option<i64> = conn.query_row(
+        "SELECT year_id FROM terms WHERE id=?1", params![id], |r| r.get(0)
+    ).ok();
+    if let Some(yid) = year_id {
+        conn.execute("UPDATE terms SET is_active=0 WHERE year_id=?1", params![yid]).ok();
+        conn.execute("UPDATE terms SET is_active=1 WHERE id=?1", params![id]).ok();
+    }
+    (200, json!({"ok": true}))
+}
+
+fn seed_academic_year(conn: &rusqlite::Connection) {
+    conn.execute(
+        "INSERT INTO academic_years(label, start_date, end_date, is_active, is_closed) VALUES(?1,?2,?3,1,0)",
+        params!["2025-26", "2025-04-01", "2026-03-31"],
+    ).unwrap();
+    let year_id = conn.last_insert_rowid();
+    let terms: &[(&str, &str, &str)] = &[
+        ("Term 1", "2025-04-01", "2025-09-30"),
+        ("Term 2", "2025-10-01", "2025-12-31"),
+        ("Term 3", "2026-01-01", "2026-03-31"),
+    ];
+    for (i, (label, start, end)) in terms.iter().enumerate() {
+        let is_active = if i == 0 { 1 } else { 0 };
+        conn.execute(
+            "INSERT INTO terms(year_id, label, start_date, end_date, is_active) VALUES(?1,?2,?3,?4,?5)",
+            params![year_id, label, start, end, is_active],
+        ).unwrap();
     }
 }
 

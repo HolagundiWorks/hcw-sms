@@ -17,6 +17,7 @@ import { roleLabel } from '../../roles';
 import { initials, type SessionUser } from '../../types';
 import { useAuth } from '../../stores/auth';
 import { useSchool } from '../../hooks/useSchool';
+import { useActiveYear } from '../../hooks/useAcademicYears';
 import { institutionTypeLabel } from '../../lib/institution';
 
 const FALLBACK_AY = '2026–27';
@@ -26,8 +27,9 @@ const chip = { root: { background: 'rgba(255,255,255,0.18)' }, label: { color: '
 export function UtilityStrip({ user }: { user: SessionUser }) {
   const signOut = useAuth((s) => s.signOut);
   const { data: school } = useSchool();
+  const { data: activeYearData } = useActiveYear();
   const schoolName = school?.name ?? 'School';
-  const academicYear = school?.academic_year ?? FALLBACK_AY;
+  const academicYear = activeYearData?.year?.label ?? school?.academic_year ?? FALLBACK_AY;
 
   return (
     <Group h="100%" px="sm" justify="space-between" wrap="nowrap" gap="sm">

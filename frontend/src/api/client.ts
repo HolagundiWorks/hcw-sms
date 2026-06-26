@@ -238,6 +238,52 @@ export function fetchClasses(token: string) {
   return req<ClassesResponse>('/classes', { token });
 }
 
+export interface Term {
+  id: number;
+  year_id: number;
+  label: string;
+  start_date: string | null;
+  end_date: string | null;
+  is_active: boolean;
+}
+export interface AcademicYear {
+  id: number;
+  label: string;
+  start_date: string | null;
+  end_date: string | null;
+  is_active: boolean;
+  is_closed: boolean;
+  terms: Term[];
+}
+export interface AcademicYearsResponse {
+  years: AcademicYear[];
+  total: number;
+}
+export function fetchAcademicYears(token: string) {
+  return req<AcademicYearsResponse>('/academic-years', { token });
+}
+export function fetchActiveYear(token: string) {
+  return req<{ year: AcademicYear | null }>('/academic-years/active', { token });
+}
+export function createAcademicYear(token: string, data: { label: string; start_date?: string; end_date?: string }) {
+  return req<{ ok: boolean; id: number }>('/academic-years', { method: 'POST', token, body: data });
+}
+export function activateAcademicYear(token: string, id: number) {
+  return req<{ ok: boolean }>('/academic-years/activate', { method: 'POST', token, body: { id } });
+}
+export function closeAcademicYear(token: string, id: number) {
+  return req<{ ok: boolean }>('/academic-years/close', { method: 'POST', token, body: { id } });
+}
+export function createTerm(token: string, data: { year_id: number; label: string; start_date?: string; end_date?: string }) {
+  return req<{ ok: boolean; id: number }>('/terms', { method: 'POST', token, body: data });
+}
+export function deleteTerm(token: string, id: number) {
+  return req<{ ok: boolean }>('/terms/delete', { method: 'POST', token, body: { id } });
+}
+export function activateTerm(token: string, id: number) {
+  return req<{ ok: boolean }>('/terms/activate', { method: 'POST', token, body: { id } });
+}
+
 export interface SubjectQuota {
   id: number;
   name: string | null;
