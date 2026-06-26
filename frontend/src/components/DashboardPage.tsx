@@ -168,7 +168,7 @@ export function DashboardScreen({ onNavigate }: { onNavigate: (module: string) =
         </Card>
 
         {/* Meetings today */}
-        {meetingsData && meetingsData.meetings.length > 0 && (
+        {meetingsData && (meetingsData.meetings?.length ?? 0) > 0 && (
           <MeetingsTodayCard meetings={meetingsData.meetings} />
         )}
 
