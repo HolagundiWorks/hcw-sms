@@ -9,6 +9,7 @@ import {
   Book,
   Bus,
   CalendarCheck,
+  CalendarDays,
   Layers,
   CalendarClock,
   CalendarOff,
@@ -200,6 +201,15 @@ export const modules: ModuleDef[] = [
     ],
   },
   {
+    key: 'timetable',
+    label: 'Timetable',
+    icon: CalendarDays,
+    actions: [
+      { key: 'print', label: 'Print', icon: Printer, shortcut: 'Ctrl P' },
+      { key: 'export', label: 'Export', icon: Download },
+    ],
+  },
+  {
     key: 'timings',
     label: 'Timings',
     icon: Clock,
@@ -226,7 +236,7 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'Overview', keys: ['dashboard'] },
   { label: 'People', keys: ['students', 'staff'] },
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
-  { label: 'Schedule', keys: ['timings'] },
+  { label: 'Schedule', keys: ['timetable', 'timings'] },
   { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport'] },
   { label: 'System', keys: ['settings'] },
 ];

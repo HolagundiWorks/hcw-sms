@@ -238,6 +238,51 @@ export function fetchClasses(token: string) {
   return req<ClassesResponse>('/classes', { token });
 }
 
+export interface TimetableEntry {
+  id: number;
+  section_id: number;
+  period_id: number;
+  day_of_week: number;
+  subject_id: number | null;
+  subject_name: string | null;
+  subject_code: string | null;
+  subject_type: string | null;
+  staff_id: number | null;
+  teacher_name: string | null;
+  room_id: number | null;
+  room_name: string | null;
+}
+
+export interface TimetableResponse {
+  entries: TimetableEntry[];
+  total: number;
+}
+
+export function fetchTimetable(token: string, sectionId: number) {
+  return req<TimetableResponse>(`/timetable?section_id=${sectionId}`, { token });
+}
+
+export function setTimetableEntry(
+  token: string,
+  data: {
+    section_id: number;
+    period_id: number;
+    day_of_week: number;
+    subject_id: number | null;
+    staff_id: number | null;
+    room_id: number | null;
+  },
+) {
+  return req<{ ok: boolean }>('/timetable', { method: 'POST', token, body: data });
+}
+
+export function clearTimetableEntry(
+  token: string,
+  data: { section_id: number; period_id: number; day_of_week: number },
+) {
+  return req<{ ok: boolean }>('/timetable/clear', { method: 'POST', token, body: data });
+}
+
 export interface Period {
   id?: number;
   label: string;

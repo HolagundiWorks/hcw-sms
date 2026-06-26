@@ -123,6 +123,15 @@ fn dispatch(
     if method == &Method::Get && path == "/classes" {
         return with_auth(state, token, |_| classes_list(state));
     }
+    if method == &Method::Get && path == "/timetable" {
+        return with_auth(state, token, |_| timetable_list(state, url));
+    }
+    if method == &Method::Post && path == "/timetable" {
+        return with_auth(state, token, |_| timetable_set(state, body));
+    }
+    if method == &Method::Post && path == "/timetable/clear" {
+        return with_auth(state, token, |_| timetable_clear(state, body));
+    }
     if method == &Method::Get && path == "/periods" {
         return with_auth(state, token, |_| periods_list(state));
     }
@@ -431,6 +440,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS sections(id INTEGER PRIMARY KEY AUTOINCREMENT, class_id INTEGER, name TEXT, teacher_id INTEGER, capacity INTEGER, room_id INTEGER);
          CREATE TABLE IF NOT EXISTS teacher_subjects(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, priority INTEGER DEFAULT 1, UNIQUE(staff_id, subject_id));
          CREATE TABLE IF NOT EXISTS periods(id INTEGER PRIMARY KEY AUTOINCREMENT, label TEXT NOT NULL, period_type TEXT DEFAULT 'period', start_time TEXT NOT NULL, end_time TEXT NOT NULL, sort_order INTEGER DEFAULT 0);
+         CREATE TABLE IF NOT EXISTS timetable_entries(id INTEGER PRIMARY KEY AUTOINCREMENT, section_id INTEGER NOT NULL, period_id INTEGER NOT NULL, day_of_week INTEGER NOT NULL, subject_id INTEGER, staff_id INTEGER, room_id INTEGER, UNIQUE(section_id, period_id, day_of_week));
          CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);",
     )
     .expect("create schema");
@@ -809,6 +819,155 @@ fn classes_list(state: &AppState) -> (u16, Value) {
         Ok(()) => (200, json!({"classes": out, "total": out.len()})),
         Err(_) => (500, json!({"error": "query failed"})),
     }
+}
+
+// ---- timetable builder ----
+
+fn timetable_list(state: &AppState, url: &str) -> (u16, Value) {
+    let section_id = match q_param(url, "section_id").and_then(|s| s.parse::<i64>().ok()) {
+        Some(id) => id,
+        None => return (422, json!({"error": "section_id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let mut entries: Vec<Value> = Vec::new();
+    let res: rusqlite::Result<()> = (|| {
+        let mut stmt = conn.prepare(
+            "SELECT te.id, te.section_id, te.period_id, te.day_of_week,
+                    te.subject_id, subj.name, subj.code, subj.type,
+                    te.staff_id, st.first_name, st.last_name,
+                    te.room_id, r.name
+             FROM timetable_entries te
+             LEFT JOIN subjects subj ON subj.id = te.subject_id
+             LEFT JOIN staff st ON st.id = te.staff_id
+             LEFT JOIN classrooms r ON r.id = te.room_id
+             WHERE te.section_id = ?1
+             ORDER BY te.day_of_week, te.period_id",
+        )?;
+        let mut rows = stmt.query(params![section_id])?;
+        while let Some(r) = rows.next()? {
+            let first: Option<String> = r.get(9)?;
+            let last: Option<String> = r.get(10)?;
+            let teacher =
+                first.map(|f| format!("{} {}", f, last.unwrap_or_default()).trim().to_string());
+            entries.push(json!({
+                "id": r.get::<_, i64>(0)?,
+                "section_id": r.get::<_, i64>(1)?,
+                "period_id": r.get::<_, i64>(2)?,
+                "day_of_week": r.get::<_, i64>(3)?,
+                "subject_id": r.get::<_, Option<i64>>(4)?,
+                "subject_name": r.get::<_, Option<String>>(5)?,
+                "subject_code": r.get::<_, Option<String>>(6)?,
+                "subject_type": r.get::<_, Option<String>>(7)?,
+                "staff_id": r.get::<_, Option<i64>>(8)?,
+                "teacher_name": teacher,
+                "room_id": r.get::<_, Option<i64>>(11)?,
+                "room_name": r.get::<_, Option<String>>(12)?,
+            }));
+        }
+        Ok(())
+    })();
+    match res {
+        Ok(()) => {
+            let total = entries.len();
+            (200, json!({"entries": entries, "total": total}))
+        }
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn timetable_set(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let section_id = match v["section_id"].as_i64() {
+        Some(id) => id,
+        None => return (422, json!({"error": "section_id required"})),
+    };
+    let period_id = match v["period_id"].as_i64() {
+        Some(id) => id,
+        None => return (422, json!({"error": "period_id required"})),
+    };
+    let day = match v["day_of_week"].as_i64() {
+        Some(d) if (0..=6).contains(&d) => d,
+        _ => return (422, json!({"error": "day_of_week 0–6 required"})),
+    };
+    let subject_id = v["subject_id"].as_i64();
+    let staff_id = v["staff_id"].as_i64();
+    let room_id = v["room_id"].as_i64();
+
+    let conn = state.conn.lock().unwrap();
+
+    // Teacher conflict: same teacher already in this period+day for a different section?
+    if let Some(sid) = staff_id {
+        let conflict: Option<i64> = conn.query_row(
+            "SELECT te.section_id FROM timetable_entries te
+             WHERE te.staff_id=?1 AND te.period_id=?2 AND te.day_of_week=?3 AND te.section_id!=?4",
+            params![sid, period_id, day, section_id],
+            |r| r.get(0),
+        ).ok();
+        if let Some(csec) = conflict {
+            let sec_label: Option<String> = conn.query_row(
+                "SELECT c.name || ' – Sec ' || s.name FROM sections s JOIN classes c ON c.id=s.class_id WHERE s.id=?1",
+                params![csec],
+                |r| r.get(0),
+            ).ok();
+            return (409, json!({
+                "error": "teacher_conflict",
+                "message": format!("Teacher already assigned in this slot ({})",
+                    sec_label.unwrap_or_else(|| "another section".into()))
+            }));
+        }
+    }
+
+    // Room conflict
+    if let Some(rid) = room_id {
+        let conflict: Option<i64> = conn.query_row(
+            "SELECT section_id FROM timetable_entries
+             WHERE room_id=?1 AND period_id=?2 AND day_of_week=?3 AND section_id!=?4",
+            params![rid, period_id, day, section_id],
+            |r| r.get(0),
+        ).ok();
+        if conflict.is_some() {
+            return (409, json!({
+                "error": "room_conflict",
+                "message": "Room already booked for this slot by another section"
+            }));
+        }
+    }
+
+    let res = conn.execute(
+        "INSERT INTO timetable_entries(section_id, period_id, day_of_week, subject_id, staff_id, room_id)
+         VALUES(?1,?2,?3,?4,?5,?6)
+         ON CONFLICT(section_id, period_id, day_of_week) DO UPDATE SET
+           subject_id=excluded.subject_id,
+           staff_id=excluded.staff_id,
+           room_id=excluded.room_id",
+        params![section_id, period_id, day, subject_id, staff_id, room_id],
+    );
+    match res {
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn timetable_clear(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let section_id = match v["section_id"].as_i64() {
+        Some(id) => id,
+        None => return (422, json!({"error": "section_id required"})),
+    };
+    let period_id = match v["period_id"].as_i64() {
+        Some(id) => id,
+        None => return (422, json!({"error": "period_id required"})),
+    };
+    let day = match v["day_of_week"].as_i64() {
+        Some(d) => d,
+        None => return (422, json!({"error": "day_of_week required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute(
+        "DELETE FROM timetable_entries WHERE section_id=?1 AND period_id=?2 AND day_of_week=?3",
+        params![section_id, period_id, day],
+    );
+    (200, json!({"ok": true}))
 }
 
 // ---- school timings / period slots ----
