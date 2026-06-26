@@ -44,6 +44,7 @@ import {
   PenLine,
   Home,
   AlarmClock,
+  PackageCheck,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -203,7 +204,7 @@ export const ribbonTabs: RibbonTab[] = [
         label: 'Admin Control',
         actions: [
           { key: 'visitor', label: 'Visitor Log', icon: UserCheck, accessLevel: 2, placeholder: true },
-          { key: 'inventory', label: 'Inventory', icon: ClipboardList, accessLevel: 2, placeholder: true },
+          { key: 'issued', label: 'Issued Items', icon: PackageCheck, accessLevel: 2 },
         ],
       },
     ],

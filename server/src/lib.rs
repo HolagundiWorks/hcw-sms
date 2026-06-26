@@ -546,6 +546,13 @@ fn dispatch(
             return with_auth(state, token, |_| transport_unassign(state, id));
         }
     }
+    // Issued items (ID / books / uniform markers — no accounting)
+    if method == &Method::Get && path == "/issued" {
+        return with_auth(state, token, |_| issued_list(state, url));
+    }
+    if method == &Method::Post && path == "/issued/mark" {
+        return with_auth(state, token, |u| issued_mark(state, body, u));
+    }
     // Fee OS (P6)
     if method == &Method::Get && path == "/fee-heads" {
         return with_auth(state, token, |_| fee_heads_list(state));
@@ -1395,6 +1402,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS transport_routes(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, vehicle_id INTEGER, fare REAL, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS transport_stops(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER NOT NULL, name TEXT NOT NULL, pickup_time TEXT, sort_order INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS transport_assignments(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, route_id INTEGER NOT NULL, stop_id INTEGER, created_at TEXT DEFAULT (datetime('now')), UNIQUE(student_id));
+         CREATE TABLE IF NOT EXISTS issued_items(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, item_type TEXT NOT NULL, issued INTEGER DEFAULT 0, issued_date TEXT, marked_by INTEGER, UNIQUE(student_id, item_type));
          CREATE TABLE IF NOT EXISTS fee_heads(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, is_optional INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS fee_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, academic_year_id INTEGER, class_id INTEGER, fee_head_id INTEGER NOT NULL, amount REAL NOT NULL, due_date TEXT, UNIQUE(academic_year_id, class_id, fee_head_id));
          CREATE TABLE IF NOT EXISTS fee_payments(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, fee_head_id INTEGER NOT NULL, academic_year_id INTEGER, amount_paid REAL NOT NULL, payment_date TEXT DEFAULT (date('now')), payment_mode TEXT DEFAULT 'cash', reference TEXT, receipt_no TEXT, collected_by INTEGER, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
@@ -3051,6 +3059,77 @@ fn transport_unassign(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let _ = conn.execute("DELETE FROM transport_assignments WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
+}
+
+// ---- Issued items (ID / books / uniform markers) ----
+
+/// Roster of a section with each student's issuance markers folded into a map
+/// (e.g. {"id": true, "books": false, "uniform": true}).
+fn issued_list(state: &AppState, url: &str) -> (u16, Value) {
+    let section_id: i64 = match q_param(url, "section_id").and_then(|v| v.parse().ok()) {
+        Some(id) => id,
+        None => return (422, json!({"error": "section_id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT s.id, s.first_name, s.last_name, ii.item_type, ii.issued, ii.issued_date
+         FROM section_students ss
+         JOIN students s ON s.id = ss.student_id
+         LEFT JOIN issued_items ii ON ii.student_id = s.id
+         WHERE ss.section_id = ?1
+         ORDER BY s.first_name, s.last_name",
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+
+    // (student_id) -> aggregated row. Preserve first-seen order.
+    let mut order: Vec<i64> = Vec::new();
+    let mut map: std::collections::HashMap<i64, Value> = std::collections::HashMap::new();
+
+    let raw = stmt.query_map(params![section_id], |r| {
+        Ok((
+            r.get::<_, i64>(0)?,
+            r.get::<_, Option<String>>(1)?,
+            r.get::<_, Option<String>>(2)?,
+            r.get::<_, Option<String>>(3)?,
+            r.get::<_, Option<i64>>(4)?,
+            r.get::<_, Option<String>>(5)?,
+        ))
+    });
+    let rows = match raw { Ok(m) => m, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    for row in rows.flatten() {
+        let (sid, fn_, ln, item_type, issued, issued_date) = row;
+        let entry = map.entry(sid).or_insert_with(|| {
+            order.push(sid);
+            json!({ "student_id": sid, "first_name": fn_, "last_name": ln, "items": {}, "dates": {} })
+        });
+        if let Some(it) = item_type {
+            entry["items"][&it] = json!(issued.unwrap_or(0) != 0);
+            entry["dates"][&it] = json!(issued_date);
+        }
+    }
+    let students: Vec<Value> = order.into_iter().filter_map(|id| map.remove(&id)).collect();
+    (200, json!({"students": students, "section_id": section_id}))
+}
+
+fn issued_mark(state: &AppState, body: &str, uid: i64) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let student_id = match v["student_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "student_id required"})) };
+    let item_type = match v["item_type"].as_str() { Some(t) if !t.is_empty() => t.to_string(), _ => return (422, json!({"error": "item_type required"})) };
+    let issued = v["issued"].as_bool().unwrap_or(false);
+    let issued_i = if issued { 1 } else { 0 };
+    let conn = state.conn.lock().unwrap();
+    let r = conn.execute(
+        "INSERT INTO issued_items(student_id, item_type, issued, issued_date, marked_by)
+         VALUES(?1,?2,?3, CASE WHEN ?3=1 THEN date('now') ELSE NULL END, ?4)
+         ON CONFLICT(student_id, item_type) DO UPDATE SET
+           issued=excluded.issued,
+           issued_date=CASE WHEN excluded.issued=1 THEN date('now') ELSE NULL END,
+           marked_by=excluded.marked_by",
+        params![student_id, item_type, issued_i, uid],
+    );
+    match r {
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
 }
 
 // ---- Fee OS (P6) ----

@@ -124,10 +124,10 @@ are the real remaining build targets. Tier = build priority; Gate = dependency.
 
 | # | Module | Tab | Tier | Gate | Status |
 |---|---|---|---|---|---|
-| M1 | **ID Cards** | People | High | Students, Hardware (NFC) | 🟡 building |
-| M2 | Transport | Operations | High | P1 | ⬜ |
+| M1 | **ID Cards** | People | High | Students, Hardware (NFC) | ✅ done |
+| M2 | Transport (vehicles/routes/stops/assignments) | Operations | High | P1 | ✅ done |
 | M3 | Visitor Log | Operations | Medium | P1 | ⬜ |
-| M4 | Inventory | Operations | Medium | P1 | ⬜ |
+| M4 | **Issued Items** markers (ID/books/uniform, no accounting) | Operations | Medium | P1 | ✅ done |
 | M5 | Library (catalog + issue/return) | Academics + Ops | Medium | P1 | ⬜ |
 | M6 | Finance Reports | Finance | Medium | Fee OS (P6) | ⬜ |
 | M7 | Scholarships / concessions | Finance | Medium | Fee OS (P6) | ⬜ |
