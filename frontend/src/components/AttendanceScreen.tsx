@@ -15,14 +15,19 @@ import {
   Title,
 } from '@mantine/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Download, Monitor } from 'lucide-react';
+import { Check, Download, Monitor, Sun, Sunset } from 'lucide-react';
 import { useClasses } from '../hooks/useClasses';
-import { useTimings } from '../hooks/useTimings';
 import { useAuth } from '../stores/auth';
 
 const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8787';
 
 type AttendanceStatus = 'present' | 'absent' | 'late' | 'excused' | 'unmarked';
+
+// Daily attendance is taken twice per class: a morning and an afternoon
+// session. These reserved (negative) codes occupy the period_id slot so they
+// never collide with real timetable periods (which are positive).
+type Session = 'morning' | 'afternoon';
+const SESSION_CODE: Record<Session, number> = { morning: -1, afternoon: -2 };
 
 interface StudentAttendance {
   student_id: number;
@@ -96,18 +101,16 @@ function StatusToggle({ status, onChange }: { status: AttendanceStatus; onChange
 // ─── Mark attendance panel ─────────────────────────────────────────────────────
 function MarkAttendancePanel({ token, sectionId }: { token: string; sectionId: number }) {
   const qc = useQueryClient();
-  const { data: periodData } = useTimings();
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [periodId, setPeriodId] = useState<string | null>(null);
+  const [session, setSession] = useState<Session>('morning');
   const [overrides, setOverrides] = useState<Record<number, AttendanceStatus>>({});
 
-  const periods = (periodData?.periods ?? []).filter((p) => p.period_type !== 'break');
-  const periodOptions = periods.map((p) => ({ value: String(p.id), label: `${p.label} (${p.start_time})` }));
+  const periodId = SESSION_CODE[session];
 
   const { data, isLoading } = useQuery({
     queryKey: ['attendance', sectionId, date, periodId],
-    queryFn: () => fetchAttendance(token, sectionId, date, Number(periodId)),
-    enabled: !!sectionId && !!date && !!periodId,
+    queryFn: () => fetchAttendance(token, sectionId, date, periodId),
+    enabled: !!sectionId && !!date,
     staleTime: 60_000,
   });
 
@@ -131,7 +134,7 @@ function MarkAttendancePanel({ token, sectionId }: { token: string; sectionId: n
       markAttendance(token, {
         section_id: sectionId,
         date,
-        period_id: Number(periodId),
+        period_id: periodId,
         records: students.map((s) => ({ student_id: s.student_id, status: effectiveStatus(s) })),
       }),
     onSuccess: () => {
@@ -145,11 +148,21 @@ function MarkAttendancePanel({ token, sectionId }: { token: string; sectionId: n
 
   return (
     <Stack gap="md">
-      <Group gap="sm" wrap="wrap">
-        <TextInput type="date" label="Date" value={date} onChange={(e) => setDate(e.currentTarget.value)} w={150} />
-        <Select label="Period" placeholder="Select period…" data={periodOptions} value={periodId} onChange={setPeriodId} w={220} />
+      <Group gap="sm" wrap="wrap" align="flex-end">
+        <TextInput type="date" label="Date" value={date} onChange={(e) => { setDate(e.currentTarget.value); setOverrides({}); }} w={150} />
+        <div>
+          <Text size="sm" fw={500} mb={4}>Session</Text>
+          <SegmentedControl
+            value={session}
+            onChange={(v) => { setSession(v as Session); setOverrides({}); }}
+            data={[
+              { value: 'morning', label: (<Group gap={6} wrap="nowrap"><Sun size={14} /> Morning</Group>) },
+              { value: 'afternoon', label: (<Group gap={6} wrap="nowrap"><Sunset size={14} /> Afternoon</Group>) },
+            ]}
+          />
+        </div>
         {students.length > 0 && (
-          <Group gap={4} mt={22}>
+          <Group gap={4}>
             {STATUSES.map((s) => (
               <Button key={s} size="xs" variant="subtle" color={STATUS_COLOR[s]} onClick={() => markAll(s)}>
                 All {s}
@@ -159,9 +172,7 @@ function MarkAttendancePanel({ token, sectionId }: { token: string; sectionId: n
         )}
       </Group>
 
-      {!periodId ? (
-        <Text size="sm" c="dimmed">Select a period to mark attendance.</Text>
-      ) : isLoading ? (
+      {isLoading ? (
         <Stack gap="xs">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} height={36} radius="md" />)}</Stack>
       ) : students.length === 0 ? (
         <Card>
@@ -301,7 +312,7 @@ export function AttendanceScreen({ onKiosk }: { onKiosk?: () => void } = {}) {
         <Group justify="space-between" align="flex-end" wrap="nowrap">
           <div>
             <Title order={2}>Attendance</Title>
-            <Text c="dimmed" size="sm">Per-period attendance marking and monthly reports</Text>
+            <Text c="dimmed" size="sm">Daily morning &amp; afternoon attendance, per class</Text>
           </div>
           <Group gap="sm">
             {onKiosk && (
