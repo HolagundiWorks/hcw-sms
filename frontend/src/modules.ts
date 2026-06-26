@@ -1,5 +1,6 @@
 import {
   ArrowRightLeft,
+  ArrowDownToLine,
   ArrowUp,
   Banknote,
   Bell,
@@ -11,6 +12,7 @@ import {
   Bus,
   CalendarCheck,
   CalendarDays,
+  Database,
   CalendarRange,
   Layers,
   CalendarClock,
@@ -280,6 +282,15 @@ export const modules: ModuleDef[] = [
     ],
   },
   {
+    key: 'import',
+    label: 'LEOS Connect',
+    icon: ArrowDownToLine,
+    actions: [
+      { key: 'csv', label: 'CSV Import', icon: FileText },
+      { key: 'sqlite', label: 'SQLite Import', icon: Database },
+    ],
+  },
+  {
     key: 'security',
     label: 'Security',
     icon: Settings,
@@ -315,5 +326,5 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
   { label: 'Schedule', keys: ['timetable', 'substitution', 'timings'] },
   { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport', 'payroll', 'events', 'activities'] },
-  { label: 'System', keys: ['academic-year', 'security', 'backup', 'settings'] },
+  { label: 'System', keys: ['academic-year', 'import', 'security', 'backup', 'settings'] },
 ];

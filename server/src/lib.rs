@@ -268,6 +268,16 @@ fn dispatch(
     if method == &Method::Post && path == "/substitutions/resolve" {
         return with_auth(state, token, |_| substitution_resolve(state, body));
     }
+    // External DB Connector (P12)
+    if method == &Method::Get && path == "/import/jobs" {
+        return with_auth(state, token, |_| import_jobs_list(state));
+    }
+    if method == &Method::Post && path == "/import/csv" {
+        return with_auth(state, token, |_| import_csv(state, body));
+    }
+    if method == &Method::Post && path == "/import/sqlite" {
+        return with_auth(state, token, |_| import_sqlite(state, body));
+    }
     // Security & Audit (P11)
     if method == &Method::Get && path == "/audit-log" {
         return with_auth(state, token, |_| audit_log_list(state, url));
@@ -1102,6 +1112,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS exam_marks(id INTEGER PRIMARY KEY AUTOINCREMENT, exam_id INTEGER NOT NULL, student_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, marks_obtained REAL, max_marks REAL DEFAULT 100, grade TEXT, remarks TEXT, UNIQUE(exam_id, student_id, subject_id));
          CREATE TABLE IF NOT EXISTS salary_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL UNIQUE, basic REAL DEFAULT 0, hra REAL DEFAULT 0, da REAL DEFAULT 0, ta REAL DEFAULT 0, other_allowances REAL DEFAULT 0, pf_deduction REAL DEFAULT 0, pt_deduction REAL DEFAULT 0, other_deductions REAL DEFAULT 0, effective_from TEXT, updated_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS payslips(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, month TEXT NOT NULL, basic REAL, hra REAL, da REAL, ta REAL, other_allowances REAL, pf_deduction REAL, pt_deduction REAL, other_deductions REAL, gross REAL, net REAL, working_days INTEGER, paid_days INTEGER, generated_at TEXT DEFAULT (datetime('now')), UNIQUE(staff_id, month));
+         CREATE TABLE IF NOT EXISTS import_jobs(id INTEGER PRIMARY KEY AUTOINCREMENT, source_type TEXT NOT NULL, source_path TEXT, status TEXT DEFAULT 'pending', rows_imported INTEGER DEFAULT 0, rows_failed INTEGER DEFAULT 0, error TEXT, started_at TEXT, completed_at TEXT, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS audit_log(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, action TEXT NOT NULL, resource_type TEXT, resource_id INTEGER, detail TEXT, ip TEXT, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS roles(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, permissions TEXT DEFAULT '{}');
          CREATE TABLE IF NOT EXISTS backup_config(id INTEGER PRIMARY KEY, schedule TEXT DEFAULT 'daily', destinations TEXT DEFAULT '[]', last_backup_at TEXT, enabled INTEGER DEFAULT 1);
@@ -1445,6 +1456,153 @@ fn substitution_resolve(state: &AppState, body: &str) -> (u16, Value) {
         Ok(_) => (404, json!({"error": "substitution not found"})),
         Err(e) => (500, json!({"error": format!("{e}")})),
     }
+}
+
+// ---- External DB Connector (P12) ----
+
+fn import_jobs_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT id, source_type, source_path, status, rows_imported, rows_failed, error, started_at, completed_at, created_at
+         FROM import_jobs ORDER BY created_at DESC LIMIT 50"
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "source_type": r.get::<_, String>(1)?,
+            "source_path": r.get::<_, Option<String>>(2)?,
+            "status": r.get::<_, Option<String>>(3)?,
+            "rows_imported": r.get::<_, i64>(4)?,
+            "rows_failed": r.get::<_, i64>(5)?,
+            "error": r.get::<_, Option<String>>(6)?,
+            "started_at": r.get::<_, Option<String>>(7)?,
+            "completed_at": r.get::<_, Option<String>>(8)?,
+            "created_at": r.get::<_, String>(9)?,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"jobs": rows, "total": total}))
+}
+
+fn import_csv(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let path = match v["path"].as_str() { Some(p) if !p.is_empty() => p.to_string(), _ => return (422, json!({"error": "path required"})) };
+    let target = v["target"].as_str().unwrap_or("students").to_string();
+    let job_id = {
+        let conn = state.conn.lock().unwrap();
+        match conn.execute(
+            "INSERT INTO import_jobs(source_type, source_path, status, started_at) VALUES('csv', ?1, 'running', datetime('now'))",
+            params![path],
+        ) {
+            Ok(_) => conn.last_insert_rowid(),
+            Err(e) => return (500, json!({"error": format!("{e}")})),
+        }
+    };
+    match do_import_csv(state, &path, &target, job_id) {
+        Ok((imported, failed)) => {
+            let conn = state.conn.lock().unwrap();
+            let _ = conn.execute(
+                "UPDATE import_jobs SET status='completed', rows_imported=?1, rows_failed=?2, completed_at=datetime('now') WHERE id=?3",
+                params![imported, failed, job_id],
+            );
+            (200, json!({"ok": true, "job_id": job_id, "rows_imported": imported, "rows_failed": failed}))
+        }
+        Err(e) => {
+            let conn = state.conn.lock().unwrap();
+            let _ = conn.execute(
+                "UPDATE import_jobs SET status='error', error=?1, completed_at=datetime('now') WHERE id=?2",
+                params![e.to_string(), job_id],
+            );
+            (500, json!({"error": e.to_string()}))
+        }
+    }
+}
+
+fn do_import_csv(state: &AppState, path: &str, target: &str, _job_id: i64) -> Result<(i64, i64), Box<dyn std::error::Error>> {
+    use std::io::BufRead;
+    let file = std::fs::File::open(path)?;
+    let reader = std::io::BufReader::new(file);
+    let mut lines = reader.lines();
+    // First line = headers
+    let header_line = lines.next().ok_or("empty file")??;
+    let headers: Vec<String> = header_line.split(',').map(|h| h.trim().trim_matches('"').to_lowercase()).collect();
+    let mut imported = 0i64;
+    let mut failed = 0i64;
+    let conn = state.conn.lock().unwrap();
+    for line in lines {
+        let line = match line { Ok(l) => l, Err(_) => { failed += 1; continue; } };
+        if line.trim().is_empty() { continue; }
+        let fields: Vec<String> = line.split(',').map(|f| f.trim().trim_matches('"').to_string()).collect();
+        let get = |col: &str| -> Option<String> {
+            headers.iter().position(|h| h == col).and_then(|i| fields.get(i)).filter(|v| !v.is_empty()).cloned()
+        };
+        let result = match target {
+            "students" => conn.execute(
+                "INSERT OR IGNORE INTO students(first_name, last_name, email, phone, gender, birthdate) VALUES(?1,?2,?3,?4,?5,?6)",
+                params![get("first_name").or_else(|| get("firstname")), get("last_name").or_else(|| get("lastname")), get("email"), get("phone"), get("gender"), get("birthdate").or_else(|| get("dob"))],
+            ),
+            "staff" => conn.execute(
+                "INSERT OR IGNORE INTO staff(first_name, last_name, email, phone, profile) VALUES(?1,?2,?3,?4,?5)",
+                params![get("first_name").or_else(|| get("firstname")), get("last_name").or_else(|| get("lastname")), get("email"), get("phone"), get("profile").or_else(|| get("role"))],
+            ),
+            _ => return Err(format!("unknown target: {target}").into()),
+        };
+        match result { Ok(_) => imported += 1, Err(_) => failed += 1 }
+    }
+    Ok((imported, failed))
+}
+
+fn import_sqlite(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let path = match v["path"].as_str() { Some(p) if !p.is_empty() => p.to_string(), _ => return (422, json!({"error": "path required"})) };
+    let target_tables = match v["tables"].as_array() {
+        Some(t) => t.iter().filter_map(|v| v.as_str()).map(|s| s.to_string()).collect::<Vec<_>>(),
+        None => vec!["students".to_string(), "staff".to_string()],
+    };
+    let job_id = {
+        let conn = state.conn.lock().unwrap();
+        match conn.execute(
+            "INSERT INTO import_jobs(source_type, source_path, status, started_at) VALUES('sqlite', ?1, 'running', datetime('now'))",
+            params![path],
+        ) {
+            Ok(_) => conn.last_insert_rowid(),
+            Err(e) => return (500, json!({"error": format!("{e}")})),
+        }
+    };
+    // Attach external DB and copy rows
+    let total_imported: i64;
+    {
+        let conn = state.conn.lock().unwrap();
+        let attach = format!("ATTACH DATABASE '{}' AS ext", path.replace('\'', "''"));
+        if let Err(e) = conn.execute_batch(&attach) {
+            let _ = conn.execute("UPDATE import_jobs SET status='error', error=?1, completed_at=datetime('now') WHERE id=?2", params![e.to_string(), job_id]);
+            return (500, json!({"error": format!("{e}")}));
+        }
+        let mut count_imported = 0i64;
+        for table in &target_tables {
+            let insert_sql = match table.as_str() {
+                "students" => "INSERT OR IGNORE INTO students SELECT * FROM ext.students",
+                "staff" => "INSERT OR IGNORE INTO staff SELECT * FROM ext.staff",
+                "courses" => "INSERT OR IGNORE INTO courses SELECT * FROM ext.courses",
+                "subjects" => "INSERT OR IGNORE INTO subjects SELECT * FROM ext.subjects",
+                _ => continue,
+            };
+            if let Ok(n) = conn.execute(insert_sql, []) { count_imported += n as i64; }
+        }
+        let _ = conn.execute_batch("DETACH DATABASE ext");
+        let _ = conn.execute(
+            "UPDATE import_jobs SET status='completed', rows_imported=?1, completed_at=datetime('now') WHERE id=?2",
+            params![count_imported, job_id],
+        );
+        total_imported = count_imported;
+    }
+    (200, json!({"ok": true, "job_id": job_id, "rows_imported": total_imported}))
 }
 
 // ---- Security & Audit (P11) ----
