@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { AppShell } from '@mantine/core';
 import type { SessionUser } from '../../types';
 import { ribbonTabs } from '../../ribbon.config';
@@ -20,6 +20,12 @@ interface CockpitShellProps {
  * full-height workspace. No footer.
  */
 export function CockpitShell({ user, active, onNavigate, children }: CockpitShellProps) {
+  // The Dashboard ('home') tab hides its action ribbon, so the header shrinks
+  // to utility strip (44) + tab strip (36) = 80px; other tabs use 160px.
+  const [ribbonTab, setRibbonTab] = useState('home');
+  const onHome = ribbonTab === 'home';
+  const headerHeight = onHome ? 80 : 160;
+
   // Alt+1..9 jump to ribbon tabs.
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -39,7 +45,7 @@ export function CockpitShell({ user, active, onNavigate, children }: CockpitShel
   return (
     <>
       <CommandPalette onNavigate={onNavigate} />
-      <AppShell header={{ height: 160 }} padding="md">
+      <AppShell header={{ height: headerHeight }} padding="md">
         <AppShell.Header style={{ borderBottom: 'none' }}>
           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             {/* Deep Graphite utility strip */}
@@ -52,9 +58,9 @@ export function CockpitShell({ user, active, onNavigate, children }: CockpitShel
             >
               <UtilityStrip user={user} />
             </div>
-            {/* Tab strip + action ribbon (116px total) */}
+            {/* Tab strip (+ action ribbon on non-Dashboard tabs) */}
             <div style={{ flex: 1, minHeight: 0 }}>
-              <TopRibbon active={active} onSelect={onNavigate} />
+              <TopRibbon active={active} onSelect={onNavigate} onTabChange={setRibbonTab} />
             </div>
           </div>
         </AppShell.Header>

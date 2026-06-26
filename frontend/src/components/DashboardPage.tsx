@@ -5,6 +5,7 @@ import {
   Container,
   Grid,
   Group,
+  ScrollArea,
   Skeleton,
   Stack,
   Text,
@@ -13,7 +14,7 @@ import {
 } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, Building2, CalendarHeart, ChevronRight, CircleAlert, GraduationCap, Info, Layers, PartyPopper, Sparkles, UserCheck, Users, Wallet } from 'lucide-react';
+import { AlertTriangle, Building2, CalendarHeart, ChevronRight, CircleAlert, ClipboardList, GraduationCap, Info, Layers, PartyPopper, UserCheck, Users, Wallet } from 'lucide-react';
 import dayjs from 'dayjs';
 import type { IconComponent } from '../icons';
 import type { AccentColor } from '../theme';
@@ -26,7 +27,6 @@ const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8787';
 
 // ─── Stat card data ────────────────────────────────────────────────────────────
 interface DashStats { students: number; staff: number; sections: number; pending_fees: number; }
-interface MeetingToday { id: number; title: string; meeting_type: string | null; start_time: string | null; end_time: string | null; venue: string | null; status: string | null; }
 
 // ─── Agenda (categorised upcoming meetings + events) ────────────────────────────
 interface AgendaItem { id: number; title: string; date: string | null; start_time?: string | null; venue: string | null; }
@@ -75,14 +75,14 @@ function StatCards({ stats, onNavigate }: { stats: DashStats; onNavigate: (m: st
       {STAT_DEFS.map((def) => (
         <Grid.Col key={def.key} span={{ base: 6, sm: 3 }}>
           <UnstyledButton onClick={() => onNavigate(def.module)} style={{ width: '100%' }}>
-            <Card p="md" style={{ borderTop: `3px solid var(--mantine-color-${def.color}-5)` }}>
+            <Card p="sm" style={{ borderTop: `3px solid var(--mantine-color-${def.color}-5)` }}>
               <Group wrap="nowrap" justify="space-between">
                 <Stack gap={0}>
-                  <Text size="xl" fw={700}>{stats[def.key as keyof DashStats].toLocaleString()}</Text>
+                  <Text size="lg" fw={700} lh={1.1}>{stats[def.key as keyof DashStats].toLocaleString()}</Text>
                   <Text size="xs" c="dimmed">{def.label}</Text>
                 </Stack>
-                <ThemeIcon variant="light" color={def.color} size={40} radius="md">
-                  <def.Icon size={20} />
+                <ThemeIcon variant="light" color={def.color} size={34} radius="md">
+                  <def.Icon size={18} />
                 </ThemeIcon>
               </Group>
             </Card>
@@ -93,64 +93,44 @@ function StatCards({ stats, onNavigate }: { stats: DashStats; onNavigate: (m: st
   );
 }
 
-// ─── Meetings today widget ─────────────────────────────────────────────────────
-function MeetingsTodayCard({ meetings }: { meetings: MeetingToday[] }) {
-  if (meetings.length === 0) return null;
-  return (
-    <Card>
-      <Text fw={650} mb="sm">Today's Meetings</Text>
-      <Stack gap="xs">
-        {meetings.map((m) => (
-          <Group key={m.id} gap="md" p="xs" style={{ borderLeft: '3px solid var(--mantine-color-brand-5)', background: 'var(--mantine-color-gray-0)', borderRadius: 6 }}>
-            <Text fw={700} c="brand" w={48} style={{ flexShrink: 0, fontSize: '0.8rem' }}>{m.start_time ?? '—'}</Text>
-            <div style={{ minWidth: 0 }}>
-              <Text fw={600} truncate size="sm">{m.title}</Text>
-              <Text size="xs" c="dimmed">{m.venue ?? m.meeting_type}</Text>
-            </div>
-            <Badge size="xs" ml="auto" variant="outline">{m.meeting_type}</Badge>
-          </Group>
-        ))}
-      </Stack>
-    </Card>
-  );
-}
-
 // ─── Agenda card (one category) ─────────────────────────────────────────────────
 function AgendaCard({
   label, Icon, color, items, onNavigate,
 }: { label: string; Icon: IconComponent; color: AccentColor; items: AgendaItem[]; onNavigate: (m: string) => void }) {
   return (
-    <Card p="md" style={{ height: '100%' }}>
-      <Group justify="space-between" mb="xs" wrap="nowrap">
-        <Group gap={8} wrap="nowrap">
-          <ThemeIcon variant="light" color={color} radius="md" size={30}>
-            <Icon size={16} strokeWidth={2} />
+    <Card p="sm" style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Group justify="space-between" mb={6} wrap="nowrap">
+        <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
+          <ThemeIcon variant="light" color={color} radius="md" size={26}>
+            <Icon size={14} strokeWidth={2} />
           </ThemeIcon>
-          <Text fw={650} size="sm">{label}</Text>
+          <Text fw={650} size="xs" truncate>{label}</Text>
         </Group>
-        {items.length > 0 && <Badge variant="light" color={color} radius="sm">{items.length}</Badge>}
+        {items.length > 0 && <Badge variant="light" color={color} radius="sm" size="sm">{items.length}</Badge>}
       </Group>
-      {items.length === 0 ? (
-        <Text size="xs" c="dimmed" py="sm">None scheduled.</Text>
-      ) : (
-        <Stack gap={6}>
-          {items.slice(0, 4).map((it) => (
-            <Group key={it.id} gap="xs" wrap="nowrap" align="flex-start">
-              <Text fw={700} c={color} style={{ fontSize: '0.7rem', flexShrink: 0, width: 52 }}>
-                {it.date ? dayjs(it.date).format('MMM D') : '—'}
-              </Text>
-              <div style={{ minWidth: 0 }}>
-                <Text size="sm" fw={500} truncate>{it.title}</Text>
-                <Text size="xs" c="dimmed" truncate>
-                  {[it.start_time, it.venue].filter(Boolean).join(' · ') || '—'}
+      <ScrollArea style={{ flex: 1 }} type="auto" scrollbarSize={5}>
+        {items.length === 0 ? (
+          <Text size="xs" c="dimmed">None scheduled.</Text>
+        ) : (
+          <Stack gap={5}>
+            {items.slice(0, 4).map((it) => (
+              <Group key={it.id} gap={6} wrap="nowrap" align="flex-start">
+                <Text fw={700} c={color} style={{ fontSize: '0.68rem', flexShrink: 0, width: 46 }}>
+                  {it.date ? dayjs(it.date).format('MMM D') : '—'}
                 </Text>
-              </div>
-            </Group>
-          ))}
-        </Stack>
-      )}
-      <UnstyledButton onClick={() => onNavigate('events')} mt="sm">
-        <Group gap={2}><Text size="xs" c={color} fw={500}>Open</Text><ChevronRight size={13} /></Group>
+                <div style={{ minWidth: 0 }}>
+                  <Text size="xs" fw={500} truncate>{it.title}</Text>
+                  <Text size="xs" c="dimmed" truncate>
+                    {[it.start_time, it.venue].filter(Boolean).join(' · ') || '—'}
+                  </Text>
+                </div>
+              </Group>
+            ))}
+          </Stack>
+        )}
+      </ScrollArea>
+      <UnstyledButton onClick={() => onNavigate('events')} mt={4}>
+        <Group gap={2}><Text size="xs" c={color} fw={500}>Open</Text><ChevronRight size={12} /></Group>
       </UnstyledButton>
     </Card>
   );
@@ -174,20 +154,20 @@ function AgendaSection({ token, onNavigate }: { token: string; onNavigate: (m: s
     : { department: [], staff: [], parent: [], events: [] };
 
   return (
-    <Grid gutter="sm">
-      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
-        <AgendaCard label="Department Meetings" Icon={Building2} color="lavender" items={agenda.department} onNavigate={onNavigate} />
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
-        <AgendaCard label="Staff Meetings" Icon={Users} color="brand" items={agenda.staff} onNavigate={onNavigate} />
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
-        <AgendaCard label="Parent Meetings" Icon={UserCheck} color="mint" items={agenda.parent} onNavigate={onNavigate} />
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
-        <AgendaCard label="Upcoming Events" Icon={CalendarHeart} color="peach" items={agenda.events} onNavigate={onNavigate} />
-      </Grid.Col>
-    </Grid>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gridTemplateRows: '1fr 1fr',
+        gap: 'var(--mantine-spacing-sm)',
+        height: '100%',
+      }}
+    >
+      <AgendaCard label="Department Meetings" Icon={Building2} color="lavender" items={agenda.department} onNavigate={onNavigate} />
+      <AgendaCard label="Staff Meetings" Icon={Users} color="brand" items={agenda.staff} onNavigate={onNavigate} />
+      <AgendaCard label="Parent Meetings" Icon={UserCheck} color="mint" items={agenda.parent} onNavigate={onNavigate} />
+      <AgendaCard label="Upcoming Events" Icon={CalendarHeart} color="peach" items={agenda.events} onNavigate={onNavigate} />
+    </div>
   );
 }
 
@@ -209,79 +189,77 @@ export function DashboardScreen({ onNavigate }: { onNavigate: (module: string) =
     staleTime: 120_000,
   });
 
-  const { data: meetingsData } = useQuery<{ meetings: MeetingToday[] }>({
-    queryKey: ['dashboard-meetings-today'],
-    queryFn: async () => {
-      const r = await fetch(`${BASE}/dashboard/meetings-today`, { headers: { Authorization: `Bearer ${token}` } });
-      if (!r.ok) throw new ApiError(`HTTP ${r.status}`, r.status);
-      return r.json() as Promise<{ meetings: MeetingToday[] }>;
-    },
-    enabled: !!token,
-    staleTime: 60_000,
-  });
-
+  // Fits a single screen: header (80px) collapsed on the Dashboard tab, then
+  // a fixed stat row + a flex grid (work queue · agenda · calendar) below.
   return (
-    <Container size="xl" px={0}>
-      <Stack gap="lg">
+    <Container
+      fluid
+      px={0}
+      style={{ height: 'calc(100dvh - 112px)', display: 'flex', flexDirection: 'column' }}
+    >
+      <Stack gap="sm" style={{ flex: 1, minHeight: 0 }}>
         {/* Stat cards */}
         {statsData && typeof statsData.students === 'number' ? (
           <StatCards stats={statsData} onNavigate={onNavigate} />
         ) : (
           <Grid gutter="sm">
-            {Array.from({ length: 4 }).map((_, i) => <Grid.Col key={i} span={{ base: 6, sm: 3 }}><Skeleton height={76} radius="md" /></Grid.Col>)}
+            {Array.from({ length: 4 }).map((_, i) => <Grid.Col key={i} span={{ base: 6, sm: 3 }}><Skeleton height={60} radius="md" /></Grid.Col>)}
           </Grid>
         )}
 
-        {/* Needs-attention work queue */}
-        <Card>
-          <Group justify="space-between" mb="xs">
-            <Text fw={650}>Today</Text>
-            {items.length > 0 && <Badge variant="light" color="yellow">{items.length} to act on</Badge>}
-          </Group>
-          {loadingToday ? (
-            <Stack gap={6}>
-              {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} height={50} radius="md" />)}
-            </Stack>
-          ) : items.length === 0 ? (
-            <Group justify="center" py="lg" gap="xs" c="dimmed">
-              <PartyPopper size={18} />
-              <Text>You're all caught up.</Text>
-            </Group>
-          ) : (
-            <Stack gap={2}>
-              {items.map((it) => <WorkRow key={it.key} item={it} onNavigate={onNavigate} />)}
-            </Stack>
-          )}
-        </Card>
+        {/* Main area: work queue · agenda · calendar — fills remaining height */}
+        <Grid gutter="sm" style={{ flex: 1, minHeight: 0 }}>
+          {/* Needs-attention work queue */}
+          <Grid.Col span={{ base: 12, md: 4 }} style={{ height: '100%' }}>
+            <Card p="md" style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <Group justify="space-between" mb="xs" wrap="nowrap">
+                <Group gap={6}>
+                  <ClipboardList size={16} color="var(--mantine-color-brand-6)" />
+                  <Text fw={650}>Today</Text>
+                </Group>
+                {items.length > 0 && <Badge variant="light" color="yellow" size="sm">{items.length} to act on</Badge>}
+              </Group>
+              <ScrollArea style={{ flex: 1 }} type="auto">
+                {loadingToday ? (
+                  <Stack gap={6}>
+                    {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} height={46} radius="md" />)}
+                  </Stack>
+                ) : items.length === 0 ? (
+                  <Group justify="center" py="lg" gap="xs" c="dimmed">
+                    <PartyPopper size={18} />
+                    <Text size="sm">You're all caught up.</Text>
+                  </Group>
+                ) : (
+                  <Stack gap={2}>
+                    {items.map((it) => <WorkRow key={it.key} item={it} onNavigate={onNavigate} />)}
+                  </Stack>
+                )}
+              </ScrollArea>
+            </Card>
+          </Grid.Col>
 
-        {/* Meetings today */}
-        {meetingsData && (meetingsData.meetings?.length ?? 0) > 0 && (
-          <MeetingsTodayCard meetings={meetingsData.meetings} />
-        )}
+          {/* Categorised agenda: department / staff / parent meetings + events */}
+          <Grid.Col span={{ base: 12, md: 5 }} style={{ height: '100%' }}>
+            {token && <AgendaSection token={token} onNavigate={onNavigate} />}
+          </Grid.Col>
 
-        {/* Categorised agenda: department / staff / parent meetings + events */}
-        <div>
-          <Group gap="xs" mb="sm">
-            <Sparkles size={16} color="var(--mantine-color-brand-6)" />
-            <Text fw={650}>Meetings &amp; Events</Text>
-          </Group>
-          {token && <AgendaSection token={token} onNavigate={onNavigate} />}
-        </div>
-
-        {/* Calendar */}
-        <Card>
-          <Group justify="space-between" mb="sm">
-            <Text fw={650}>Calendar</Text>
-            <Badge variant="light" color="brand">{dayjs(selected).format('MMM D')}</Badge>
-          </Group>
-          <Calendar
-            size="md"
-            getDayProps={(date) => ({
-              selected: dayjs(date).isSame(selected, 'day'),
-              onClick: () => setSelected(date),
-            })}
-          />
-        </Card>
+          {/* Calendar */}
+          <Grid.Col span={{ base: 12, md: 3 }} style={{ height: '100%' }}>
+            <Card p="md" style={{ height: '100%', overflow: 'hidden' }}>
+              <Group justify="space-between" mb="xs" wrap="nowrap">
+                <Text fw={650} size="sm">Calendar</Text>
+                <Badge variant="light" color="brand" size="sm">{dayjs(selected).format('MMM D')}</Badge>
+              </Group>
+              <Calendar
+                size="sm"
+                getDayProps={(date) => ({
+                  selected: dayjs(date).isSame(selected, 'day'),
+                  onClick: () => setSelected(date),
+                })}
+              />
+            </Card>
+          </Grid.Col>
+        </Grid>
       </Stack>
 
       {/* Floating create-event button (bottom-right) */}

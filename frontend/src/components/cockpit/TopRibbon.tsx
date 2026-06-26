@@ -6,18 +6,22 @@ import classes from './TopRibbon.module.css';
 interface TopRibbonProps {
   active: string;           // current module key
   onSelect: (key: string) => void;
+  onTabChange?: (tabId: string) => void;  // report active tab to the shell
 }
 
 /**
  * Two-level MS Office-style ribbon.
  *
- * Level 1 — Tab strip (slim, dark): Home | People | Academics | …
+ * Level 1 — Tab strip (slim, dark): Dashboard | People | Academics | …
  * Level 2 — Action ribbon (light): grouped actions for the selected tab.
+ *
+ * The Dashboard ('home') tab has no action ribbon — it holds only the single
+ * Dashboard view, so the lower strip is hidden and the workspace gains height.
  *
  * Active tab is derived from the current module; user can also click a tab
  * to browse its actions without navigating (standard ribbon behaviour).
  */
-export function TopRibbon({ active, onSelect }: TopRibbonProps) {
+export function TopRibbon({ active, onSelect, onTabChange }: TopRibbonProps) {
   const user = useAuth((s) => s.user);
   const userLevel = profileToLevel(user?.profile ?? '');
   const [activeTab, setActiveTab] = useState(() => tabForModule(active));
@@ -28,6 +32,11 @@ export function TopRibbon({ active, onSelect }: TopRibbonProps) {
     if (t !== 'home' || active === 'dashboard') setActiveTab(t);
   }, [active]);
 
+  // Keep the shell informed so it can collapse the header on the Dashboard tab
+  useEffect(() => {
+    onTabChange?.(activeTab);
+  }, [activeTab, onTabChange]);
+
   // Filter tabs the user can see
   const visibleTabs = ribbonTabs.filter(
     (t) => !t.accessLevel || userLevel <= t.accessLevel,
@@ -35,6 +44,9 @@ export function TopRibbon({ active, onSelect }: TopRibbonProps) {
 
   const currentTab: RibbonTab =
     visibleTabs.find((t) => t.id === activeTab) ?? visibleTabs[0];
+
+  // Dashboard tab: tab strip only, no action ribbon.
+  const hideActionRibbon = activeTab === 'home';
 
   return (
     <div className={classes.ribbonRoot} role="navigation" aria-label="Module navigation">
@@ -49,7 +61,11 @@ export function TopRibbon({ active, onSelect }: TopRibbonProps) {
             aria-controls={`ribbon-panel-${tab.id}`}
             className={classes.tabBtn}
             data-active={tab.id === activeTab}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              setActiveTab(tab.id);
+              // Clicking the Dashboard tab navigates straight to the dashboard.
+              if (tab.id === 'home') onSelect('dashboard');
+            }}
             title={tab.label}
           >
             {tab.label}
@@ -57,7 +73,8 @@ export function TopRibbon({ active, onSelect }: TopRibbonProps) {
         ))}
       </div>
 
-      {/* ── Level 2: Action ribbon ── */}
+      {/* ── Level 2: Action ribbon (hidden on Dashboard tab) ── */}
+      {!hideActionRibbon && (
       <div
         id={`ribbon-panel-${currentTab?.id}`}
         className={classes.actionRibbon}
@@ -108,6 +125,7 @@ export function TopRibbon({ active, onSelect }: TopRibbonProps) {
           })}
         </div>
       </div>
+      )}
     </div>
   );
 }

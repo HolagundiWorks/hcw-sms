@@ -75,10 +75,10 @@ export interface RibbonTab {
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 
 export const ribbonTabs: RibbonTab[] = [
-  // ── Home ───────────────────────────────────────────────────────────────────
+  // ── Dashboard ──────────────────────────────────────────────────────────────
   {
     id: 'home',
-    label: 'Home',
+    label: 'Dashboard',
     icon: Home,
     groups: [
       {
