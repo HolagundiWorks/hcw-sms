@@ -97,6 +97,9 @@ fn dispatch(
     if method == &Method::Get && path == "/students" {
         return with_auth(state, token, |_| students_list(state, url));
     }
+    if method == &Method::Get && path == "/students/by-card" {
+        return with_auth(state, token, |_| student_by_card(state, url));
+    }
     if method == &Method::Post && path == "/students" {
         return with_auth(state, token, |_| student_create(state, body));
     }
@@ -748,7 +751,7 @@ fn student_update(state: &AppState, id: i64, body: &str) -> (u16, Value) {
     match conn.execute(
         "UPDATE students SET first_name=COALESCE(?1,first_name), middle_name=?2, last_name=COALESCE(?3,last_name),
          email=?4, phone=?5, gender=?6, birthdate=?7, alt_id=?8, enrolled=?9,
-         guardian_name=?10, guardian_phone=?11, guardian_relation=?12, address=?13
+         guardian_name=?10, guardian_phone=?11, guardian_relation=?12, address=?13, card_uid=COALESCE(?15,card_uid)
          WHERE id=?14",
         params![
             v["first_name"].as_str().filter(|s| !s.is_empty()),
@@ -765,11 +768,26 @@ fn student_update(state: &AppState, id: i64, body: &str) -> (u16, Value) {
             v["guardian_relation"].as_str().map(str::to_string),
             v["address"].as_str().map(str::to_string),
             id,
+            v["card_uid"].as_str().filter(|s| !s.is_empty()),
         ],
     ) {
         Ok(0) => (404, json!({"error": "student not found"})),
         Ok(_) => (200, json!({"ok": true})),
         Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn student_by_card(state: &AppState, url: &str) -> (u16, Value) {
+    let uid = match q_param(url, "uid") { Some(u) if !u.is_empty() => u, _ => return (422, json!({"error": "uid required"})) };
+    let conn = state.conn.lock().unwrap();
+    let result = conn.query_row(
+        "SELECT id, first_name, last_name, card_uid FROM students WHERE card_uid=?1",
+        params![uid],
+        |r| Ok(json!({ "id": r.get::<_, i64>(0)?, "first_name": r.get::<_, String>(1)?, "last_name": r.get::<_, String>(2)?, "card_uid": r.get::<_, Option<String>>(3)? })),
+    );
+    match result {
+        Ok(s) => (200, json!({"student": s})),
+        Err(_) => (200, json!({"student": null})),
     }
 }
 
@@ -1144,6 +1162,7 @@ fn init_db(conn: &Connection) {
     let _ = conn.execute("ALTER TABLE staff ADD COLUMN join_date TEXT", []);
     let _ = conn.execute("ALTER TABLE staff ADD COLUMN employee_id TEXT", []);
     let _ = conn.execute("ALTER TABLE staff ADD COLUMN department_id INTEGER", []);
+    let _ = conn.execute("ALTER TABLE students ADD COLUMN card_uid TEXT", []);
     let _ = conn.execute("ALTER TABLE users ADD COLUMN role_id INTEGER", []);
 
     // Seed default roles (idempotent)

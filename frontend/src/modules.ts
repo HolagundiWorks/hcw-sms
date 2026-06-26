@@ -1,6 +1,9 @@
 import {
   ArrowRightLeft,
   ArrowDownToLine,
+  Cpu,
+  Nfc,
+  ScanLine,
   ArrowUp,
   Banknote,
   Bell,
@@ -282,6 +285,15 @@ export const modules: ModuleDef[] = [
     ],
   },
   {
+    key: 'hardware',
+    label: 'Hardware',
+    icon: Cpu,
+    actions: [
+      { key: 'scan', label: 'Scan Attendance', icon: ScanLine },
+      { key: 'enroll', label: 'Enroll Card', icon: Nfc },
+    ],
+  },
+  {
     key: 'import',
     label: 'LEOS Connect',
     icon: ArrowDownToLine,
@@ -326,5 +338,5 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
   { label: 'Schedule', keys: ['timetable', 'substitution', 'timings'] },
   { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport', 'payroll', 'events', 'activities'] },
-  { label: 'System', keys: ['academic-year', 'import', 'security', 'backup', 'settings'] },
+  { label: 'System', keys: ['academic-year', 'import', 'hardware', 'security', 'backup', 'settings'] },
 ];
