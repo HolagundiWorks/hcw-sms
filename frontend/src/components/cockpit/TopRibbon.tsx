@@ -25,16 +25,18 @@ export function TopRibbon({ active, onSelect, userName }: TopRibbonProps) {
   const firstName = (userName ?? '').split(' ')[0];
   return (
     <div className={classes.ribbon}>
-      {userName && (
-        <div className={classes.greeting}>
-          <div className={classes.greetTitle}>
-            {greetingWord()}, {firstName} 👋
+      <div className={classes.side}>
+        {userName && (
+          <div className={classes.greeting}>
+            <div className={classes.greetTitle}>
+              {greetingWord()}, {firstName} 👋
+            </div>
+            <div className={classes.greetSub}>
+              {dayjs().format('dddd, D MMMM YYYY')} · here's what needs your attention.
+            </div>
           </div>
-          <div className={classes.greetSub}>
-            {dayjs().format('dddd, D MMMM YYYY')} · here's what needs your attention.
-          </div>
-        </div>
-      )}
+        )}
+      </div>
       <div className={classes.inner}>
         {moduleGroups.map((group, gi) => (
           <Fragment key={group.label}>
@@ -65,6 +67,7 @@ export function TopRibbon({ active, onSelect, userName }: TopRibbonProps) {
           </Fragment>
         ))}
       </div>
+      <div className={classes.side} aria-hidden />
     </div>
   );
 }

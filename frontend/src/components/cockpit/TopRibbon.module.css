@@ -1,41 +1,10 @@
 .ribbon {
-  position: relative;
   height: 100%;
   background: var(--mantine-color-white);
   display: flex;
+  align-items: stretch;
   overflow-x: auto;
   overflow-y: hidden;
-}
-
-/* Personalised greeting pinned to the ribbon's left; modules stay centered. */
-.greeting {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  max-width: 300px;
-  pointer-events: none;
-  z-index: 1;
-}
-.greetTitle {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.25;
-  color: var(--mantine-color-gray-8);
-  white-space: nowrap;
-}
-.greetSub {
-  font-size: 11.5px;
-  line-height: 1.25;
-  color: var(--mantine-color-gray-5);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-@media (max-width: 1180px) {
-  .greeting {
-    display: none;
-  }
 }
 
 .ribbon::-webkit-scrollbar {
@@ -46,10 +15,43 @@
   border-radius: 3px;
 }
 
-/* margin:auto centers the row when it fits, and collapses to 0 (scrollable,
-   no clipping) when it overflows. */
+/* Three regions: greeting (left) · modules (center) · spacer (right). The two
+   equal-flex sides keep the modules centered and can never overlap them — the
+   greeting clips with an ellipsis as the side shrinks. */
+.side {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.side:first-child {
+  padding-left: 16px;
+}
+
+.greeting {
+  min-width: 0;
+  pointer-events: none;
+}
+.greetTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--mantine-color-gray-8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.greetSub {
+  font-size: 11.5px;
+  line-height: 1.25;
+  color: var(--mantine-color-gray-5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .inner {
-  margin: auto;
+  flex: 0 0 auto;
   display: flex;
   align-items: stretch;
   gap: 2px;
