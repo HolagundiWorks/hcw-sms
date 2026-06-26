@@ -12,6 +12,7 @@ import { CoursesScreen } from './components/CoursesScreen';
 import { SubjectsScreen } from './components/SubjectsScreen';
 import { ClassroomsScreen } from './components/ClassroomsScreen';
 import { FloorPlanScreen } from './components/FloorPlanScreen';
+import { InstitutionSettingsScreen } from './components/InstitutionSettingsScreen';
 import { Placeholder } from './components/Placeholder';
 
 // Auth gate + cockpit shell. Active module drives the workspace + ribbon;
@@ -57,6 +58,8 @@ export function App() {
     screen = <ClassroomsScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
+  } else if (active === 'settings') {
+    screen = <InstitutionSettingsScreen />;
   } else {
     screen = <Placeholder screenKey={active} />;
   }

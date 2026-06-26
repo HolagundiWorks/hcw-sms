@@ -14,8 +14,10 @@ import {
 import { Search } from 'lucide-react';
 import type { Staff } from '../api/client';
 import { useStaff } from '../hooks/useStaff';
+import { useTerms } from '../hooks/useTerms';
 import { initials } from '../types';
 import { accentColors, type AccentColor } from '../theme';
+import type { Terms } from '../lib/institution';
 
 function colorFor(id: number): AccentColor {
   return accentColors[id % accentColors.length];
@@ -27,9 +29,10 @@ function roleColor(profile: string | null): AccentColor {
   return 'lavender';
 }
 
-function StaffRow({ s }: { s: Staff }) {
+function StaffRow({ s, terms }: { s: Staff; terms: Terms }) {
   const name = `${s.first_name ?? ''} ${s.last_name ?? ''}`.trim() || s.email || 'Staff';
   const secondary = s.email ?? '—';
+  const roleLabel = s.profile === 'teacher' ? terms.educator : s.profile;
   return (
     <Card>
       <Group justify="space-between" wrap="nowrap">
@@ -49,7 +52,7 @@ function StaffRow({ s }: { s: Staff }) {
         <Group gap="lg" wrap="nowrap" visibleFrom="sm">
           {s.profile && (
             <Badge color={roleColor(s.profile)} variant="light" tt="capitalize">
-              {s.profile}
+              {roleLabel}
             </Badge>
           )}
           <Text size="sm" c="dimmed">
@@ -64,6 +67,7 @@ function StaffRow({ s }: { s: Staff }) {
 export function StaffScreen() {
   const [q, setQ] = useState('');
   const { data, isLoading } = useStaff(q);
+  const terms = useTerms();
 
   return (
     <Container size="xl" px={0}>
@@ -88,7 +92,7 @@ export function StaffScreen() {
               <Skeleton key={i} height={68} radius="lg" />
             ))
           ) : data && data.staff.length > 0 ? (
-            data.staff.map((s) => <StaffRow key={s.id} s={s} />)
+            data.staff.map((s) => <StaffRow key={s.id} s={s} terms={terms} />)
           ) : (
             <Card>
               <Text c="dimmed" ta="center" py="xl">

@@ -204,10 +204,17 @@ export function fetchClassrooms(token: string) {
 export interface School {
   name: string | null;
   academic_year: string | null;
+  type: string | null;
 }
 export async function fetchSchool(token: string): Promise<School | null> {
   const res = await req<{ school: School | null }>('/school', { token });
   return res.school;
+}
+export function saveSchool(
+  token: string,
+  data: { name: string; academic_year: string; type: string },
+) {
+  return req<{ ok: boolean }>('/school', { method: 'POST', token, body: data });
 }
 
 export interface RoomShape {

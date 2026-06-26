@@ -17,6 +17,7 @@ import { roleLabel } from '../../roles';
 import { initials, type SessionUser } from '../../types';
 import { useAuth } from '../../stores/auth';
 import { useSchool } from '../../hooks/useSchool';
+import { institutionTypeLabel } from '../../lib/institution';
 
 const FALLBACK_AY = '2026–27';
 
@@ -63,6 +64,9 @@ export function UtilityStrip({ user }: { user: SessionUser }) {
       </UnstyledButton>
 
       <Group gap="xs" wrap="nowrap">
+        <Badge variant="light" color="brand" radius="sm" visibleFrom="md">
+          {institutionTypeLabel(school?.type)}
+        </Badge>
         <Badge variant="light" color="gray" radius="sm" visibleFrom="sm">
           AY {academicYear}
         </Badge>

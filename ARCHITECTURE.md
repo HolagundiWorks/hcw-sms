@@ -49,7 +49,7 @@ builds.) Login is now **`admin` / `admin123`**.
 
 | # | Module | Status | Notes |
 |---|---|---|---|
-| 1 | School Setup | ⬜ | academic year, wings, timings |
+| 1 | Institution Setup | 🟡 | institution **type** (School/Pre-School/College/Pre-University College) + name/AY configurable (Settings → Institution, `GET/POST /school`); type drives **terminology** (Teacher↔Lecturer via `lib/institution.ts` + `useTerms`); wings/timings pending |
 | 2 | Users & Roles | 🟡 | JWT+bcrypt auth done; roles need the spec set (§6: Principal, Timetable/Exam Coordinator, Class Teacher, Accountant, Front Office …) |
 | 3 | Student Management | 🟡 | list · search · profile · detail API (UI done; data in MariaDB) |
 | 4 | Staff/Teacher Management | 🟡 | list done |

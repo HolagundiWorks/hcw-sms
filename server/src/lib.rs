@@ -123,6 +123,9 @@ fn dispatch(
     if method == &Method::Get && path == "/school" {
         return with_auth(state, token, |_| school_get(state));
     }
+    if method == &Method::Post && path == "/school" {
+        return with_auth(state, token, |_| school_save(state, body));
+    }
     if method == &Method::Get && path == "/floorplan" {
         return with_auth(state, token, |_| floorplan_get(state));
     }
@@ -397,7 +400,7 @@ fn percent_decode(s: &str) -> String {
 
 fn init_db(conn: &Connection) {
     conn.execute_batch(
-        "CREATE TABLE IF NOT EXISTS schools(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, academic_year TEXT);
+        "CREATE TABLE IF NOT EXISTS schools(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, academic_year TEXT, type TEXT);
          CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password_hash TEXT, role TEXT, name TEXT);
          CREATE TABLE IF NOT EXISTS students(id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, middle_name TEXT, last_name TEXT, email TEXT, phone TEXT, gender TEXT, birthdate TEXT, alt_id TEXT, enrolled INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS staff(id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT, email TEXT, phone TEXT, profile TEXT, title TEXT);
@@ -409,6 +412,10 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);",
     )
     .expect("create schema");
+
+    // Migrate older DBs: add institution type if missing, default to 'school'.
+    let _ = conn.execute("ALTER TABLE schools ADD COLUMN type TEXT", []);
+    let _ = conn.execute("UPDATE schools SET type='school' WHERE type IS NULL OR type=''", []);
 
     if count(conn, "SELECT COUNT(*) FROM users") == 0 {
         seed(conn);
@@ -423,8 +430,8 @@ fn init_db(conn: &Connection) {
 
 fn seed(conn: &Connection) {
     conn.execute(
-        "INSERT INTO schools(name, academic_year) VALUES(?1, ?2)",
-        params!["School Of Architecture", "2026-27"],
+        "INSERT INTO schools(name, academic_year, type) VALUES(?1, ?2, ?3)",
+        params!["School Of Architecture", "2026-27", "school"],
     )
     .unwrap();
 
@@ -694,14 +701,49 @@ fn classrooms_list(state: &AppState) -> (u16, Value) {
 fn school_get(state: &AppState) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let row = conn.query_row(
-        "SELECT name, academic_year FROM schools ORDER BY id LIMIT 1",
+        "SELECT name, academic_year, type FROM schools ORDER BY id LIMIT 1",
         [],
-        |r| Ok((r.get::<_, Option<String>>(0)?, r.get::<_, Option<String>>(1)?)),
+        |r| {
+            Ok((
+                r.get::<_, Option<String>>(0)?,
+                r.get::<_, Option<String>>(1)?,
+                r.get::<_, Option<String>>(2)?,
+            ))
+        },
     );
     match row {
-        Ok((name, ay)) => (200, json!({"school": {"name": name, "academic_year": ay}})),
+        Ok((name, ay, typ)) => (
+            200,
+            json!({"school": {"name": name, "academic_year": ay, "type": typ.unwrap_or_else(|| "school".into())}}),
+        ),
         Err(_) => (200, json!({"school": Value::Null})),
     }
+}
+
+fn school_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let name = v["name"].as_str().unwrap_or("").to_string();
+    let ay = v["academic_year"].as_str().unwrap_or("").to_string();
+    let typ = v["type"].as_str().unwrap_or("school").to_string();
+    let conn = state.conn.lock().unwrap();
+    let existing: Option<i64> = conn
+        .query_row("SELECT id FROM schools ORDER BY id LIMIT 1", [], |r| r.get(0))
+        .ok();
+    match existing {
+        Some(id) => {
+            let _ = conn.execute(
+                "UPDATE schools SET name=?1, academic_year=?2, type=?3 WHERE id=?4",
+                params![name, ay, typ, id],
+            );
+        }
+        None => {
+            let _ = conn.execute(
+                "INSERT INTO schools(name, academic_year, type) VALUES(?1,?2,?3)",
+                params![name, ay, typ],
+            );
+        }
+    }
+    (200, json!({"ok": true}))
 }
 
 // ---- floor plan (canvas layout persisted as JSON) ----
