@@ -1,6 +1,4 @@
-// "Developed by" credit — faint, click-through, bottom-right.
 interface BrandWatermarkProps {
-  /** Distance from the bottom edge (px). */
   bottom?: number;
 }
 
@@ -16,13 +14,13 @@ export function BrandWatermark({ bottom = 14 }: BrandWatermarkProps) {
         fontWeight: 500,
         letterSpacing: '0.06em',
         color: 'var(--mantine-color-gray-6)',
-        opacity: 0.7,
+        opacity: 0.65,
         pointerEvents: 'none',
         userSelect: 'none',
         zIndex: 50,
       }}
     >
-      Developed by HOLAGUNDI CONSULTING WORKS
+      A Product of Holagundi Consulting Works
     </div>
   );
 }

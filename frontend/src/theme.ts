@@ -8,70 +8,72 @@ import {
 } from '@mantine/core';
 
 // ---------------------------------------------------------------------------
-// IBM Carbon Design System palette. Named ramps map to Carbon hues for a
-// Carbon-consistent UI; neutrals carry the layout. The categorical rotation
-// (accentColors) is the Carbon data-vis set: purple-70, cyan-50, teal-70,
-// magenta-70, red-50, purple-50.
+// LEOS Brand Palette — per brand guide (Holagundi Consulting Works, 2026).
+// Primary accent: Muted Teal #3E7B7B
+// Success: Slate Green #5C8A62
+// Alert/Warning: Muted Amber #D9A441
+// Background: Soft White #F5F7FA
+// Primary UI shell: Deep Graphite #1E2329
 // ---------------------------------------------------------------------------
 
-// Carbon Cyan — primary (cyan-50 #1192e8 at shade 5)
+// LEOS Teal — primary action color (#3E7B7B at shade 5)
 const brand: MantineColorsTuple = [
-  '#e5f6ff', '#bae6ff', '#82cfff', '#56bdff', '#33b1ff',
-  '#1192e8', '#0f80cc', '#0072c3', '#00539a', '#003a6d',
+  '#e8f4f4', '#c4e3e3', '#9dd0d0', '#74bcbc', '#52a9a9',
+  '#3E7B7B', '#336666', '#295252', '#1e3d3d', '#122929',
 ];
-// Carbon Purple (light, purple-50)
-const sky: MantineColorsTuple = [
-  '#f6f2ff', '#ece1ff', '#dcc8ff', '#c9a8ff', '#b88cff',
-  '#a56eff', '#9351ec', '#7d3bd0', '#6929c4', '#4e1f96',
-];
-// Carbon Teal (teal-70)
+// Slate Green — success (#5C8A62 at shade 5)
 const mint: MantineColorsTuple = [
-  '#d9fbfb', '#9ef0f0', '#3ddbd9', '#08bdba', '#009d9a',
-  '#007d79', '#005d5d', '#004144', '#022b30', '#081a1c',
+  '#eef5ef', '#cde3cf', '#a9d0ac', '#84bc89', '#6da671',
+  '#5C8A62', '#4d7452', '#3d5d41', '#2c4530', '#1c2d1f',
 ];
-// Amber — Warm Yellow #FFF4CC (1) -> Warning #F59E0B (5)
+// Muted Amber — warnings, due dates (#D9A441 at shade 5)
 const yellow: MantineColorsTuple = [
-  '#fffbeb', '#FFF4CC', '#fde58a', '#fcd34d', '#f9bd24',
-  '#F59E0B', '#d9870a', '#b66f06', '#925905', '#784a08',
+  '#fdf5e8', '#f8e4b9', '#f3d08a', '#ecba5c', '#e3ab4b',
+  '#D9A441', '#b88836', '#906c2b', '#6d5120', '#4a3615',
 ];
-// Carbon Purple (purple-70)
+// Soft Blue — informational, secondary accent
+const sky: MantineColorsTuple = [
+  '#f0f6ff', '#dceeff', '#bad9ff', '#91beff', '#6da3ff',
+  '#4d8cf5', '#3871d8', '#2658b3', '#18418c', '#0e2d66',
+];
+// Violet — categorical accent (lavender-ish)
 const lavender: MantineColorsTuple = [
-  '#f6f2ff', '#e8daff', '#d4bbff', '#be95ff', '#a56eff',
-  '#8a3ffc', '#6929c4', '#491d8b', '#31135e', '#1c0f30',
+  '#f4f1ff', '#e5deff', '#cbbaff', '#ad93ff', '#9070f7',
+  '#7550e8', '#5f3cc8', '#4a2ca6', '#35207e', '#211554',
 ];
-// Carbon Red (red-50 / danger)
+// Muted Red — danger/critical (kept restrained per brand guide)
 const peach: MantineColorsTuple = [
-  '#fff1f1', '#ffd7d9', '#ffb3b8', '#ff8389', '#fa6872',
-  '#fa4d56', '#da1e28', '#a2191f', '#750e13', '#520408',
+  '#fff2f1', '#ffdbd9', '#ffbab7', '#ff9290', '#f97070',
+  '#e85555', '#c83838', '#a02626', '#7a1818', '#550d0d',
 ];
-// Carbon Magenta (magenta-70)
+// Warm Rose — categorical accent
 const rose: MantineColorsTuple = [
-  '#fff0f7', '#ffd6e8', '#ffafd2', '#ff7eb6', '#ee5396',
-  '#d02670', '#9f1853', '#740937', '#510224', '#2a0a18',
+  '#fff0f5', '#ffd6e6', '#ffaed0', '#ff84b8', '#f2609f',
+  '#db4080', '#b82e65', '#91204c', '#6c1336', '#470822',
 ];
 // Sand — warm neutral accent
 const sand: MantineColorsTuple = [
-  '#fbf6ef', '#F5E6D3', '#e9cfae', '#dcb588', '#cf9c64',
-  '#c1854a', '#a66e3b', '#85572f', '#664324', '#4a301a',
+  '#faf6f0', '#f0e6d6', '#e0ccb0', '#cdb28a', '#bb9a6a',
+  '#a8834e', '#8c6b3e', '#6f5430', '#533e23', '#382a17',
 ];
-// Neutrals — bg #FAFBFC, muted #F3F4F6, border #E5E7EB, secondary #64748B, primary #1F2937
+// Graphite neutrals — bg, cards, borders, text (#F5F7FA lightest → #1E2329 darkest)
 const gray: MantineColorsTuple = [
-  '#FAFBFC', '#F3F4F6', '#E5E7EB', '#D1D5DB', '#94A3B8',
-  '#64748B', '#475569', '#334155', '#1F2937', '#111827',
+  '#F5F7FA', '#EDF0F5', '#DDE3EC', '#C8D0DC', '#9BAABB',
+  '#6B7A91', '#4E5D72', '#364357', '#252F3F', '#1E2329',
 ];
 
 export const theme = createTheme({
   primaryColor: 'brand',
-  primaryShade: { light: 5, dark: 7 },
+  primaryShade: { light: 5, dark: 4 },
   white: '#FFFFFF',
-  black: '#1F2937',
+  black: '#1E2329',
   defaultRadius: 'md',
   colors: { brand, sky, mint, peach, rose, lavender, yellow, sand, gray },
   fontFamily:
-    'Inter, "IBM Plex Sans", "Segoe UI", Roboto, system-ui, -apple-system, sans-serif',
+    'Inter, "IBM Plex Sans", Manrope, "Segoe UI", system-ui, -apple-system, sans-serif',
   headings: {
     fontFamily:
-      'Inter, "IBM Plex Sans", "Segoe UI", Roboto, system-ui, -apple-system, sans-serif',
+      'Inter, "IBM Plex Sans", Manrope, "Segoe UI", system-ui, -apple-system, sans-serif',
     fontWeight: '600',
   },
   components: {
@@ -93,9 +95,8 @@ export type AccentColor =
   | 'lavender'
   | 'yellow'
   | 'sand';
-// Carbon data-vis categorical rotation: purple-70, cyan-50, teal-70, magenta-70,
-// red-50, purple-50 (mapped to the named ramps above).
-export const accentColors: AccentColor[] = ['lavender', 'brand', 'mint', 'rose', 'peach', 'sky'];
+// Categorical rotation for data elements: teal, blue, green, amber, rose, violet
+export const accentColors: AccentColor[] = ['brand', 'sky', 'mint', 'yellow', 'rose', 'lavender'];
 
 export const semantic = {
   success: 'mint',

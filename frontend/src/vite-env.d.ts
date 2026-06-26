@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** Base URL of the HCW-SMS PHP API (e.g. http://localhost:8080/api/v1). */
+  /** Base URL of the LEOS API server (e.g. http://localhost:8787). */
   readonly VITE_API_BASE?: string;
 }
 

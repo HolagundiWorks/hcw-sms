@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "HCW-SMS",
+  "productName": "LEOS",
   "version": "0.1.0",
-  "identifier": "school.hcw.sms",
+  "identifier": "works.holagundi.leos",
   "build": {
     "devUrl": "http://localhost:5174",
     "frontendDist": "../frontend/dist",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "HCW School Management System",
+        "title": "LEOS — Learning Environment Operating System",
         "width": 1280,
         "height": 820,
         "minWidth": 1024,

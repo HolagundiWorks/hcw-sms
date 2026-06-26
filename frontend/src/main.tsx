@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Providers } from './Providers';
 import { App } from './App';
 
-const host = document.getElementById('hcw-playground');
+const host = document.getElementById('leos-app');
 if (host) {
   createRoot(host).render(
     <StrictMode>

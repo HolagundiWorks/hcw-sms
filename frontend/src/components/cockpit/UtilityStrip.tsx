@@ -90,7 +90,7 @@ export function UtilityStrip({ user }: { user: SessionUser }) {
                   radius="xl"
                   styles={{
                     root: { background: '#fff' },
-                    placeholder: { color: 'var(--mantine-color-lavender-7)', fontWeight: 600 },
+                    placeholder: { color: 'var(--mantine-color-brand-6)', fontWeight: 600 },
                   }}
                 >
                   {initials(user.name)}
@@ -119,20 +119,20 @@ export function UtilityStrip({ user }: { user: SessionUser }) {
   );
 }
 
-// School logo — the real HCW emblem from public/, falling back to a school icon.
+// Institution logo — tries /leos-logo.svg then /leos-logo.png, falls back to icon.
 function SchoolMark() {
   const [stage, setStage] = useState<'svg' | 'png' | 'icon'>('svg');
   if (stage === 'icon') {
     return (
-      <ThemeIcon size={28} radius="md" variant="white" color="lavender">
+      <ThemeIcon size={28} radius="md" variant="white" color="brand">
         <School size={17} strokeWidth={2} />
       </ThemeIcon>
     );
   }
   return (
     <img
-      src={stage === 'svg' ? '/hcw-logo.svg' : '/hcw-logo.png'}
-      alt=""
+      src={stage === 'svg' ? '/leos-logo.svg' : '/leos-logo.png'}
+      alt="LEOS"
       style={{ display: 'block', width: 'auto', height: 28, maxHeight: 28 }}
       onError={() => setStage((s) => (s === 'svg' ? 'png' : 'icon'))}
     />

@@ -11,7 +11,7 @@ import {
   ThemeIcon,
   Title,
 } from '@mantine/core';
-import { CircleAlert, School } from 'lucide-react';
+import { CircleAlert, Layers } from 'lucide-react';
 import { ApiError } from '../api/client';
 import { useAuth } from '../stores/auth';
 import { BrandWatermark } from './brand/BrandWatermark';
@@ -37,19 +37,19 @@ export function LoginPage() {
   };
 
   return (
-    <Center mih="100vh" className="hcw-ui hcw-ui--fullscreen" p="md">
+    <Center mih="100vh" p="md" style={{ background: 'var(--mantine-color-gray-0)' }}>
       <BrandWatermark bottom={20} />
       <Card w={380} withBorder shadow="sm" radius="lg" p="xl">
         <Stack gap="lg">
           <Stack gap={6} align="center">
             <ThemeIcon size={52} radius="lg" variant="light" color="brand">
-              <School size={28} strokeWidth={1.6} />
+              <Layers size={26} strokeWidth={1.6} />
             </ThemeIcon>
-            <Title order={3} ta="center">
-              HCW School Management System
+            <Title order={3} ta="center" c="gray.9">
+              LEOS
             </Title>
-            <Text size="sm" c="dimmed">
-              Sign in to continue
+            <Text size="xs" c="dimmed" ta="center" lh={1.4}>
+              Learning Environment Operating System
             </Text>
           </Stack>
 

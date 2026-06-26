@@ -16,8 +16,8 @@ interface CockpitShellProps {
 }
 
 /**
- * School-ops cockpit: bold purple header (utility strip + AutoCAD-style top
- * ribbon) over a full-height workspace. No footer.
+ * LEOS cockpit: Deep Graphite utility strip + translucent ribbon over the
+ * full-height workspace. No footer.
  */
 export function CockpitShell({ user, active, onNavigate, children }: CockpitShellProps) {
   // Alt+1..9 jump to modules.
@@ -45,7 +45,7 @@ export function CockpitShell({ user, active, onNavigate, children }: CockpitShel
               style={{
                 height: 44,
                 flexShrink: 0,
-                background: 'var(--mantine-color-lavender-6)',
+                background: '#1E2329',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.18)',
               }}
             >

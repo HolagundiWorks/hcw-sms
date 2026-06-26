@@ -1,8 +1,8 @@
 [package]
-name = "hcwsms-server"
+name = "leos-server"
 version = "0.1.0"
 edition = "2021"
-description = "HCW-SMS local API server (SQLite) — offline-first core"
+description = "LEOS local API server (SQLite, offline-first)"
 
 [dependencies]
 tiny_http = "0.12"

@@ -1,8 +1,8 @@
 .ribbon {
   height: 100%;
-  background: rgba(105, 41, 196, 0.1); /* Carbon Purple 70, 90% transparent */
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
-  backdrop-filter: blur(22px) saturate(150%);
+  background: rgba(62, 123, 123, 0.06); /* LEOS teal, 94% transparent */
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
   display: flex;
   align-items: stretch;
   overflow-x: auto;
@@ -13,7 +13,7 @@
   height: 6px;
 }
 .ribbon::-webkit-scrollbar-thumb {
-  background: rgba(105, 41, 196, 0.35);
+  background: rgba(62, 123, 123, 0.35);
   border-radius: 3px;
 }
 
@@ -78,7 +78,7 @@
   line-height: 1;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--mantine-color-lavender-6);
+  color: var(--mantine-color-brand-6);
   margin-top: 3px;
 }
 
@@ -93,20 +93,20 @@
   border: none;
   border-radius: var(--mantine-radius-md);
   background: transparent;
-  color: var(--mantine-color-lavender-7);
+  color: var(--mantine-color-gray-7);
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease;
 }
 
 .btn:hover {
-  background: rgba(105, 41, 196, 0.12);
-  color: var(--mantine-color-lavender-8);
+  background: rgba(62, 123, 123, 0.1);
+  color: var(--mantine-color-brand-7);
 }
 
-/* Active module → contrasting blue accent. */
+/* Active module → teal accent. */
 .btn[data-active='true'] {
-  background: var(--mantine-color-brand-2);
-  color: var(--mantine-color-brand-9);
+  background: var(--mantine-color-brand-1);
+  color: var(--mantine-color-brand-8);
 }
 
 .btnLabel {
@@ -119,6 +119,6 @@
 .divider {
   width: 1px;
   align-self: stretch;
-  background: rgba(105, 41, 196, 0.2);
+  background: rgba(62, 123, 123, 0.18);
   margin: 4px 6px;
 }

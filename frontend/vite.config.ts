@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// HCW-SMS desktop frontend (Vite + React + Mantine), loaded by the Tauri shell.
+// LEOS desktop frontend (Vite + React + Mantine), loaded by the Tauri shell.
 //   dev:   `npm run dev` serves on :5174 (host 5173 is taken by another project);
 //          Tauri's devUrl points here.
 //   build: outputs to ./dist for `cargo tauri build` (tauri frontendDist).

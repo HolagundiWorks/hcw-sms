@@ -1,4 +1,4 @@
-// HCW-SMS local API server — offline-first core over SQLite.
+// LEOS local API server — offline-first core over SQLite.
 // Mirrors the JSON shapes of the legacy PHP API so the React frontend only
 // needs its base URL re-pointed (8080 -> 8787). Embeddable later in Tauri and
 // extendable into the LAN server.
@@ -18,7 +18,7 @@ struct AppState {
     sessions: Mutex<HashMap<String, i64>>,
 }
 
-/// Start the HCW-SMS API server (blocks, serving on :8787). Called by the
+/// Start the LEOS API server (blocks, serving on :8787). Called by the
 /// standalone binary and by the Tauri app (on a background thread).
 pub fn run() {
     let conn = Connection::open("school.sqlite").expect("open sqlite");
@@ -30,7 +30,7 @@ pub fn run() {
 
     let addr = "0.0.0.0:8787";
     let server = Server::http(addr).expect("bind 8787");
-    println!("hcwsms-server listening on http://localhost:8787 (SQLite: school.sqlite)");
+    println!("leos-server listening on http://localhost:8787 (SQLite: school.sqlite)");
     for req in server.incoming_requests() {
         let st = state.clone();
         thread::spawn(move || handle(st, req));
@@ -86,7 +86,7 @@ fn dispatch(
     body: &str,
 ) -> (u16, Value) {
     if method == &Method::Get && (path == "/" || path == "/health") {
-        return (200, json!({"ok": true, "service": "hcwsms-server", "store": "sqlite"}));
+        return (200, json!({"ok": true, "service": "leos-server", "store": "sqlite"}));
     }
     if method == &Method::Post && path == "/auth/login" {
         return login(state, body);
@@ -243,11 +243,11 @@ fn dispatch(
     if method == &Method::Post && path == "/floorplan" {
         return with_auth(state, token, |_| floorplan_save(state, body));
     }
-    if method == &Method::Post && path == "/schooldb/save" {
-        return with_auth(state, token, |_| schooldb_save(body));
+    if method == &Method::Post && path == "/leosdb/save" {
+        return with_auth(state, token, |_| leosdb_save(body));
     }
-    if method == &Method::Post && path == "/schooldb/open" {
-        return with_auth(state, token, |_| schooldb_open(state, body));
+    if method == &Method::Post && path == "/leosdb/open" {
+        return with_auth(state, token, |_| leosdb_open(state, body));
     }
     if method == &Method::Get && path == "/academic-years" {
         return with_auth(state, token, |_| academic_years_list(state));
@@ -774,22 +774,22 @@ fn seed(conn: &Connection) {
     }
 }
 
-// ---- .schooldb portable file (ZIP: manifest + school.sqlite + media/docs) ----
+// ---- .leosdb portable archive (ZIP: manifest + school.sqlite + media/docs) ----
 
-fn schooldb_save(body: &str) -> (u16, Value) {
+fn leosdb_save(body: &str) -> (u16, Value) {
     let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
     let out = v["path"]
         .as_str()
         .filter(|s| !s.is_empty())
-        .unwrap_or("HCW-SMS.schooldb")
+        .unwrap_or("LEOS.leosdb")
         .to_string();
-    match write_schooldb(&out) {
+    match write_leosdb(&out) {
         Ok(checksum) => (200, json!({"ok": true, "path": out, "checksum": checksum})),
         Err(e) => (500, json!({"error": format!("save failed: {e}")})),
     }
 }
 
-fn write_schooldb(out: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn write_leosdb(out: &str) -> Result<String, Box<dyn std::error::Error>> {
     use std::io::Write;
     let sqlite_bytes = std::fs::read("school.sqlite")?;
     let checksum = sha256_hex(&sqlite_bytes);
@@ -798,7 +798,7 @@ fn write_schooldb(out: &str) -> Result<String, Box<dyn std::error::Error>> {
         .map(|d| d.as_secs())
         .unwrap_or(0);
     let manifest =
-        json!({"app": "HCW-SMS", "schema": 1, "created": created, "files": ["school.sqlite"]})
+        json!({"app": "LEOS", "schema": 1, "created": created, "files": ["school.sqlite"]})
             .to_string();
     let checksum_json = json!({"school.sqlite": checksum}).to_string();
     let file = std::fs::File::create(out)?;
@@ -816,19 +816,19 @@ fn write_schooldb(out: &str) -> Result<String, Box<dyn std::error::Error>> {
     Ok(checksum)
 }
 
-fn schooldb_open(state: &AppState, body: &str) -> (u16, Value) {
+fn leosdb_open(state: &AppState, body: &str) -> (u16, Value) {
     let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
     let path = match v["path"].as_str() {
         Some(p) if !p.is_empty() => p.to_string(),
         _ => return (422, json!({"error": "path required"})),
     };
-    match read_schooldb(state, &path) {
+    match read_leosdb(state, &path) {
         Ok(()) => (200, json!({"ok": true, "opened": path})),
         Err(e) => (500, json!({"error": format!("open failed: {e}")})),
     }
 }
 
-fn read_schooldb(state: &AppState, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+fn read_leosdb(state: &AppState, path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let file = std::fs::File::open(path)?;
     let mut archive = zip::ZipArchive::new(file)?;
     let mut sqlite_bytes = Vec::new();

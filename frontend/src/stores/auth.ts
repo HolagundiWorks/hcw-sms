@@ -22,6 +22,6 @@ export const useAuth = create<AuthState>()(
       },
       signOut: () => set({ token: null, user: null }),
     }),
-    { name: 'hcwsms-auth' },
+    { name: 'leos-auth' },
   ),
 );
