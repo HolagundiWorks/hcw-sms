@@ -30,6 +30,7 @@ import {
   Pencil,
   PenLine,
   Percent,
+  Play,
   Plus,
   Printer,
   Receipt,
@@ -242,6 +243,16 @@ export const modules: ModuleDef[] = [
   },
   { key: 'transport', label: 'Transport', icon: Bus, actions: [] },
   {
+    key: 'payroll',
+    label: 'Payroll',
+    icon: Banknote,
+    actions: [
+      { key: 'generate', label: 'Generate Payslips', icon: Play },
+      { key: 'structure', label: 'Salary Structure', icon: FileText },
+      { key: 'print', label: 'Print Payslip', icon: Printer },
+    ],
+  },
+  {
     key: 'academic-year',
     label: 'Academic Year',
     icon: CalendarRange,
@@ -266,6 +277,6 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'People', keys: ['students', 'staff', 'staff-os'] },
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
   { label: 'Schedule', keys: ['timetable', 'substitution', 'timings'] },
-  { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport'] },
+  { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport', 'payroll'] },
   { label: 'System', keys: ['academic-year', 'settings'] },
 ];

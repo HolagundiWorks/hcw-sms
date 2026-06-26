@@ -281,6 +281,19 @@ fn dispatch(
             return with_auth(state, token, |_| department_delete(state, id));
         }
     }
+    // Staff OS — Payroll (P4.3)
+    if method == &Method::Get && path == "/payroll/structure" {
+        return with_auth(state, token, |_| payroll_structure_get(state, url));
+    }
+    if method == &Method::Post && path == "/payroll/structure" {
+        return with_auth(state, token, |_| payroll_structure_save(state, body));
+    }
+    if method == &Method::Get && path == "/payroll/payslips" {
+        return with_auth(state, token, |_| payslips_list(state, url));
+    }
+    if method == &Method::Post && path == "/payroll/generate" {
+        return with_auth(state, token, |_| payroll_generate(state, body));
+    }
     // Staff OS — Leave management
     if method == &Method::Get && path == "/leave" {
         return with_auth(state, token, |_| leave_list(state, url));
@@ -767,6 +780,8 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS substitutions(id INTEGER PRIMARY KEY AUTOINCREMENT, original_entry_id INTEGER NOT NULL, original_staff_id INTEGER NOT NULL, substitute_staff_id INTEGER, date TEXT NOT NULL, reason TEXT, status TEXT DEFAULT 'pending', created_at TEXT DEFAULT (datetime('now')), resolved_at TEXT, UNIQUE(original_entry_id, date));
          CREATE TABLE IF NOT EXISTS departments(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, head_staff_id INTEGER);
          CREATE TABLE IF NOT EXISTS leave_requests(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, leave_type TEXT DEFAULT 'sick', from_date TEXT NOT NULL, to_date TEXT NOT NULL, reason TEXT, status TEXT DEFAULT 'pending', approved_by INTEGER, approved_at TEXT, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS salary_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL UNIQUE, basic REAL DEFAULT 0, hra REAL DEFAULT 0, da REAL DEFAULT 0, ta REAL DEFAULT 0, other_allowances REAL DEFAULT 0, pf_deduction REAL DEFAULT 0, pt_deduction REAL DEFAULT 0, other_deductions REAL DEFAULT 0, effective_from TEXT, updated_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS payslips(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, month TEXT NOT NULL, basic REAL, hra REAL, da REAL, ta REAL, other_allowances REAL, pf_deduction REAL, pt_deduction REAL, other_deductions REAL, gross REAL, net REAL, working_days INTEGER, paid_days INTEGER, generated_at TEXT DEFAULT (datetime('now')), UNIQUE(staff_id, month));
          CREATE TABLE IF NOT EXISTS section_students(id INTEGER PRIMARY KEY AUTOINCREMENT, section_id INTEGER NOT NULL, student_id INTEGER NOT NULL, enrolled_date TEXT, UNIQUE(section_id, student_id));
          CREATE TABLE IF NOT EXISTS student_attendance(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, section_id INTEGER NOT NULL, date TEXT NOT NULL, period_id INTEGER NOT NULL, status TEXT DEFAULT 'present', marked_by INTEGER, note TEXT, marked_at TEXT DEFAULT (datetime('now')), UNIQUE(student_id, date, period_id));",
     )
@@ -1156,6 +1171,167 @@ fn department_delete(state: &AppState, id: i64) -> (u16, Value) {
     let _ = conn.execute("UPDATE staff SET department_id=NULL WHERE department_id=?1", params![id]);
     let _ = conn.execute("DELETE FROM departments WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
+}
+
+fn payroll_structure_get(state: &AppState, url: &str) -> (u16, Value) {
+    let staff_id: i64 = match q_param(url, "staff_id").and_then(|v| v.parse().ok()) {
+        Some(id) => id,
+        None => return (422, json!({"error": "staff_id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let r = conn.query_row(
+        "SELECT id, staff_id, basic, hra, da, ta, other_allowances,
+                pf_deduction, pt_deduction, other_deductions, effective_from
+         FROM salary_structures WHERE staff_id=?1",
+        params![staff_id],
+        |r| Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "staff_id": r.get::<_, i64>(1)?,
+            "basic": r.get::<_, f64>(2)?,
+            "hra": r.get::<_, f64>(3)?,
+            "da": r.get::<_, f64>(4)?,
+            "ta": r.get::<_, f64>(5)?,
+            "other_allowances": r.get::<_, f64>(6)?,
+            "pf_deduction": r.get::<_, f64>(7)?,
+            "pt_deduction": r.get::<_, f64>(8)?,
+            "other_deductions": r.get::<_, f64>(9)?,
+            "effective_from": r.get::<_, Option<String>>(10)?,
+        })),
+    );
+    match r {
+        Ok(v) => (200, json!({"structure": v})),
+        Err(_) => (200, json!({"structure": null})),
+    }
+}
+
+fn payroll_structure_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let staff_id = match v["staff_id"].as_i64() {
+        Some(x) => x,
+        None => return (422, json!({"error": "staff_id required"})),
+    };
+    let basic = v["basic"].as_f64().unwrap_or(0.0);
+    let hra = v["hra"].as_f64().unwrap_or(0.0);
+    let da = v["da"].as_f64().unwrap_or(0.0);
+    let ta = v["ta"].as_f64().unwrap_or(0.0);
+    let other_allow = v["other_allowances"].as_f64().unwrap_or(0.0);
+    let pf = v["pf_deduction"].as_f64().unwrap_or(0.0);
+    let pt = v["pt_deduction"].as_f64().unwrap_or(0.0);
+    let other_ded = v["other_deductions"].as_f64().unwrap_or(0.0);
+    let eff_from = v["effective_from"].as_str().map(|s| s.to_string());
+    let conn = state.conn.lock().unwrap();
+    let r = conn.execute(
+        "INSERT INTO salary_structures(staff_id,basic,hra,da,ta,other_allowances,pf_deduction,pt_deduction,other_deductions,effective_from,updated_at)
+         VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,datetime('now'))
+         ON CONFLICT(staff_id) DO UPDATE SET
+           basic=excluded.basic, hra=excluded.hra, da=excluded.da,
+           ta=excluded.ta, other_allowances=excluded.other_allowances,
+           pf_deduction=excluded.pf_deduction, pt_deduction=excluded.pt_deduction,
+           other_deductions=excluded.other_deductions, effective_from=excluded.effective_from,
+           updated_at=datetime('now')",
+        params![staff_id, basic, hra, da, ta, other_allow, pf, pt, other_ded, eff_from],
+    );
+    match r {
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn payslips_list(state: &AppState, url: &str) -> (u16, Value) {
+    let staff_id: Option<i64> = q_param(url, "staff_id").and_then(|v| v.parse().ok());
+    let month = q_param(url, "month");
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT p.id, p.staff_id, st.first_name, st.last_name,
+                p.month, p.basic, p.hra, p.da, p.ta, p.other_allowances,
+                p.pf_deduction, p.pt_deduction, p.other_deductions,
+                p.gross, p.net, p.working_days, p.paid_days, p.generated_at
+         FROM payslips p
+         JOIN staff st ON st.id = p.staff_id
+         WHERE (?1 IS NULL OR p.staff_id=?1)
+           AND (?2 IS NULL OR p.month=?2)
+         ORDER BY p.month DESC, st.first_name",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![staff_id, month], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "staff_id": r.get::<_, i64>(1)?,
+            "first_name": r.get::<_, Option<String>>(2)?,
+            "last_name": r.get::<_, Option<String>>(3)?,
+            "month": r.get::<_, String>(4)?,
+            "basic": r.get::<_, f64>(5)?,
+            "hra": r.get::<_, f64>(6)?,
+            "da": r.get::<_, f64>(7)?,
+            "ta": r.get::<_, f64>(8)?,
+            "other_allowances": r.get::<_, f64>(9)?,
+            "pf_deduction": r.get::<_, f64>(10)?,
+            "pt_deduction": r.get::<_, f64>(11)?,
+            "other_deductions": r.get::<_, f64>(12)?,
+            "gross": r.get::<_, f64>(13)?,
+            "net": r.get::<_, f64>(14)?,
+            "working_days": r.get::<_, Option<i64>>(15)?,
+            "paid_days": r.get::<_, Option<i64>>(16)?,
+            "generated_at": r.get::<_, String>(17)?,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"payslips": rows, "total": total}))
+}
+
+fn payroll_generate(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let month = match v["month"].as_str() {
+        Some(m) if !m.is_empty() => m.to_string(),
+        _ => return (422, json!({"error": "month required (YYYY-MM)"})),
+    };
+    let staff_ids: Vec<i64> = v["staff_ids"]
+        .as_array()
+        .map(|arr| arr.iter().filter_map(|x| x.as_i64()).collect())
+        .unwrap_or_default();
+    let working_days = v["working_days"].as_i64().unwrap_or(26);
+    let paid_days = v["paid_days"].as_i64(); // per-staff override if needed
+    let conn = state.conn.lock().unwrap();
+    let mut generated = 0i64;
+    for sid in &staff_ids {
+        let ss = conn.query_row(
+            "SELECT basic, hra, da, ta, other_allowances, pf_deduction, pt_deduction, other_deductions
+             FROM salary_structures WHERE staff_id=?1",
+            params![sid],
+            |r| Ok((
+                r.get::<_, f64>(0)?, r.get::<_, f64>(1)?, r.get::<_, f64>(2)?,
+                r.get::<_, f64>(3)?, r.get::<_, f64>(4)?,
+                r.get::<_, f64>(5)?, r.get::<_, f64>(6)?, r.get::<_, f64>(7)?,
+            )),
+        );
+        if let Ok((basic, hra, da, ta, other_allow, pf, pt, other_ded)) = ss {
+            let pd = paid_days.unwrap_or(working_days);
+            let ratio = if working_days > 0 { pd as f64 / working_days as f64 } else { 1.0 };
+            let gross = (basic + hra + da + ta + other_allow) * ratio;
+            let net = gross - pf - pt - other_ded;
+            let _ = conn.execute(
+                "INSERT INTO payslips(staff_id,month,basic,hra,da,ta,other_allowances,
+                  pf_deduction,pt_deduction,other_deductions,gross,net,working_days,paid_days)
+                 VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14)
+                 ON CONFLICT(staff_id,month) DO UPDATE SET
+                   basic=excluded.basic, hra=excluded.hra, da=excluded.da,
+                   ta=excluded.ta, other_allowances=excluded.other_allowances,
+                   pf_deduction=excluded.pf_deduction, pt_deduction=excluded.pt_deduction,
+                   other_deductions=excluded.other_deductions, gross=excluded.gross,
+                   net=excluded.net, working_days=excluded.working_days,
+                   paid_days=excluded.paid_days, generated_at=datetime('now')",
+                params![sid, month, basic*ratio, hra*ratio, da*ratio, ta*ratio, other_allow*ratio,
+                        pf, pt, other_ded, gross, net, working_days, pd],
+            );
+            generated += 1;
+        }
+    }
+    (200, json!({"ok": true, "generated": generated, "month": month}))
 }
 
 fn leave_list(state: &AppState, url: &str) -> (u16, Value) {
