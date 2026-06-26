@@ -33,6 +33,7 @@ import { IssuedItemsScreen } from './components/IssuedItemsScreen';
 import { VisitorScreen } from './components/VisitorScreen';
 import { LibraryScreen } from './components/LibraryScreen';
 import { FinanceReportScreen } from './components/FinanceReportScreen';
+import { ScholarshipScreen } from './components/ScholarshipScreen';
 import { ActivityScreen } from './components/ActivityScreen';
 import { BackupScreen } from './components/BackupScreen';
 import { SecurityScreen } from './components/SecurityScreen';
@@ -127,6 +128,8 @@ export function App() {
     screen = <LibraryScreen />;
   } else if (active === 'fin-reports') {
     screen = <FinanceReportScreen />;
+  } else if (active === 'scholarships') {
+    screen = <ScholarshipScreen />;
   } else if (active === 'activities') {
     screen = <ActivityScreen />;
   } else if (active === 'backup') {

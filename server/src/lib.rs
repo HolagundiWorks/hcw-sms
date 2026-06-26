@@ -637,6 +637,19 @@ fn dispatch(
             return with_auth(state, token, |_| fee_payment_delete(state, id));
         }
     }
+    // Scholarships / concessions
+    if method == &Method::Get && path == "/scholarships" {
+        return with_auth(state, token, |_| scholarships_list(state));
+    }
+    if method == &Method::Post && path == "/scholarships" {
+        return with_auth(state, token, |u| scholarship_create(state, body, u));
+    }
+    if method == &Method::Post && path.starts_with("/scholarships/") && path.ends_with("/delete") {
+        let id_str = &path["/scholarships/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| scholarship_delete(state, id));
+        }
+    }
     // Exam OS (P5)
     if method == &Method::Get && path == "/exams" {
         return with_auth(state, token, |_| exams_list(state, url));
@@ -1459,6 +1472,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS visitors(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, phone TEXT, purpose TEXT, whom_to_meet TEXT, date TEXT NOT NULL, in_time TEXT, out_time TEXT, created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS library_books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, author TEXT, isbn TEXT, category TEXT, total_copies INTEGER DEFAULT 1, available_copies INTEGER DEFAULT 1, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS library_loans(id INTEGER PRIMARY KEY AUTOINCREMENT, book_id INTEGER NOT NULL, student_id INTEGER NOT NULL, issued_date TEXT DEFAULT (date('now')), due_date TEXT, returned_date TEXT, created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS scholarships(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, name TEXT NOT NULL, kind TEXT DEFAULT 'amount', value REAL DEFAULT 0, notes TEXT, awarded_date TEXT DEFAULT (date('now')), created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS fee_heads(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, is_optional INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS fee_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, academic_year_id INTEGER, class_id INTEGER, fee_head_id INTEGER NOT NULL, amount REAL NOT NULL, due_date TEXT, UNIQUE(academic_year_id, class_id, fee_head_id));
          CREATE TABLE IF NOT EXISTS fee_payments(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, fee_head_id INTEGER NOT NULL, academic_year_id INTEGER, amount_paid REAL NOT NULL, payment_date TEXT DEFAULT (date('now')), payment_mode TEXT DEFAULT 'cash', reference TEXT, receipt_no TEXT, collected_by INTEGER, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
@@ -3527,6 +3541,53 @@ fn fee_payment_create(state: &AppState, body: &str) -> (u16, Value) {
 fn fee_payment_delete(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let _ = conn.execute("DELETE FROM fee_payments WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+fn scholarships_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT sc.id, sc.student_id, s.first_name, s.last_name, sc.name, sc.kind, sc.value, sc.notes, sc.awarded_date
+         FROM scholarships sc
+         JOIN students s ON s.id = sc.student_id
+         ORDER BY sc.awarded_date DESC, sc.id DESC",
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "student_id": r.get::<_, i64>(1)?,
+            "first_name": r.get::<_, Option<String>>(2)?,
+            "last_name": r.get::<_, Option<String>>(3)?,
+            "name": r.get::<_, String>(4)?,
+            "kind": r.get::<_, Option<String>>(5)?,
+            "value": r.get::<_, f64>(6)?,
+            "notes": r.get::<_, Option<String>>(7)?,
+            "awarded_date": r.get::<_, Option<String>>(8)?,
+        }))
+    }) { Ok(m) => m.filter_map(|r| r.ok()).collect(), Err(e) => return (500, json!({"error": format!("{e}")})) };
+    (200, json!({"scholarships": rows, "total": rows.len()}))
+}
+
+fn scholarship_create(state: &AppState, body: &str, uid: i64) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let student_id = match v["student_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "student_id required"})) };
+    let name = match v["name"].as_str() { Some(t) if !t.is_empty() => t.to_string(), _ => return (422, json!({"error": "name required"})) };
+    let kind = v["kind"].as_str().unwrap_or("amount").to_string();
+    let value = v["value"].as_f64().unwrap_or(0.0);
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO scholarships(student_id, name, kind, value, notes, awarded_date, created_by)
+         VALUES(?1,?2,?3,?4,?5, date('now'), ?6)",
+        params![student_id, name, kind, value, v["notes"].as_str().map(|s| s.to_string()), uid],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn scholarship_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM scholarships WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
 }
 

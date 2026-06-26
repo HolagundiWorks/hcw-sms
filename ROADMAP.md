@@ -130,7 +130,7 @@ are the real remaining build targets. Tier = build priority; Gate = dependency.
 | M4 | **Issued Items** markers (ID/books/uniform, no accounting) | Operations | Medium | P1 | ✅ done |
 | M5 | Library (catalog + issue/return) | Academics + Ops | Medium | P1 | ✅ done |
 | M6 | Finance Reports (collections + outstanding) | Finance | Medium | Fee OS (P6) | ✅ done |
-| M7 | Scholarships / concessions | Finance | Medium | Fee OS (P6) | ⬜ |
+| M7 | Scholarships / concessions | Finance | Medium | Fee OS (P6) | ✅ done |
 | M8 | Receipts history / reprint | Finance | Low | Fee OS (P6) ✅ collect+print exists | ⬜ |
 | M9 | Daily Schedule view | Schedule | Low | Timetable (P2) | ⬜ |
 | M10 | Room Status / occupancy | Schedule | Low | Timetable + Classrooms | ⬜ |
