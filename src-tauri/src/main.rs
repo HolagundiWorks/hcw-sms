@@ -4,6 +4,10 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
+    // Embedded API server (Rust + SQLite) on :8787 — single self-contained app,
+    // no separate server process.
+    std::thread::spawn(hcwsms_server::run);
+
     tauri::Builder::default()
         .run(tauri::generate_context!())
         .expect("error while running HCW-SMS");

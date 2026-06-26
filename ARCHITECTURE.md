@@ -22,8 +22,10 @@ Status: ✅ done · 🟡 partial · ⬜ not started · ⚠️ conflicts with cur
 on `:8787`; the React app is re-pointed there (`VITE_API_BASE`). The **PHP API +
 MariaDB/openSIS are retired** as the backend. The **`.schoolpkg`** portable file
 (ZIP: manifest + school.sqlite + checksum + media/docs) save/open is implemented
-(`/schoolpkg/save|open`). Remaining for the core: embed the server in the Tauri
-process (single `.exe`). Login is now **`admin` / `admin123`**.
+(`/schoolpkg/save|open`). The server is now **embedded in the Tauri process**
+(spawned on a thread) → single self-contained app; the **offline-first core is
+complete**. (Follow-up: move `school.sqlite` to the app-data dir for installed
+builds.) Login is now **`admin` / `admin123`**.
 
 ## Stack mapping
 
