@@ -52,7 +52,7 @@ builds.) Login is now **`admin` / `admin123`**.
 | 2 | Users & Roles | 🟡 | JWT+bcrypt auth done; roles need the spec set (§6: Principal, Timetable/Exam Coordinator, Class Teacher, Accountant, Front Office …) |
 | 3 | Student Management | 🟡 | list · search · profile · detail API (UI done; data in MariaDB) |
 | 4 | Staff/Teacher Management | 🟡 | list done |
-| 5 | Course & Subject | ⬜ | + subject types/weekly periods |
+| 5 | Course & Subject | 🟡 | list screens + seed (CBSE Class 8 · 8 subjects); create/edit pending |
 | 6 | Teacher-Subject Mapper | ⬜ | up to 3 teachers/subject, priority |
 | 7 | Classroom & Lab | ⬜ | room types, lab allocation |
 | 8 | **Timetable Builder** | ⬜ | **centerpiece** — drag-drop, conflict detection, auto-assist |

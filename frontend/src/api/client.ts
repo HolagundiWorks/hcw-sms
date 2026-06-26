@@ -152,3 +152,36 @@ export function fetchStaff(
   const suffix = qs.toString() ? `?${qs}` : '';
   return req<StaffResponse>(`/staff${suffix}`, { token });
 }
+
+export interface Course {
+  id: number;
+  name: string | null;
+  subjects: number;
+}
+export interface CoursesResponse {
+  courses: Course[];
+  total: number;
+}
+export function fetchCourses(token: string) {
+  return req<CoursesResponse>('/courses', { token });
+}
+
+export interface Subject {
+  id: number;
+  course_id: number | null;
+  name: string | null;
+  code: string | null;
+  type: string | null;
+  weekly_periods: number;
+  is_lab: number;
+}
+export interface SubjectsResponse {
+  subjects: Subject[];
+  total: number;
+}
+export function fetchSubjects(token: string, params: { q?: string } = {}) {
+  const qs = new URLSearchParams();
+  if (params.q) qs.set('q', params.q);
+  const suffix = qs.toString() ? `?${qs}` : '';
+  return req<SubjectsResponse>(`/subjects${suffix}`, { token });
+}

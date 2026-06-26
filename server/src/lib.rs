@@ -111,6 +111,12 @@ fn dispatch(
     if method == &Method::Get && path == "/dashboard/today" {
         return with_auth(state, token, |_| (200, json!({"items": dashboard_today(state)})));
     }
+    if method == &Method::Get && path == "/courses" {
+        return with_auth(state, token, |_| courses_list(state));
+    }
+    if method == &Method::Get && path == "/subjects" {
+        return with_auth(state, token, |_| subjects_list(state, url));
+    }
     if method == &Method::Post && path == "/schoolpkg/save" {
         return with_auth(state, token, |_| schoolpkg_save(body));
     }
@@ -384,6 +390,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS students(id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, middle_name TEXT, last_name TEXT, email TEXT, phone TEXT, gender TEXT, birthdate TEXT, alt_id TEXT, enrolled INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS staff(id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT, email TEXT, phone TEXT, profile TEXT, title TEXT);
          CREATE TABLE IF NOT EXISTS courses(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);
+         CREATE TABLE IF NOT EXISTS subjects(id INTEGER PRIMARY KEY AUTOINCREMENT, course_id INTEGER, name TEXT, code TEXT, type TEXT, weekly_periods INTEGER DEFAULT 0, is_lab INTEGER DEFAULT 0, mandatory INTEGER DEFAULT 1);
          CREATE TABLE IF NOT EXISTS gradelevels(id INTEGER PRIMARY KEY AUTOINCREMENT, short_name TEXT, title TEXT);
          CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);",
     )
@@ -391,6 +398,9 @@ fn init_db(conn: &Connection) {
 
     if count(conn, "SELECT COUNT(*) FROM users") == 0 {
         seed(conn);
+    }
+    if count(conn, "SELECT COUNT(*) FROM courses") == 0 {
+        seed_academics(conn);
     }
 }
 
@@ -522,4 +532,95 @@ fn sha256_hex(bytes: &[u8]) -> String {
     let mut h = Sha256::new();
     h.update(bytes);
     h.finalize().iter().map(|b| format!("{:02x}", b)).collect()
+}
+
+// ---- academics: courses + subjects ----
+
+fn seed_academics(conn: &Connection) {
+    conn.execute("INSERT INTO courses(name) VALUES(?1)", params!["CBSE — Class 8"])
+        .unwrap();
+    let course_id = conn.last_insert_rowid();
+    let subjects = [
+        ("English", "ENG", "Language", 5, 0),
+        ("Kannada", "KAN", "Language", 4, 0),
+        ("Hindi", "HIN", "Language", 4, 0),
+        ("Mathematics", "MAT", "Core", 6, 0),
+        ("Science", "SCI", "Core", 6, 0),
+        ("Social Science", "SOC", "Core", 5, 0),
+        ("Computer Science", "CMP", "Lab", 3, 1),
+        ("Physical Education", "PED", "Sports", 2, 0),
+    ];
+    for (name, code, typ, wp, lab) in subjects {
+        conn.execute(
+            "INSERT INTO subjects(course_id, name, code, type, weekly_periods, is_lab) VALUES(?1,?2,?3,?4,?5,?6)",
+            params![course_id, name, code, typ, wp, lab],
+        )
+        .unwrap();
+    }
+}
+
+fn courses_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut list = Vec::new();
+    let res: rusqlite::Result<()> = (|| {
+        let mut stmt = conn.prepare(
+            "SELECT c.id, c.name, (SELECT COUNT(*) FROM subjects s WHERE s.course_id = c.id) \
+             FROM courses c ORDER BY c.name",
+        )?;
+        let mut rows = stmt.query([])?;
+        while let Some(r) = rows.next()? {
+            list.push(json!({
+                "id": r.get::<_, i64>(0)?,
+                "name": r.get::<_, Option<String>>(1)?,
+                "subjects": r.get::<_, i64>(2)?,
+            }));
+        }
+        Ok(())
+    })();
+    match res {
+        Ok(()) => (200, json!({"courses": list, "total": list.len()})),
+        Err(_) => (500, json!({"error": "query failed"})),
+    }
+}
+
+fn subject_row(r: &rusqlite::Row) -> rusqlite::Result<Value> {
+    Ok(json!({
+        "id": r.get::<_, i64>(0)?,
+        "course_id": r.get::<_, Option<i64>>(1)?,
+        "name": r.get::<_, Option<String>>(2)?,
+        "code": r.get::<_, Option<String>>(3)?,
+        "type": r.get::<_, Option<String>>(4)?,
+        "weekly_periods": r.get::<_, i64>(5)?,
+        "is_lab": r.get::<_, i64>(6)?,
+    }))
+}
+
+fn subjects_list(state: &AppState, url: &str) -> (u16, Value) {
+    let q = q_param(url, "q");
+    let conn = state.conn.lock().unwrap();
+    let mut list = Vec::new();
+    let base = "SELECT id, course_id, name, code, type, weekly_periods, is_lab FROM subjects";
+    let res: rusqlite::Result<()> = (|| {
+        if let Some(qq) = &q {
+            let like = format!("%{}%", qq);
+            let sql = format!("{base} WHERE name LIKE ?1 OR code LIKE ?1 ORDER BY name");
+            let mut stmt = conn.prepare(&sql)?;
+            let mut rows = stmt.query(params![like])?;
+            while let Some(r) = rows.next()? {
+                list.push(subject_row(r)?);
+            }
+        } else {
+            let sql = format!("{base} ORDER BY name");
+            let mut stmt = conn.prepare(&sql)?;
+            let mut rows = stmt.query([])?;
+            while let Some(r) = rows.next()? {
+                list.push(subject_row(r)?);
+            }
+        }
+        Ok(())
+    })();
+    match res {
+        Ok(()) => (200, json!({"subjects": list, "total": list.len()})),
+        Err(_) => (500, json!({"error": "query failed"})),
+    }
 }

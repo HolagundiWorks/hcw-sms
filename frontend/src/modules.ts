@@ -6,8 +6,10 @@ import {
   BookDown,
   BookOpen,
   BookUp,
+  Book,
   Bus,
   CalendarCheck,
+  Layers,
   CalendarClock,
   CalendarOff,
   Check,
@@ -73,6 +75,27 @@ export const modules: ModuleDef[] = [
       { key: 'edit', label: 'Edit', icon: Pencil },
       { key: 'assign', label: 'Assign', icon: ClipboardList },
       { key: 'message', label: 'Message', icon: MessageSquare },
+    ],
+  },
+  {
+    key: 'courses',
+    label: 'Courses',
+    icon: Layers,
+    actions: [
+      { key: 'add', label: 'Add Course', icon: Plus, shortcut: 'Ctrl N' },
+      { key: 'edit', label: 'Edit', icon: Pencil },
+      { key: 'report', label: 'Report', icon: FileText },
+    ],
+  },
+  {
+    key: 'subjects',
+    label: 'Subjects',
+    icon: Book,
+    actions: [
+      { key: 'add', label: 'Add Subject', icon: Plus, shortcut: 'Ctrl N' },
+      { key: 'edit', label: 'Edit', icon: Pencil },
+      { key: 'teachers', label: 'Assign Teachers', icon: Users },
+      { key: 'report', label: 'Report', icon: FileText },
     ],
   },
   {
