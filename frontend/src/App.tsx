@@ -14,6 +14,7 @@ import { SubjectsScreen } from './components/SubjectsScreen';
 import { ClassroomsScreen } from './components/ClassroomsScreen';
 import { ClassesScreen } from './components/ClassesScreen';
 import { TeacherSubjectsScreen } from './components/TeacherSubjectsScreen';
+import { TimingsScreen } from './components/TimingsScreen';
 import { FloorPlanScreen } from './components/FloorPlanScreen';
 import { InstitutionSettingsScreen } from './components/InstitutionSettingsScreen';
 import { Placeholder } from './components/Placeholder';
@@ -68,6 +69,8 @@ export function App() {
     screen = <ClassesScreen />;
   } else if (active === 'teacher-subjects') {
     screen = <TeacherSubjectsScreen />;
+  } else if (active === 'timings') {
+    screen = <TimingsScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'settings') {

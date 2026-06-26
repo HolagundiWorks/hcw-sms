@@ -14,6 +14,8 @@ import {
   CalendarOff,
   Check,
   ClipboardList,
+  Clock,
+  Coffee,
   DoorOpen,
   Download,
   FileText,
@@ -197,6 +199,16 @@ export const modules: ModuleDef[] = [
       { key: 'report', label: 'Report', icon: FileText },
     ],
   },
+  {
+    key: 'timings',
+    label: 'Timings',
+    icon: Clock,
+    actions: [
+      { key: 'add-period', label: 'Add Period', icon: Plus },
+      { key: 'add-break', label: 'Add Break', icon: Coffee },
+      { key: 'save', label: 'Save', icon: Save, shortcut: 'Ctrl S' },
+    ],
+  },
   { key: 'transport', label: 'Transport', icon: Bus, actions: [] },
   { key: 'settings', label: 'Settings', icon: Settings, actions: [] },
 ];
@@ -214,6 +226,7 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'Overview', keys: ['dashboard'] },
   { label: 'People', keys: ['students', 'staff'] },
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
+  { label: 'Schedule', keys: ['timings'] },
   { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport'] },
   { label: 'System', keys: ['settings'] },
 ];

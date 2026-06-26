@@ -238,6 +238,28 @@ export function fetchClasses(token: string) {
   return req<ClassesResponse>('/classes', { token });
 }
 
+export interface Period {
+  id?: number;
+  label: string;
+  period_type: 'period' | 'break';
+  start_time: string;
+  end_time: string;
+  sort_order?: number;
+}
+
+export interface PeriodsResponse {
+  periods: Period[];
+  total: number;
+}
+
+export function fetchPeriods(token: string) {
+  return req<PeriodsResponse>('/periods', { token });
+}
+
+export function savePeriods(token: string, periods: Omit<Period, 'id' | 'sort_order'>[]) {
+  return req<{ ok: boolean }>('/periods', { method: 'POST', token, body: { periods } });
+}
+
 export interface TeacherAssignment {
   id: number;
   staff_id: number;

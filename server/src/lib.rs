@@ -123,6 +123,12 @@ fn dispatch(
     if method == &Method::Get && path == "/classes" {
         return with_auth(state, token, |_| classes_list(state));
     }
+    if method == &Method::Get && path == "/periods" {
+        return with_auth(state, token, |_| periods_list(state));
+    }
+    if method == &Method::Post && path == "/periods" {
+        return with_auth(state, token, |_| periods_save(state, body));
+    }
     if method == &Method::Get && path == "/teacher-subjects" {
         return with_auth(state, token, |_| teacher_subjects_list(state));
     }
@@ -424,6 +430,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS classes(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, grade_level TEXT, course_id INTEGER);
          CREATE TABLE IF NOT EXISTS sections(id INTEGER PRIMARY KEY AUTOINCREMENT, class_id INTEGER, name TEXT, teacher_id INTEGER, capacity INTEGER, room_id INTEGER);
          CREATE TABLE IF NOT EXISTS teacher_subjects(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, priority INTEGER DEFAULT 1, UNIQUE(staff_id, subject_id));
+         CREATE TABLE IF NOT EXISTS periods(id INTEGER PRIMARY KEY AUTOINCREMENT, label TEXT NOT NULL, period_type TEXT DEFAULT 'period', start_time TEXT NOT NULL, end_time TEXT NOT NULL, sort_order INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);",
     )
     .expect("create schema");
@@ -448,6 +455,9 @@ fn init_db(conn: &Connection) {
         && count(conn, "SELECT COUNT(*) FROM subjects") > 0
     {
         seed_teacher_subjects(conn);
+    }
+    if count(conn, "SELECT COUNT(*) FROM periods") == 0 {
+        seed_periods(conn);
     }
 }
 
@@ -798,6 +808,89 @@ fn classes_list(state: &AppState) -> (u16, Value) {
     match res {
         Ok(()) => (200, json!({"classes": out, "total": out.len()})),
         Err(_) => (500, json!({"error": "query failed"})),
+    }
+}
+
+// ---- school timings / period slots ----
+
+fn seed_periods(conn: &Connection) {
+    // Typical CBSE 8-period day (India)
+    let slots: &[(&str, &str, &str, &str)] = &[
+        ("Assembly",    "break",  "08:00", "08:15"),
+        ("Period 1",    "period", "08:15", "09:00"),
+        ("Period 2",    "period", "09:00", "09:45"),
+        ("Period 3",    "period", "09:45", "10:30"),
+        ("Short Break", "break",  "10:30", "10:45"),
+        ("Period 4",    "period", "10:45", "11:30"),
+        ("Period 5",    "period", "11:30", "12:15"),
+        ("Lunch Break", "break",  "12:15", "13:00"),
+        ("Period 6",    "period", "13:00", "13:45"),
+        ("Period 7",    "period", "13:45", "14:30"),
+        ("Period 8",    "period", "14:30", "15:15"),
+    ];
+    for (i, (label, ptype, start, end)) in slots.iter().enumerate() {
+        let _ = conn.execute(
+            "INSERT INTO periods(label, period_type, start_time, end_time, sort_order) VALUES(?1,?2,?3,?4,?5)",
+            params![label, ptype, start, end, i as i64],
+        );
+    }
+}
+
+fn periods_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut list: Vec<Value> = Vec::new();
+    let res: rusqlite::Result<()> = (|| {
+        let mut stmt = conn.prepare(
+            "SELECT id, label, period_type, start_time, end_time, sort_order \
+             FROM periods ORDER BY sort_order",
+        )?;
+        let mut rows = stmt.query([])?;
+        while let Some(r) = rows.next()? {
+            list.push(json!({
+                "id": r.get::<_, i64>(0)?,
+                "label": r.get::<_, Option<String>>(1)?,
+                "period_type": r.get::<_, Option<String>>(2)?,
+                "start_time": r.get::<_, Option<String>>(3)?,
+                "end_time": r.get::<_, Option<String>>(4)?,
+                "sort_order": r.get::<_, i64>(5)?,
+            }));
+        }
+        Ok(())
+    })();
+    match res {
+        Ok(()) => {
+            let total = list.len();
+            (200, json!({"periods": list, "total": total}))
+        }
+        Err(_) => (500, json!({"error": "query failed"})),
+    }
+}
+
+fn periods_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let arr = match v["periods"].as_array() {
+        Some(a) => a.clone(),
+        None => return (422, json!({"error": "periods array required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let res: rusqlite::Result<()> = (|| {
+        conn.execute("DELETE FROM periods", [])?;
+        for (i, p) in arr.iter().enumerate() {
+            let label = p["label"].as_str().unwrap_or("Period").to_string();
+            let ptype = p["period_type"].as_str().unwrap_or("period").to_string();
+            let start = p["start_time"].as_str().unwrap_or("08:00").to_string();
+            let end = p["end_time"].as_str().unwrap_or("08:45").to_string();
+            conn.execute(
+                "INSERT INTO periods(label, period_type, start_time, end_time, sort_order) \
+                 VALUES(?1,?2,?3,?4,?5)",
+                params![label, ptype, start, end, i as i64],
+            )?;
+        }
+        Ok(())
+    })();
+    match res {
+        Ok(()) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
     }
 }
 
