@@ -86,7 +86,7 @@ async function apiTasks(token: string, status?: string): Promise<{ tasks: Task[]
   return fetch(`${BASE}/tasks${qs}`, { headers: authed(token) }).then((r) => r.json());
 }
 
-const MEETING_TYPES = ['staff', 'parent', 'government', 'board', 'other'];
+const MEETING_TYPES = ['department', 'staff', 'parent', 'government', 'board', 'other'];
 const AUDIENCES = ['internal', 'all-staff', 'students', 'parents', 'public'];
 const PRIORITIES = ['low', 'normal', 'high', 'urgent'];
 const TASK_STATUSES = ['pending', 'in_progress', 'completed', 'cancelled'];

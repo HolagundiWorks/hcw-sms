@@ -27,17 +27,20 @@ async function apiFetch<T>(url: string, token: string): Promise<T> {
   return r.json() as Promise<T>;
 }
 
+interface DashStats { students: number; staff: number; sections: number; pending_fees: number; }
+type QueueItem = { type: string; title: string; subtitle?: string };
+
 // ─── Teacher dashboard (L2) ───────────────────────────────────────────────────
 function TeacherDashboard({ token, onNavigate }: { token: string; onNavigate: (k: string) => void }) {
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats'],
-    queryFn: () => apiFetch(`${BASE}/dashboard/stats`, token),
+    queryFn: () => apiFetch<DashStats>(`${BASE}/dashboard/stats`, token),
     staleTime: 60_000,
   });
 
   const { data: queue } = useQuery({
     queryKey: ['dashboard-today'],
-    queryFn: () => apiFetch(`${BASE}/dashboard/today`, token),
+    queryFn: () => apiFetch<QueueItem[]>(`${BASE}/dashboard/today`, token),
     staleTime: 30_000,
   });
 
@@ -101,13 +104,13 @@ function TeacherDashboard({ token, onNavigate }: { token: string; onNavigate: (k
 function AccountantDashboard({ token, onNavigate }: { token: string; onNavigate: (k: string) => void }) {
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats'],
-    queryFn: () => apiFetch(`${BASE}/dashboard/stats`, token),
+    queryFn: () => apiFetch<DashStats>(`${BASE}/dashboard/stats`, token),
     staleTime: 60_000,
   });
 
   const { data: queue } = useQuery({
     queryKey: ['dashboard-today'],
-    queryFn: () => apiFetch(`${BASE}/dashboard/today`, token),
+    queryFn: () => apiFetch<QueueItem[]>(`${BASE}/dashboard/today`, token),
     staleTime: 30_000,
   });
 
@@ -145,7 +148,7 @@ function AccountantDashboard({ token, onNavigate }: { token: string; onNavigate:
 function ClassTeacherDashboard({ token, onNavigate }: { token: string; onNavigate: (k: string) => void }) {
   const { data: queue } = useQuery({
     queryKey: ['dashboard-today'],
-    queryFn: () => apiFetch(`${BASE}/dashboard/today`, token),
+    queryFn: () => apiFetch<QueueItem[]>(`${BASE}/dashboard/today`, token),
     staleTime: 30_000,
   });
 
@@ -194,7 +197,7 @@ function ClassTeacherDashboard({ token, onNavigate }: { token: string; onNavigat
 function NoticeboardDashboard({ token }: { token: string }) {
   const { data: queue, isLoading } = useQuery({
     queryKey: ['dashboard-today'],
-    queryFn: () => apiFetch(`${BASE}/dashboard/today`, token),
+    queryFn: () => apiFetch<QueueItem[]>(`${BASE}/dashboard/today`, token),
     staleTime: 60_000,
   });
 

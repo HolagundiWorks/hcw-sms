@@ -13,19 +13,24 @@ import {
 } from '@mantine/core';
 import { Calendar } from '@mantine/dates';
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, ChevronRight, CircleAlert, GraduationCap, Info, Layers, PartyPopper, Users, Wallet } from 'lucide-react';
+import { AlertTriangle, Building2, CalendarHeart, ChevronRight, CircleAlert, GraduationCap, Info, Layers, PartyPopper, Sparkles, UserCheck, Users, Wallet } from 'lucide-react';
 import dayjs from 'dayjs';
 import type { IconComponent } from '../icons';
 import type { AccentColor } from '../theme';
 import { ApiError, type WorkItem } from '../api/client';
 import { useDashboardToday } from '../hooks/useDashboardToday';
 import { useAuth } from '../stores/auth';
+import { EventFab } from './EventFab';
 
 const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8787';
 
 // ─── Stat card data ────────────────────────────────────────────────────────────
 interface DashStats { students: number; staff: number; sections: number; pending_fees: number; }
 interface MeetingToday { id: number; title: string; meeting_type: string | null; start_time: string | null; end_time: string | null; venue: string | null; status: string | null; }
+
+// ─── Agenda (categorised upcoming meetings + events) ────────────────────────────
+interface AgendaItem { id: number; title: string; date: string | null; start_time?: string | null; venue: string | null; }
+interface AgendaData { department: AgendaItem[]; staff: AgendaItem[]; parent: AgendaItem[]; events: AgendaItem[]; }
 
 const SEV: Record<WorkItem['severity'], { color: AccentColor; Icon: IconComponent }> = {
   danger: { color: 'peach', Icon: CircleAlert },
@@ -110,6 +115,82 @@ function MeetingsTodayCard({ meetings }: { meetings: MeetingToday[] }) {
   );
 }
 
+// ─── Agenda card (one category) ─────────────────────────────────────────────────
+function AgendaCard({
+  label, Icon, color, items, onNavigate,
+}: { label: string; Icon: IconComponent; color: AccentColor; items: AgendaItem[]; onNavigate: (m: string) => void }) {
+  return (
+    <Card p="md" style={{ height: '100%' }}>
+      <Group justify="space-between" mb="xs" wrap="nowrap">
+        <Group gap={8} wrap="nowrap">
+          <ThemeIcon variant="light" color={color} radius="md" size={30}>
+            <Icon size={16} strokeWidth={2} />
+          </ThemeIcon>
+          <Text fw={650} size="sm">{label}</Text>
+        </Group>
+        {items.length > 0 && <Badge variant="light" color={color} radius="sm">{items.length}</Badge>}
+      </Group>
+      {items.length === 0 ? (
+        <Text size="xs" c="dimmed" py="sm">None scheduled.</Text>
+      ) : (
+        <Stack gap={6}>
+          {items.slice(0, 4).map((it) => (
+            <Group key={it.id} gap="xs" wrap="nowrap" align="flex-start">
+              <Text fw={700} c={color} style={{ fontSize: '0.7rem', flexShrink: 0, width: 52 }}>
+                {it.date ? dayjs(it.date).format('MMM D') : '—'}
+              </Text>
+              <div style={{ minWidth: 0 }}>
+                <Text size="sm" fw={500} truncate>{it.title}</Text>
+                <Text size="xs" c="dimmed" truncate>
+                  {[it.start_time, it.venue].filter(Boolean).join(' · ') || '—'}
+                </Text>
+              </div>
+            </Group>
+          ))}
+        </Stack>
+      )}
+      <UnstyledButton onClick={() => onNavigate('events')} mt="sm">
+        <Group gap={2}><Text size="xs" c={color} fw={500}>Open</Text><ChevronRight size={13} /></Group>
+      </UnstyledButton>
+    </Card>
+  );
+}
+
+// ─── Agenda section (4 category cards) ──────────────────────────────────────────
+function AgendaSection({ token, onNavigate }: { token: string; onNavigate: (m: string) => void }) {
+  const { data } = useQuery<AgendaData>({
+    queryKey: ['dashboard-agenda'],
+    queryFn: async () => {
+      const r = await fetch(`${BASE}/dashboard/agenda`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) throw new ApiError(`HTTP ${r.status}`, r.status);
+      return r.json() as Promise<AgendaData>;
+    },
+    enabled: !!token,
+    staleTime: 60_000,
+  });
+
+  const agenda: AgendaData = data && Array.isArray(data.staff)
+    ? data
+    : { department: [], staff: [], parent: [], events: [] };
+
+  return (
+    <Grid gutter="sm">
+      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
+        <AgendaCard label="Department Meetings" Icon={Building2} color="lavender" items={agenda.department} onNavigate={onNavigate} />
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
+        <AgendaCard label="Staff Meetings" Icon={Users} color="brand" items={agenda.staff} onNavigate={onNavigate} />
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
+        <AgendaCard label="Parent Meetings" Icon={UserCheck} color="mint" items={agenda.parent} onNavigate={onNavigate} />
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
+        <AgendaCard label="Upcoming Events" Icon={CalendarHeart} color="peach" items={agenda.events} onNavigate={onNavigate} />
+      </Grid.Col>
+    </Grid>
+  );
+}
+
 // ─── Main dashboard ────────────────────────────────────────────────────────────
 export function DashboardScreen({ onNavigate }: { onNavigate: (module: string) => void }) {
   const token = useAuth((s) => s.token);
@@ -178,6 +259,15 @@ export function DashboardScreen({ onNavigate }: { onNavigate: (module: string) =
           <MeetingsTodayCard meetings={meetingsData.meetings} />
         )}
 
+        {/* Categorised agenda: department / staff / parent meetings + events */}
+        <div>
+          <Group gap="xs" mb="sm">
+            <Sparkles size={16} color="var(--mantine-color-brand-6)" />
+            <Text fw={650}>Meetings &amp; Events</Text>
+          </Group>
+          {token && <AgendaSection token={token} onNavigate={onNavigate} />}
+        </div>
+
         {/* Calendar */}
         <Card>
           <Group justify="space-between" mb="sm">
@@ -193,6 +283,9 @@ export function DashboardScreen({ onNavigate }: { onNavigate: (module: string) =
           />
         </Card>
       </Stack>
+
+      {/* Floating create-event button (bottom-right) */}
+      <EventFab />
     </Container>
   );
 }

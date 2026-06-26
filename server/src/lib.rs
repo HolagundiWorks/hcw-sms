@@ -138,6 +138,9 @@ fn dispatch(
     if method == &Method::Get && path == "/dashboard/stats" {
         return with_auth(state, token, |_| dashboard_stats(state));
     }
+    if method == &Method::Get && path == "/dashboard/agenda" {
+        return with_auth(state, token, |_| dashboard_agenda(state));
+    }
     if method == &Method::Get && path == "/courses" {
         return with_auth(state, token, |_| courses_list(state));
     }
@@ -1092,6 +1095,76 @@ fn dashboard_meetings_today(state: &AppState) -> (u16, Value) {
         Err(e) => return (500, json!({"error": format!("{e}")})),
     };
     (200, json!({"meetings": rows}))
+}
+
+/// Upcoming meetings grouped by type (department/staff/parent) plus upcoming
+/// events (activities). Powers the categorised dashboard cards.
+fn dashboard_agenda(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+
+    // Upcoming meetings of a given type (today onward, not cancelled).
+    let meetings_of = |mtype: &str| -> Vec<Value> {
+        let mut stmt = match conn.prepare(
+            "SELECT id, title, meeting_type, date, start_time, venue, status
+             FROM meetings
+             WHERE meeting_type=?1 AND date >= date('now') AND status != 'cancelled'
+             ORDER BY date, start_time LIMIT 5",
+        ) {
+            Ok(s) => s,
+            Err(_) => return vec![],
+        };
+        let rows = stmt.query_map(params![mtype], |r| {
+            Ok(json!({
+                "id": r.get::<_, i64>(0)?,
+                "title": r.get::<_, String>(1)?,
+                "meeting_type": r.get::<_, Option<String>>(2)?,
+                "date": r.get::<_, String>(3)?,
+                "start_time": r.get::<_, Option<String>>(4)?,
+                "venue": r.get::<_, Option<String>>(5)?,
+                "status": r.get::<_, Option<String>>(6)?,
+            }))
+        });
+        match rows {
+            Ok(m) => m.filter_map(|r| r.ok()).collect(),
+            Err(_) => vec![],
+        }
+    };
+
+    // Upcoming events = activities scheduled today onward.
+    let events: Vec<Value> = {
+        let mut stmt = conn.prepare(
+            "SELECT id, title, activity_type, date, venue, status
+             FROM activities
+             WHERE date >= date('now') AND status IN ('planned','confirmed')
+             ORDER BY date LIMIT 6",
+        );
+        match stmt {
+            Ok(ref mut s) => {
+                let m = s.query_map([], |r| {
+                    Ok(json!({
+                        "id": r.get::<_, i64>(0)?,
+                        "title": r.get::<_, String>(1)?,
+                        "activity_type": r.get::<_, Option<String>>(2)?,
+                        "date": r.get::<_, Option<String>>(3)?,
+                        "venue": r.get::<_, Option<String>>(4)?,
+                        "status": r.get::<_, Option<String>>(5)?,
+                    }))
+                });
+                match m {
+                    Ok(it) => it.filter_map(|r| r.ok()).collect(),
+                    Err(_) => vec![],
+                }
+            }
+            Err(_) => vec![],
+        }
+    };
+
+    (200, json!({
+        "department": meetings_of("department"),
+        "staff": meetings_of("staff"),
+        "parent": meetings_of("parent"),
+        "events": events,
+    }))
 }
 
 fn dashboard_stats(state: &AppState) -> (u16, Value) {
