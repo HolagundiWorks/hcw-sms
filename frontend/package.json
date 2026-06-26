@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "HCW-SMS fresh UI — React + Mantine islands embedded into the HCW-SMS PHP app",
+  "description": "HCW-SMS desktop UI — React + Mantine (Tauri shell, Rust/SQLite API)",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -15,7 +15,6 @@
     "@mantine/dates": "^7.13.0",
     "@mantine/hooks": "^7.13.0",
     "@mantine/spotlight": "^7.17.8",
-    "@tabler/icons-react": "^3.17.0",
     "@tanstack/react-query": "^5.101.1",
     "dayjs": "^1.11.13",
     "lucide-react": "^1.21.0",
