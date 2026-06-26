@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid slice">
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F9FCFF"/>
+      <stop offset="55%" stop-color="#EFF8FF"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="lineA" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F6FFF"/>
+      <stop offset="45%" stop-color="#22D3C5"/>
+      <stop offset="100%" stop-color="#FFC928"/>
+    </linearGradient>
+    <linearGradient id="lineB" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="55%" stop-color="#FF4F9A"/>
+      <stop offset="100%" stop-color="#00AEEF"/>
+    </linearGradient>
+    <style>
+      .flowA{fill:none;stroke:url(#lineA);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:70 34;animation:flow 6s linear infinite}
+      .flowB{fill:none;stroke:url(#lineB);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:42 30;animation:flowBack 8s linear infinite;opacity:.65}
+      .hair{fill:none;stroke:#0F6FFF;stroke-width:1.8;stroke-linecap:round;stroke-dasharray:8 18;animation:flow 12s linear infinite;opacity:.22}
+      .float1{animation:f1 7s ease-in-out infinite alternate}
+      .float2{animation:f2 9s ease-in-out infinite alternate}
+      .spin{transform-box:fill-box;transform-origin:center;animation:spin 18s linear infinite}
+      .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 3s ease-in-out infinite}
+      @keyframes flow{to{stroke-dashoffset:-260}}
+      @keyframes flowBack{to{stroke-dashoffset:220}}
+      @keyframes f1{from{transform:translate(-8px,-4px)}to{transform:translate(12px,8px)}}
+      @keyframes f2{from{transform:translate(10px,8px)}to{transform:translate(-12px,-6px)}}
+      @keyframes spin{to{transform:rotate(360deg)}}
+      @keyframes pulse{50%{transform:scale(1.16);opacity:1}}
+      @media (prefers-reduced-motion: reduce){*{animation:none!important}}
+    </style>
+  </defs>
+
+  <rect width="1600" height="700" fill="url(#bg)"/>
+  <g opacity=".58">
+    <path class="hair" d="M-60 180 C210 80 320 310 565 220 C800 135 885 250 1100 160 C1325 65 1450 120 1660 45"/>
+    <path class="hair" d="M-80 510 C160 410 350 590 560 470 C790 340 950 475 1160 360 C1355 255 1480 300 1660 210"/>
+    <path class="hair" d="M-40 620 C215 520 430 680 665 555 C850 455 1010 575 1200 480 C1385 390 1510 430 1650 350"/>
+  </g>
+  <path class="flowA" d="M-90 405 C130 270 295 420 490 320 C705 210 860 355 1075 245 C1285 140 1420 205 1685 90"/>
+  <path class="flowB" d="M-70 470 C160 360 310 505 520 400 C720 300 865 430 1095 325 C1300 230 1450 260 1680 185"/>
+  <path class="flowA" opacity=".72" d="M-55 570 C190 480 360 610 590 500 C805 397 925 545 1150 430 C1370 320 1495 355 1680 292"/>
+  <g class="float1" fill="none">
+    <circle cx="180" cy="190" r="34" stroke="#22D3C5" stroke-width="6"/>
+    <rect class="spin" x="1265" y="100" width="70" height="70" rx="12" stroke="#FFC928" stroke-width="7"/>
+    <path class="spin" d="M1020 95 L1075 188 L968 178 Z" stroke="#7C3AED" stroke-width="7" stroke-linejoin="round"/>
+  </g>
+  <g class="float2" fill="none">
+    <circle cx="1320" cy="525" r="42" stroke="#0F6FFF" stroke-width="7"/>
+    <rect class="spin" x="335" y="505" width="56" height="56" rx="10" stroke="#FF4F9A" stroke-width="6"/>
+    <path class="spin" d="M690 510 L748 545 L685 585 Z" stroke="#00AEEF" stroke-width="6" stroke-linejoin="round"/>
+  </g>
+  <g>
+    <circle class="pulse" cx="485" cy="322" r="10" fill="#FFFFFF" stroke="#22D3C5" stroke-width="6"/>
+    <circle class="pulse" cx="840" cy="352" r="10" fill="#FFFFFF" stroke="#FFC928" stroke-width="6"/>
+    <circle class="pulse" cx="1160" cy="430" r="10" fill="#FFFFFF" stroke="#FF4F9A" stroke-width="6"/>
+  </g>
+</svg>

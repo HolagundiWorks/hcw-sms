@@ -62,7 +62,7 @@ export function CockpitShell({
             </div>
           </div>
         </AppShell.Header>
-        <AppShell.Main bg="var(--mantine-color-gray-0)">{children}</AppShell.Main>
+        <AppShell.Main>{children}</AppShell.Main>
         <AppShell.Footer>
           <ContextRibbon active={active} onViewStudent={onViewStudent} />
         </AppShell.Footer>

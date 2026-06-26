@@ -1,6 +1,9 @@
 # Legacy PHP installer DB config (contains credentials) — never track.
 /Data.php
 
+# Source drop for background art (runtime copies live in frontend/public/bg/).
+/animated bg/
+
 # HCW-SMS React/Mantine UI — deps and build artifacts (run `npm run build`).
 /frontend/node_modules/
 /frontend/dist/

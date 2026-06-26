@@ -1,6 +1,6 @@
 .ribbon {
   height: 100%;
-  background: var(--mantine-color-white);
+  background: transparent;
   display: flex;
   align-items: stretch;
   overflow-x: auto;

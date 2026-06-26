@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { SessionUser } from './types';
 import { useAuth } from './stores/auth';
 import { useSelection } from './stores/selection';
+import { BackgroundLayer } from './components/BackgroundLayer';
 import { LoginPage } from './components/LoginPage';
 import { CockpitShell } from './components/cockpit/CockpitShell';
 import { DashboardScreen } from './components/DashboardPage';
@@ -24,7 +25,12 @@ export function App() {
   const [studentId, setStudentId] = useState<number | null>(null);
 
   if (!token || !user) {
-    return <LoginPage />;
+    return (
+      <>
+        <BackgroundLayer />
+        <LoginPage />
+      </>
+    );
   }
 
   const sessionUser: SessionUser = {
@@ -38,7 +44,7 @@ export function App() {
     setActive(key);
   };
 
-  let screen;
+  let screen: ReactNode;
   if (active === 'dashboard') {
     screen = <DashboardScreen onNavigate={navigate} />;
   } else if (active === 'students') {
@@ -65,13 +71,16 @@ export function App() {
   }
 
   return (
-    <CockpitShell
-      user={sessionUser}
-      active={active}
-      onNavigate={navigate}
-      onViewStudent={setStudentId}
-    >
-      {screen}
-    </CockpitShell>
+    <>
+      <BackgroundLayer />
+      <CockpitShell
+        user={sessionUser}
+        active={active}
+        onNavigate={navigate}
+        onViewStudent={setStudentId}
+      >
+        {screen}
+      </CockpitShell>
+    </>
   );
 }

@@ -2,8 +2,7 @@
    consistent whether it renders standalone (playground) or embedded inside a
    legacy HCW-SMS PHP page. */
 .hcw-ui {
-  --hcw-page-bg: #FAFBFC;
-  background: var(--hcw-page-bg);
+  background: transparent;
   color: var(--mantine-color-text);
   font-family: var(--mantine-font-family);
   -webkit-font-smoothing: antialiased;
@@ -21,5 +20,51 @@
   transition: background 120ms ease;
 }
 .hcw-workrow:hover {
-  background: var(--mantine-color-gray-1);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* =========================================================================
+   Liquid-glass theme — animated SVG background + frosted surfaces
+   ========================================================================= */
+html,
+body,
+#hcw-playground {
+  background: transparent;
+}
+body {
+  /* soft fallback shown behind the animated SVG while it loads */
+  background: #e9f3ff;
+}
+
+/* Fixed, full-viewport animated background behind all app content. */
+.app-bg-img {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* AppShell chrome → frosted glass. */
+.mantine-AppShell-header,
+.mantine-AppShell-footer {
+  background: rgba(255, 255, 255, 0.5) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border-color: rgba(255, 255, 255, 0.45) !important;
+}
+.mantine-AppShell-main {
+  background: transparent !important;
+}
+
+/* Content cards → glass panes. */
+.mantine-Card-root {
+  background: rgba(255, 255, 255, 0.6) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: 0 10px 30px rgba(15, 111, 255, 0.08);
 }
