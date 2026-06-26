@@ -25,6 +25,7 @@ import { AttendanceKiosk } from './components/AttendanceKiosk';
 import { StaffOSScreen } from './components/StaffOSScreen';
 import { PayrollScreen } from './components/PayrollScreen';
 import { ExamScreen } from './components/ExamScreen';
+import { FeeScreen } from './components/FeeScreen';
 import { Placeholder } from './components/Placeholder';
 
 // Auth gate + cockpit shell. Active module drives the workspace + ribbon;
@@ -93,6 +94,8 @@ export function App() {
     screen = <PayrollScreen />;
   } else if (active === 'exams') {
     screen = <ExamScreen />;
+  } else if (active === 'fees') {
+    screen = <FeeScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'academic-year') {

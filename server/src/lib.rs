@@ -262,6 +262,37 @@ fn dispatch(
     if method == &Method::Post && path == "/substitutions/resolve" {
         return with_auth(state, token, |_| substitution_resolve(state, body));
     }
+    // Fee OS (P6)
+    if method == &Method::Get && path == "/fee-heads" {
+        return with_auth(state, token, |_| fee_heads_list(state));
+    }
+    if method == &Method::Post && path == "/fee-heads" {
+        return with_auth(state, token, |_| fee_head_create(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/fee-heads/") && path.ends_with("/delete") {
+        let id_str = &path["/fee-heads/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| fee_head_delete(state, id));
+        }
+    }
+    if method == &Method::Get && path == "/fee-structures" {
+        return with_auth(state, token, |_| fee_structures_list(state, url));
+    }
+    if method == &Method::Post && path == "/fee-structures" {
+        return with_auth(state, token, |_| fee_structure_save(state, body));
+    }
+    if method == &Method::Get && path == "/fee-payments" {
+        return with_auth(state, token, |_| fee_payments_list(state, url));
+    }
+    if method == &Method::Post && path == "/fee-payments" {
+        return with_auth(state, token, |_| fee_payment_create(state, body));
+    }
+    if method == &Method::Get && path == "/fee-payments/outstanding" {
+        return with_auth(state, token, |_| fee_outstanding(state, url));
+    }
+    if method == &Method::Get && path == "/fee-payments/overdue" {
+        return with_auth(state, token, |_| fee_overdue(state, url));
+    }
     // Exam OS (P5)
     if method == &Method::Get && path == "/exams" {
         return with_auth(state, token, |_| exams_list(state, url));
@@ -819,6 +850,9 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS exam_marks(id INTEGER PRIMARY KEY AUTOINCREMENT, exam_id INTEGER NOT NULL, student_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, marks_obtained REAL, max_marks REAL DEFAULT 100, grade TEXT, remarks TEXT, UNIQUE(exam_id, student_id, subject_id));
          CREATE TABLE IF NOT EXISTS salary_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL UNIQUE, basic REAL DEFAULT 0, hra REAL DEFAULT 0, da REAL DEFAULT 0, ta REAL DEFAULT 0, other_allowances REAL DEFAULT 0, pf_deduction REAL DEFAULT 0, pt_deduction REAL DEFAULT 0, other_deductions REAL DEFAULT 0, effective_from TEXT, updated_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS payslips(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, month TEXT NOT NULL, basic REAL, hra REAL, da REAL, ta REAL, other_allowances REAL, pf_deduction REAL, pt_deduction REAL, other_deductions REAL, gross REAL, net REAL, working_days INTEGER, paid_days INTEGER, generated_at TEXT DEFAULT (datetime('now')), UNIQUE(staff_id, month));
+         CREATE TABLE IF NOT EXISTS fee_heads(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, is_optional INTEGER DEFAULT 0);
+         CREATE TABLE IF NOT EXISTS fee_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, academic_year_id INTEGER, class_id INTEGER, fee_head_id INTEGER NOT NULL, amount REAL NOT NULL, due_date TEXT, UNIQUE(academic_year_id, class_id, fee_head_id));
+         CREATE TABLE IF NOT EXISTS fee_payments(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, fee_head_id INTEGER NOT NULL, academic_year_id INTEGER, amount_paid REAL NOT NULL, payment_date TEXT DEFAULT (date('now')), payment_mode TEXT DEFAULT 'cash', reference TEXT, receipt_no TEXT, collected_by INTEGER, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS section_students(id INTEGER PRIMARY KEY AUTOINCREMENT, section_id INTEGER NOT NULL, student_id INTEGER NOT NULL, enrolled_date TEXT, UNIQUE(section_id, student_id));
          CREATE TABLE IF NOT EXISTS student_attendance(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, section_id INTEGER NOT NULL, date TEXT NOT NULL, period_id INTEGER NOT NULL, status TEXT DEFAULT 'present', marked_by INTEGER, note TEXT, marked_at TEXT DEFAULT (datetime('now')), UNIQUE(student_id, date, period_id));",
     )
@@ -1129,6 +1163,253 @@ fn substitution_resolve(state: &AppState, body: &str) -> (u16, Value) {
         Ok(_) => (404, json!({"error": "substitution not found"})),
         Err(e) => (500, json!({"error": format!("{e}")})),
     }
+}
+
+// ---- Fee OS (P6) ----
+
+fn fee_heads_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare("SELECT id, name, description, is_optional FROM fee_heads ORDER BY name") {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({ "id": r.get::<_, i64>(0)?, "name": r.get::<_, String>(1)?, "description": r.get::<_, Option<String>>(2)?, "is_optional": r.get::<_, i64>(3)? }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    (200, json!({"fee_heads": rows, "total": rows.len()}))
+}
+
+fn fee_head_create(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let name = match v["name"].as_str() { Some(n) if !n.is_empty() => n.to_string(), _ => return (422, json!({"error": "name required"})) };
+    let desc = v["description"].as_str().map(|s| s.to_string());
+    let optional = v["is_optional"].as_bool().unwrap_or(false) as i64;
+    let conn = state.conn.lock().unwrap();
+    match conn.execute("INSERT INTO fee_heads(name, description, is_optional) VALUES(?1,?2,?3)", params![name, desc, optional]) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn fee_head_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM fee_structures WHERE fee_head_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM fee_heads WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+fn fee_structures_list(state: &AppState, url: &str) -> (u16, Value) {
+    let year_id: Option<i64> = q_param(url, "year_id").and_then(|v| v.parse().ok());
+    let class_id: Option<i64> = q_param(url, "class_id").and_then(|v| v.parse().ok());
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT fs.id, fs.academic_year_id, fs.class_id, c.name, fs.fee_head_id, fh.name, fs.amount, fs.due_date
+         FROM fee_structures fs
+         JOIN fee_heads fh ON fh.id = fs.fee_head_id
+         LEFT JOIN classes c ON c.id = fs.class_id
+         WHERE (?1 IS NULL OR fs.academic_year_id=?1) AND (?2 IS NULL OR fs.class_id=?2)
+         ORDER BY fh.name, c.name",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![year_id, class_id], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "academic_year_id": r.get::<_, Option<i64>>(1)?,
+            "class_id": r.get::<_, Option<i64>>(2)?,
+            "class_name": r.get::<_, Option<String>>(3)?,
+            "fee_head_id": r.get::<_, i64>(4)?,
+            "fee_head_name": r.get::<_, String>(5)?,
+            "amount": r.get::<_, f64>(6)?,
+            "due_date": r.get::<_, Option<String>>(7)?,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"structures": rows, "total": total}))
+}
+
+fn fee_structure_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let fh_id = match v["fee_head_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "fee_head_id required"})) };
+    let amount = v["amount"].as_f64().unwrap_or(0.0);
+    let year_id = v["academic_year_id"].as_i64();
+    let class_id = v["class_id"].as_i64();
+    let due = v["due_date"].as_str().map(|s| s.to_string());
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO fee_structures(academic_year_id, class_id, fee_head_id, amount, due_date) VALUES(?1,?2,?3,?4,?5)
+         ON CONFLICT(academic_year_id, class_id, fee_head_id) DO UPDATE SET amount=excluded.amount, due_date=excluded.due_date",
+        params![year_id, class_id, fh_id, amount, due],
+    ) {
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn fee_payments_list(state: &AppState, url: &str) -> (u16, Value) {
+    let student_id: Option<i64> = q_param(url, "student_id").and_then(|v| v.parse().ok());
+    let year_id: Option<i64> = q_param(url, "year_id").and_then(|v| v.parse().ok());
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT fp.id, fp.student_id, s.first_name, s.last_name,
+                fp.fee_head_id, fh.name, fp.academic_year_id,
+                fp.amount_paid, fp.payment_date, fp.payment_mode,
+                fp.reference, fp.receipt_no, fp.notes
+         FROM fee_payments fp
+         JOIN students s ON s.id = fp.student_id
+         JOIN fee_heads fh ON fh.id = fp.fee_head_id
+         WHERE (?1 IS NULL OR fp.student_id=?1) AND (?2 IS NULL OR fp.academic_year_id=?2)
+         ORDER BY fp.payment_date DESC, fp.id DESC",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![student_id, year_id], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "student_id": r.get::<_, i64>(1)?,
+            "first_name": r.get::<_, Option<String>>(2)?,
+            "last_name": r.get::<_, Option<String>>(3)?,
+            "fee_head_id": r.get::<_, i64>(4)?,
+            "fee_head_name": r.get::<_, String>(5)?,
+            "academic_year_id": r.get::<_, Option<i64>>(6)?,
+            "amount_paid": r.get::<_, f64>(7)?,
+            "payment_date": r.get::<_, Option<String>>(8)?,
+            "payment_mode": r.get::<_, Option<String>>(9)?,
+            "reference": r.get::<_, Option<String>>(10)?,
+            "receipt_no": r.get::<_, Option<String>>(11)?,
+            "notes": r.get::<_, Option<String>>(12)?,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"payments": rows, "total": total}))
+}
+
+fn fee_payment_create(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let student_id = match v["student_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "student_id required"})) };
+    let fh_id = match v["fee_head_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "fee_head_id required"})) };
+    let amount = v["amount_paid"].as_f64().unwrap_or(0.0);
+    let year_id = v["academic_year_id"].as_i64();
+    let date = v["payment_date"].as_str().map(|s| s.to_string());
+    let mode = v["payment_mode"].as_str().unwrap_or("cash").to_string();
+    let reference = v["reference"].as_str().map(|s| s.to_string());
+    let notes = v["notes"].as_str().map(|s| s.to_string());
+    let conn = state.conn.lock().unwrap();
+    let receipt_no = format!("RCP-{}-{}", chrono_or_ts(), student_id);
+    match conn.execute(
+        "INSERT INTO fee_payments(student_id, fee_head_id, academic_year_id, amount_paid, payment_date, payment_mode, reference, receipt_no, notes)
+         VALUES(?1,?2,?3,?4,COALESCE(?5, date('now')),?6,?7,?8,?9)",
+        params![student_id, fh_id, year_id, amount, date, mode, reference, receipt_no, notes],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid(), "receipt_no": receipt_no})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn chrono_or_ts() -> String {
+    let secs = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+    format!("{secs}")
+}
+
+fn fee_outstanding(state: &AppState, url: &str) -> (u16, Value) {
+    let student_id: Option<i64> = q_param(url, "student_id").and_then(|v| v.parse().ok());
+    let year_id: Option<i64> = q_param(url, "year_id").and_then(|v| v.parse().ok());
+    let conn = state.conn.lock().unwrap();
+    // For each student+fee_head combo in structures, compute balance = amount - sum(paid)
+    let mut stmt = match conn.prepare(
+        "SELECT s.id, s.first_name, s.last_name,
+                fs.fee_head_id, fh.name, fs.amount, fs.due_date,
+                COALESCE((SELECT SUM(fp.amount_paid) FROM fee_payments fp
+                          WHERE fp.student_id=s.id AND fp.fee_head_id=fs.fee_head_id
+                            AND (?1 IS NULL OR fp.academic_year_id=?1)), 0) as paid
+         FROM students s
+         JOIN (SELECT DISTINCT ss.student_id, se.class_id FROM section_students ss
+               JOIN sections se ON se.id = ss.section_id) sc ON sc.student_id = s.id
+         JOIN fee_structures fs ON (fs.class_id IS NULL OR fs.class_id = sc.class_id)
+                                AND (?1 IS NULL OR fs.academic_year_id=?1)
+         JOIN fee_heads fh ON fh.id = fs.fee_head_id
+         WHERE (?2 IS NULL OR s.id=?2)
+         HAVING (fs.amount - paid) > 0
+         ORDER BY fs.due_date, s.first_name",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![year_id, student_id], |r| {
+        let amount: f64 = r.get(5)?;
+        let paid: f64 = r.get(7)?;
+        Ok(json!({
+            "student_id": r.get::<_, i64>(0)?,
+            "first_name": r.get::<_, Option<String>>(1)?,
+            "last_name": r.get::<_, Option<String>>(2)?,
+            "fee_head_id": r.get::<_, i64>(3)?,
+            "fee_head_name": r.get::<_, String>(4)?,
+            "amount_due": amount,
+            "due_date": r.get::<_, Option<String>>(6)?,
+            "amount_paid": paid,
+            "balance": amount - paid,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"outstanding": rows, "total": total}))
+}
+
+fn fee_overdue(state: &AppState, url: &str) -> (u16, Value) {
+    let year_id: Option<i64> = q_param(url, "year_id").and_then(|v| v.parse().ok());
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT s.id, s.first_name, s.last_name,
+                fs.fee_head_id, fh.name, fs.amount, fs.due_date,
+                COALESCE((SELECT SUM(fp.amount_paid) FROM fee_payments fp
+                          WHERE fp.student_id=s.id AND fp.fee_head_id=fs.fee_head_id
+                            AND (?1 IS NULL OR fp.academic_year_id=?1)), 0) as paid
+         FROM students s
+         JOIN (SELECT DISTINCT ss.student_id, se.class_id FROM section_students ss
+               JOIN sections se ON se.id = ss.section_id) sc ON sc.student_id = s.id
+         JOIN fee_structures fs ON (fs.class_id IS NULL OR fs.class_id = sc.class_id)
+                                AND (?1 IS NULL OR fs.academic_year_id=?1)
+         JOIN fee_heads fh ON fh.id = fs.fee_head_id
+         WHERE fs.due_date IS NOT NULL AND fs.due_date < date('now')
+         HAVING (fs.amount - paid) > 0
+         ORDER BY fs.due_date, s.first_name",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![year_id], |r| {
+        let amount: f64 = r.get(5)?;
+        let paid: f64 = r.get(7)?;
+        Ok(json!({
+            "student_id": r.get::<_, i64>(0)?,
+            "first_name": r.get::<_, Option<String>>(1)?,
+            "last_name": r.get::<_, Option<String>>(2)?,
+            "fee_head_id": r.get::<_, i64>(3)?,
+            "fee_head_name": r.get::<_, String>(4)?,
+            "amount_due": amount,
+            "due_date": r.get::<_, Option<String>>(6)?,
+            "amount_paid": paid,
+            "balance": amount - paid,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"overdue": rows, "total": total}))
 }
 
 // ---- Exam OS (P5) ----
