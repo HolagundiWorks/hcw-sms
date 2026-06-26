@@ -117,12 +117,34 @@ Legend: ✅ done · 🟡 in progress · ⬜ planned
 
 ---
 
-## Pending / Upcoming
+## Module backlog (ribbon placeholders — greyed, not yet built)
+
+The ribbon shows greyed `placeholder: true` actions for planned modules. These
+are the real remaining build targets. Tier = build priority; Gate = dependency.
+
+| # | Module | Tab | Tier | Gate | Status |
+|---|---|---|---|---|---|
+| M1 | **ID Cards** | People | High | Students, Hardware (NFC) | 🟡 building |
+| M2 | Transport | Operations | High | P1 | ⬜ |
+| M3 | Visitor Log | Operations | Medium | P1 | ⬜ |
+| M4 | Inventory | Operations | Medium | P1 | ⬜ |
+| M5 | Library (catalog + issue/return) | Academics + Ops | Medium | P1 | ⬜ |
+| M6 | Finance Reports | Finance | Medium | Fee OS (P6) | ⬜ |
+| M7 | Scholarships / concessions | Finance | Medium | Fee OS (P6) | ⬜ |
+| M8 | Receipts history / reprint | Finance | Low | Fee OS (P6) ✅ collect+print exists | ⬜ |
+| M9 | Daily Schedule view | Schedule | Low | Timetable (P2) | ⬜ |
+| M10 | Room Status / occupancy | Schedule | Low | Timetable + Classrooms | ⬜ |
+| M11 | Parent Guide (activity) | Events | Low | Activities (P8) | ⬜ |
+| M12 | Itinerary (activity) | Events | Low | Activities (P8) | ⬜ |
+
+**Already built — placeholder was misleading (de-placeholder/remove):**
+- Admissions → works via **Students → Admit** (`StudentFormModal`)
+- Fee receipts → **Fees → Collect & Generate Receipt** prints already
+
+## Cross-cutting / later
 
 | Item | Priority | Gate |
 |---|---|---|
-| Student admission form (add/edit) | High | P1 |
-| Staff create/edit form | High | P1 |
 | Attendance reports + export (PDF/Excel) | High | P3 |
 | Report cards (PDF) | Medium | P5 |
 | Ranking engine | Medium | P5 |
@@ -134,5 +156,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ planned
 
 ### Current focus
 
-All P0–P14 phases complete. Upcoming: add/edit forms for students and staff (P1 gap),
-attendance report export (P3 gap), and LAN multi-user mode.
+P0–P14 core phases done, but **12 ribbon placeholder modules remain unbuilt**
+(table above) — the earlier "all complete" note was inaccurate. Building the
+backlog top-down: **M1 ID Cards** first (leverages existing student data + the
+Hardware NFC card-enrollment module), then Transport.

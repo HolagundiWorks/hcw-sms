@@ -103,7 +103,7 @@ export const ribbonTabs: RibbonTab[] = [
         actions: [
           { key: 'students', label: 'Students', icon: GraduationCap, accessLevel: 3 },
           { key: 'admissions', label: 'Admissions', icon: GraduationCap, accessLevel: 2, placeholder: true },
-          { key: 'id-cards', label: 'ID Cards', icon: CreditCard, accessLevel: 2, placeholder: true },
+          { key: 'id-cards', label: 'ID Cards', icon: CreditCard, accessLevel: 2 },
         ],
       },
       {
