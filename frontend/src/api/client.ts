@@ -217,6 +217,27 @@ export function saveSchool(
   return req<{ ok: boolean }>('/school', { method: 'POST', token, body: data });
 }
 
+export interface Section {
+  id: number;
+  name: string | null;
+  capacity: number | null;
+  teacher: string | null;
+  room: string | null;
+}
+export interface ClassRow {
+  id: number;
+  name: string | null;
+  grade_level: string | null;
+  sections: Section[];
+}
+export interface ClassesResponse {
+  classes: ClassRow[];
+  total: number;
+}
+export function fetchClasses(token: string) {
+  return req<ClassesResponse>('/classes', { token });
+}
+
 export interface RoomShape {
   id: string;
   type: string;

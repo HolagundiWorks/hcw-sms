@@ -19,6 +19,7 @@ import {
   FileText,
   GraduationCap,
   LayoutDashboard,
+  LayoutGrid,
   ListChecks,
   MessageSquare,
   Pencil,
@@ -79,6 +80,17 @@ export const modules: ModuleDef[] = [
       { key: 'edit', label: 'Edit', icon: Pencil },
       { key: 'assign', label: 'Assign', icon: ClipboardList },
       { key: 'message', label: 'Message', icon: MessageSquare },
+    ],
+  },
+  {
+    key: 'classes',
+    label: 'Classes',
+    icon: LayoutGrid,
+    actions: [
+      { key: 'add', label: 'Add Class', icon: Plus, shortcut: 'Ctrl N' },
+      { key: 'section', label: 'Add Section', icon: Plus },
+      { key: 'edit', label: 'Edit', icon: Pencil },
+      { key: 'report', label: 'Report', icon: FileText },
     ],
   },
   {
@@ -190,7 +202,7 @@ export interface ModuleGroup {
 export const moduleGroups: ModuleGroup[] = [
   { label: 'Overview', keys: ['dashboard'] },
   { label: 'People', keys: ['students', 'staff'] },
-  { label: 'Academics', keys: ['courses', 'subjects', 'classrooms', 'floorplan'] },
+  { label: 'Academics', keys: ['classes', 'courses', 'subjects', 'classrooms', 'floorplan'] },
   { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport'] },
   { label: 'System', keys: ['settings'] },
 ];

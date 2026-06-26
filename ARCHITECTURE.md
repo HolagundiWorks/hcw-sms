@@ -76,7 +76,7 @@ builds.) Login is now **`admin` / `admin123`**.
 ## Implementation phases (spec §31) vs progress
 
 - **Phase 1 — Core foundation:** Tauri ✅ · Student/Teacher UI 🟡 · **SQLite + `.schoolpkg` ⬜** · Course/Subject ⬜ · Excel ⬜ · Backup ⬜
-- **Phase 2 — Timetable:** ⬜ (timings → periods → mapper → builder → conflicts → views)
+- **Phase 2 — Timetable:** 🟡 prerequisites underway — Course/Subject ✅ · Classroom/Lab ✅ · **Classes & Sections** ✅ (Class 6/7/8 → sections A/B with class teacher · room · capacity, `/classes`); next: Teacher-Subject mapper · timings/periods · drag-drop builder · conflicts
 - **Phase 3 — Substitution:** ⬜
 - **Phase 4 — Exam:** ⬜
 - **Phase 5 — LAN:** ⬜

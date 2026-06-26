@@ -120,6 +120,9 @@ fn dispatch(
     if method == &Method::Get && path == "/classrooms" {
         return with_auth(state, token, |_| classrooms_list(state));
     }
+    if method == &Method::Get && path == "/classes" {
+        return with_auth(state, token, |_| classes_list(state));
+    }
     if method == &Method::Get && path == "/school" {
         return with_auth(state, token, |_| school_get(state));
     }
@@ -409,6 +412,8 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS gradelevels(id INTEGER PRIMARY KEY AUTOINCREMENT, short_name TEXT, title TEXT);
          CREATE TABLE IF NOT EXISTS classrooms(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, code TEXT, capacity INTEGER, room_type TEXT, is_active INTEGER DEFAULT 1);
          CREATE TABLE IF NOT EXISTS floorplans(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, data TEXT);
+         CREATE TABLE IF NOT EXISTS classes(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, grade_level TEXT, course_id INTEGER);
+         CREATE TABLE IF NOT EXISTS sections(id INTEGER PRIMARY KEY AUTOINCREMENT, class_id INTEGER, name TEXT, teacher_id INTEGER, capacity INTEGER, room_id INTEGER);
          CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);",
     )
     .expect("create schema");
@@ -425,6 +430,9 @@ fn init_db(conn: &Connection) {
     }
     if count(conn, "SELECT COUNT(*) FROM classrooms") == 0 {
         seed_rooms(conn);
+    }
+    if count(conn, "SELECT COUNT(*) FROM classes") == 0 {
+        seed_classes(conn);
     }
 }
 
@@ -694,6 +702,86 @@ fn classrooms_list(state: &AppState) -> (u16, Value) {
     })();
     match res {
         Ok(()) => (200, json!({"classrooms": list, "total": list.len()})),
+        Err(_) => (500, json!({"error": "query failed"})),
+    }
+}
+
+// ---- classes & sections ----
+
+fn seed_classes(conn: &Connection) {
+    let classes = [
+        ("Class 6", "6", None::<i64>),
+        ("Class 7", "7", None::<i64>),
+        ("Class 8", "8", Some(1)),
+    ];
+    for (name, grade, course) in classes {
+        conn.execute(
+            "INSERT INTO classes(name, grade_level, course_id) VALUES(?1,?2,?3)",
+            params![name, grade, course],
+        )
+        .unwrap();
+        let class_id = conn.last_insert_rowid();
+        let secs = [("A", 40i64), ("B", 38i64)];
+        let mut i: i64 = 0;
+        for (sn, cap) in secs {
+            let teacher_id = (class_id - 1) * 2 + i + 1; // cycle through seeded staff
+            let room_id = i + 1; // Room 101 / Room 102
+            conn.execute(
+                "INSERT INTO sections(class_id, name, teacher_id, capacity, room_id) VALUES(?1,?2,?3,?4,?5)",
+                params![class_id, sn, teacher_id, cap, room_id],
+            )
+            .unwrap();
+            i += 1;
+        }
+    }
+}
+
+fn classes_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut out = Vec::new();
+    let res: rusqlite::Result<()> = (|| {
+        let mut base: Vec<(i64, Option<String>, Option<String>)> = Vec::new();
+        {
+            let mut cstmt = conn.prepare("SELECT id, name, grade_level FROM classes ORDER BY id")?;
+            let mut crows = cstmt.query([])?;
+            while let Some(c) = crows.next()? {
+                base.push((c.get(0)?, c.get(1)?, c.get(2)?));
+            }
+        }
+        for (cid, cname, grade) in base {
+            let mut sections = Vec::new();
+            let mut sstmt = conn.prepare(
+                "SELECT s.id, s.name, s.capacity, st.first_name, st.last_name, r.name
+                 FROM sections s
+                 LEFT JOIN staff st ON st.id = s.teacher_id
+                 LEFT JOIN classrooms r ON r.id = s.room_id
+                 WHERE s.class_id = ?1 ORDER BY s.name",
+            )?;
+            let mut srows = sstmt.query(params![cid])?;
+            while let Some(s) = srows.next()? {
+                let first: Option<String> = s.get(3)?;
+                let last: Option<String> = s.get(4)?;
+                let teacher =
+                    first.map(|f| format!("{} {}", f, last.unwrap_or_default()).trim().to_string());
+                sections.push(json!({
+                    "id": s.get::<_, i64>(0)?,
+                    "name": s.get::<_, Option<String>>(1)?,
+                    "capacity": s.get::<_, Option<i64>>(2)?,
+                    "teacher": teacher,
+                    "room": s.get::<_, Option<String>>(5)?,
+                }));
+            }
+            out.push(json!({
+                "id": cid,
+                "name": cname,
+                "grade_level": grade,
+                "sections": sections,
+            }));
+        }
+        Ok(())
+    })();
+    match res {
+        Ok(()) => (200, json!({"classes": out, "total": out.len()})),
         Err(_) => (500, json!({"error": "query failed"})),
     }
 }

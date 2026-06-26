@@ -12,6 +12,7 @@ import { StaffScreen } from './components/StaffScreen';
 import { CoursesScreen } from './components/CoursesScreen';
 import { SubjectsScreen } from './components/SubjectsScreen';
 import { ClassroomsScreen } from './components/ClassroomsScreen';
+import { ClassesScreen } from './components/ClassesScreen';
 import { FloorPlanScreen } from './components/FloorPlanScreen';
 import { InstitutionSettingsScreen } from './components/InstitutionSettingsScreen';
 import { Placeholder } from './components/Placeholder';
@@ -62,6 +63,8 @@ export function App() {
     screen = <SubjectsScreen />;
   } else if (active === 'classrooms') {
     screen = <ClassroomsScreen />;
+  } else if (active === 'classes') {
+    screen = <ClassesScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'settings') {
