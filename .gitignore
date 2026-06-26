@@ -7,6 +7,10 @@
 /frontend/dist/
 /assets/hcw-ui/
 
+# Local SQLite DB created by the Rust server (regenerated/seeded on run).
+*.sqlite
+*.sqlite-*
+
 # OS / editor noise
 Thumbs.db
 ehthumbs.db

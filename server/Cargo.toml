@@ -1,0 +1,12 @@
+[package]
+name = "hcwsms-server"
+version = "0.1.0"
+edition = "2021"
+description = "HCW-SMS local API server (SQLite) — offline-first core"
+
+[dependencies]
+tiny_http = "0.12"
+rusqlite = { version = "0.31", features = ["bundled"] }
+serde_json = "1"
+bcrypt = "0.15"
+uuid = { version = "1", features = ["v4"] }

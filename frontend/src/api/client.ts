@@ -1,8 +1,8 @@
 import type { Role } from '../roles';
 
-// Base URL of the PHP API wrapper. Overridable via VITE_API_BASE (and later the
-// Tauri build). Defaults to the local Podman PHP stack.
-const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8080/api/v1';
+// Base URL of the local HCW-SMS API (Rust + SQLite) on :8787. Overridable via
+// VITE_API_BASE — e.g. a LAN server at http://192.168.1.10:8787.
+const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8787';
 
 export class ApiError extends Error {
   status: number;
