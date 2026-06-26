@@ -185,3 +185,18 @@ export function fetchSubjects(token: string, params: { q?: string } = {}) {
   const suffix = qs.toString() ? `?${qs}` : '';
   return req<SubjectsResponse>(`/subjects${suffix}`, { token });
 }
+
+export interface Classroom {
+  id: number;
+  name: string | null;
+  code: string | null;
+  capacity: number | null;
+  room_type: string | null;
+}
+export interface ClassroomsResponse {
+  classrooms: Classroom[];
+  total: number;
+}
+export function fetchClassrooms(token: string) {
+  return req<ClassroomsResponse>('/classrooms', { token });
+}

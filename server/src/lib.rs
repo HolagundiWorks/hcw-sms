@@ -117,6 +117,9 @@ fn dispatch(
     if method == &Method::Get && path == "/subjects" {
         return with_auth(state, token, |_| subjects_list(state, url));
     }
+    if method == &Method::Get && path == "/classrooms" {
+        return with_auth(state, token, |_| classrooms_list(state));
+    }
     if method == &Method::Post && path == "/schoolpkg/save" {
         return with_auth(state, token, |_| schoolpkg_save(body));
     }
@@ -392,6 +395,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS courses(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);
          CREATE TABLE IF NOT EXISTS subjects(id INTEGER PRIMARY KEY AUTOINCREMENT, course_id INTEGER, name TEXT, code TEXT, type TEXT, weekly_periods INTEGER DEFAULT 0, is_lab INTEGER DEFAULT 0, mandatory INTEGER DEFAULT 1);
          CREATE TABLE IF NOT EXISTS gradelevels(id INTEGER PRIMARY KEY AUTOINCREMENT, short_name TEXT, title TEXT);
+         CREATE TABLE IF NOT EXISTS classrooms(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, code TEXT, capacity INTEGER, room_type TEXT, is_active INTEGER DEFAULT 1);
          CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);",
     )
     .expect("create schema");
@@ -401,6 +405,9 @@ fn init_db(conn: &Connection) {
     }
     if count(conn, "SELECT COUNT(*) FROM courses") == 0 {
         seed_academics(conn);
+    }
+    if count(conn, "SELECT COUNT(*) FROM classrooms") == 0 {
+        seed_rooms(conn);
     }
 }
 
@@ -621,6 +628,55 @@ fn subjects_list(state: &AppState, url: &str) -> (u16, Value) {
     })();
     match res {
         Ok(()) => (200, json!({"subjects": list, "total": list.len()})),
+        Err(_) => (500, json!({"error": "query failed"})),
+    }
+}
+
+// ---- classrooms & labs ----
+
+fn seed_rooms(conn: &Connection) {
+    let rooms = [
+        ("Room 101", "R101", 40, "Classroom"),
+        ("Room 102", "R102", 40, "Classroom"),
+        ("Room 204", "R204", 35, "Classroom"),
+        ("Computer Lab 1", "CL1", 30, "Computer Lab"),
+        ("Science Lab", "SL1", 30, "Science Lab"),
+        ("Library", "LIB", 60, "Library"),
+        ("Auditorium", "AUD", 200, "Auditorium"),
+    ];
+    for (name, code, cap, typ) in rooms {
+        conn.execute(
+            "INSERT INTO classrooms(name, code, capacity, room_type) VALUES(?1,?2,?3,?4)",
+            params![name, code, cap, typ],
+        )
+        .unwrap();
+    }
+}
+
+fn classroom_row(r: &rusqlite::Row) -> rusqlite::Result<Value> {
+    Ok(json!({
+        "id": r.get::<_, i64>(0)?,
+        "name": r.get::<_, Option<String>>(1)?,
+        "code": r.get::<_, Option<String>>(2)?,
+        "capacity": r.get::<_, Option<i64>>(3)?,
+        "room_type": r.get::<_, Option<String>>(4)?,
+    }))
+}
+
+fn classrooms_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut list = Vec::new();
+    let res: rusqlite::Result<()> = (|| {
+        let mut stmt =
+            conn.prepare("SELECT id, name, code, capacity, room_type FROM classrooms ORDER BY name")?;
+        let mut rows = stmt.query([])?;
+        while let Some(r) = rows.next()? {
+            list.push(classroom_row(r)?);
+        }
+        Ok(())
+    })();
+    match res {
+        Ok(()) => (200, json!({"classrooms": list, "total": list.len()})),
         Err(_) => (500, json!({"error": "query failed"})),
     }
 }
