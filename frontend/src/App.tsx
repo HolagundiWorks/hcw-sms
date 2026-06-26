@@ -32,6 +32,7 @@ import { BackupScreen } from './components/BackupScreen';
 import { SecurityScreen } from './components/SecurityScreen';
 import { ImportScreen } from './components/ImportScreen';
 import { HardwareScreen } from './components/HardwareScreen';
+import { DesignScreen } from './components/DesignScreen';
 import { Placeholder } from './components/Placeholder';
 
 // Auth gate + cockpit shell. Active module drives the workspace + ribbon;
@@ -114,6 +115,8 @@ export function App() {
     screen = <ImportScreen />;
   } else if (active === 'hardware') {
     screen = <HardwareScreen />;
+  } else if (active === 'design') {
+    screen = <DesignScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'academic-year') {

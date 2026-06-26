@@ -271,6 +271,40 @@ fn dispatch(
     if method == &Method::Post && path == "/substitutions/resolve" {
         return with_auth(state, token, |_| substitution_resolve(state, body));
     }
+    // Design Connect (P14)
+    if method == &Method::Get && path == "/design/connection" {
+        return with_auth(state, token, |_| design_connection_get(state));
+    }
+    if method == &Method::Post && path == "/design/connection" {
+        return with_auth(state, token, |_| design_connection_save(state, body));
+    }
+    if method == &Method::Post && path == "/design/connection/disconnect" {
+        return with_auth(state, token, |_| design_connection_delete(state));
+    }
+    if method == &Method::Get && path == "/design/templates" {
+        return with_auth(state, token, |_| design_templates_list(state));
+    }
+    if method == &Method::Post && path == "/design/templates" {
+        return with_auth(state, token, |_| design_template_save(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/design/templates/") && path.ends_with("/field-map") {
+        let id_str = &path["/design/templates/".len()..path.len() - "/field-map".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| design_template_field_map(state, id, body));
+        }
+    }
+    if method == &Method::Get && path == "/design/jobs" {
+        return with_auth(state, token, |_| design_jobs_list(state));
+    }
+    if method == &Method::Post && path == "/design/jobs" {
+        return with_auth(state, token, |uid| design_job_create(state, uid, body));
+    }
+    if method == &Method::Post && path.starts_with("/design/jobs/") && path.ends_with("/approve") {
+        let id_str = &path["/design/jobs/".len()..path.len() - "/approve".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |uid| design_job_approve(state, uid, id));
+        }
+    }
     // External DB Connector (P12)
     if method == &Method::Get && path == "/import/jobs" {
         return with_auth(state, token, |_| import_jobs_list(state));
@@ -1130,6 +1164,10 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS exam_marks(id INTEGER PRIMARY KEY AUTOINCREMENT, exam_id INTEGER NOT NULL, student_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, marks_obtained REAL, max_marks REAL DEFAULT 100, grade TEXT, remarks TEXT, UNIQUE(exam_id, student_id, subject_id));
          CREATE TABLE IF NOT EXISTS salary_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL UNIQUE, basic REAL DEFAULT 0, hra REAL DEFAULT 0, da REAL DEFAULT 0, ta REAL DEFAULT 0, other_allowances REAL DEFAULT 0, pf_deduction REAL DEFAULT 0, pt_deduction REAL DEFAULT 0, other_deductions REAL DEFAULT 0, effective_from TEXT, updated_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS payslips(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, month TEXT NOT NULL, basic REAL, hra REAL, da REAL, ta REAL, other_allowances REAL, pf_deduction REAL, pt_deduction REAL, other_deductions REAL, gross REAL, net REAL, working_days INTEGER, paid_days INTEGER, generated_at TEXT DEFAULT (datetime('now')), UNIQUE(staff_id, month));
+         CREATE TABLE IF NOT EXISTS design_connections(id INTEGER PRIMARY KEY AUTOINCREMENT, provider TEXT NOT NULL DEFAULT 'canva', account_email TEXT, access_token_enc TEXT, refresh_token_enc TEXT, token_expiry TEXT, scopes TEXT, last_sync TEXT, connected_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS design_templates(id INTEGER PRIMARY KEY AUTOINCREMENT, connection_id INTEGER, template_id TEXT NOT NULL, template_name TEXT, thumbnail_url TEXT, category TEXT DEFAULT 'id_card', field_map TEXT DEFAULT '{}', last_fetched TEXT);
+         CREATE TABLE IF NOT EXISTS design_jobs(id INTEGER PRIMARY KEY AUTOINCREMENT, template_id INTEGER, job_type TEXT DEFAULT 'batch', entity_type TEXT DEFAULT 'students', entity_ids TEXT DEFAULT '[]', status TEXT DEFAULT 'pending', output_path TEXT, approved_by INTEGER, approved_at TEXT, created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS app_secrets(id INTEGER PRIMARY KEY AUTOINCREMENT, key_name TEXT NOT NULL UNIQUE, key_value TEXT NOT NULL, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS import_jobs(id INTEGER PRIMARY KEY AUTOINCREMENT, source_type TEXT NOT NULL, source_path TEXT, status TEXT DEFAULT 'pending', rows_imported INTEGER DEFAULT 0, rows_failed INTEGER DEFAULT 0, error TEXT, started_at TEXT, completed_at TEXT, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS audit_log(id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, action TEXT NOT NULL, resource_type TEXT, resource_id INTEGER, detail TEXT, ip TEXT, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS roles(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, permissions TEXT DEFAULT '{}');
@@ -1473,6 +1511,186 @@ fn substitution_resolve(state: &AppState, body: &str) -> (u16, Value) {
     ) {
         Ok(n) if n > 0 => (200, json!({"ok": true})),
         Ok(_) => (404, json!({"error": "substitution not found"})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+// ---- Design Connect (P14) ----
+// Tokens are XOR-encrypted with a per-installation local secret stored in app_secrets.
+// The secret never leaves the local DB; access tokens are NEVER stored in plain text.
+
+fn design_local_secret(conn: &Connection) -> Vec<u8> {
+    let existing: Result<String, _> = conn.query_row(
+        "SELECT key_value FROM app_secrets WHERE key_name='design_enc_key'", [], |r| r.get(0)
+    );
+    match existing {
+        Ok(hex) => hex::decode_hex(&hex),
+        Err(_) => {
+            // Generate a new 32-byte random key and persist it
+            let key: Vec<u8> = (0..32).map(|_| rand_byte() as u8).collect();
+            let hex = hex::encode_hex(&key);
+            let _ = conn.execute("INSERT OR IGNORE INTO app_secrets(key_name, key_value) VALUES('design_enc_key', ?1)", params![hex]);
+            key
+        }
+    }
+}
+
+mod hex {
+    pub fn encode_hex(bytes: &[u8]) -> String {
+        bytes.iter().map(|b| format!("{:02x}", b)).collect()
+    }
+    pub fn decode_hex(s: &str) -> Vec<u8> {
+        (0..s.len()).step_by(2).filter_map(|i| u8::from_str_radix(&s[i..i+2], 16).ok()).collect()
+    }
+}
+
+fn rand_byte() -> u32 {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    let ns = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().subsec_nanos();
+    (ns ^ (ns >> 4) ^ (ns >> 8)) & 0xFF
+}
+
+fn xor_encrypt(data: &str, key: &[u8]) -> String {
+    let bytes: Vec<u8> = data.bytes().enumerate().map(|(i, b)| b ^ key[i % key.len()]).collect();
+    hex::encode_hex(&bytes)
+}
+
+#[allow(dead_code)]
+fn xor_decrypt(hex: &str, key: &[u8]) -> String {
+    let bytes = hex::decode_hex(hex);
+    let plain: Vec<u8> = bytes.into_iter().enumerate().map(|(i, b)| b ^ key[i % key.len()]).collect();
+    String::from_utf8_lossy(&plain).into_owned()
+}
+
+fn design_connection_get(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let result = conn.query_row(
+        "SELECT id, provider, account_email, token_expiry, scopes, last_sync, connected_at FROM design_connections ORDER BY id DESC LIMIT 1",
+        [], |r| Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "provider": r.get::<_, String>(1)?,
+            "account_email": r.get::<_, Option<String>>(2)?,
+            "token_expiry": r.get::<_, Option<String>>(3)?,
+            "scopes": r.get::<_, Option<String>>(4)?,
+            "last_sync": r.get::<_, Option<String>>(5)?,
+            "connected_at": r.get::<_, Option<String>>(6)?,
+            "connected": true,
+        }))
+    );
+    match result {
+        Ok(c) => (200, json!({"connection": c})),
+        Err(_) => (200, json!({"connection": null})),
+    }
+}
+
+fn design_connection_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let access_token = match v["access_token"].as_str() { Some(t) if !t.is_empty() => t, _ => return (422, json!({"error": "access_token required"})) };
+    let refresh_token = v["refresh_token"].as_str().unwrap_or("").to_string();
+    let email = v["account_email"].as_str().unwrap_or("").to_string();
+    let expiry = v["token_expiry"].as_str().map(str::to_string);
+    let scopes = v["scopes"].as_str().unwrap_or("").to_string();
+    let conn = state.conn.lock().unwrap();
+    let key = design_local_secret(&conn);
+    let enc_access = xor_encrypt(access_token, &key);
+    let enc_refresh = xor_encrypt(&refresh_token, &key);
+    // Upsert: only one connection record at a time
+    let _ = conn.execute("DELETE FROM design_connections", []);
+    match conn.execute(
+        "INSERT INTO design_connections(provider, account_email, access_token_enc, refresh_token_enc, token_expiry, scopes) VALUES('canva',?1,?2,?3,?4,?5)",
+        params![email, enc_access, enc_refresh, expiry, scopes],
+    ) {
+        Ok(_) => (201, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn design_connection_delete(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM design_connections", []);
+    (200, json!({"ok": true}))
+}
+
+fn design_templates_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT id, template_id, template_name, thumbnail_url, category, field_map, last_fetched FROM design_templates ORDER BY template_name"
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({ "id": r.get::<_, i64>(0)?, "template_id": r.get::<_, String>(1)?, "template_name": r.get::<_, Option<String>>(2)?, "thumbnail_url": r.get::<_, Option<String>>(3)?, "category": r.get::<_, Option<String>>(4)?, "field_map": r.get::<_, Option<String>>(5)?, "last_fetched": r.get::<_, Option<String>>(6)? }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"templates": rows, "total": total}))
+}
+
+fn design_template_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let template_id = match v["template_id"].as_str() { Some(t) if !t.is_empty() => t, _ => return (422, json!({"error": "template_id required"})) };
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT OR REPLACE INTO design_templates(template_id, template_name, thumbnail_url, category, last_fetched) VALUES(?1,?2,?3,?4,datetime('now'))",
+        params![template_id, v["template_name"].as_str(), v["thumbnail_url"].as_str(), v["category"].as_str().unwrap_or("id_card")],
+    ) {
+        Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn design_template_field_map(state: &AppState, id: i64, body: &str) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    match conn.execute("UPDATE design_templates SET field_map=?1 WHERE id=?2", params![body, id]) {
+        Ok(0) => (404, json!({"error": "template not found"})),
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn design_jobs_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT dj.id, dj.job_type, dj.entity_type, dj.entity_ids, dj.status, dj.output_path, dj.approved_at, u.username, dj.created_at
+         FROM design_jobs dj LEFT JOIN users u ON u.id=dj.approved_by ORDER BY dj.created_at DESC LIMIT 50"
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({ "id": r.get::<_, i64>(0)?, "job_type": r.get::<_, Option<String>>(1)?, "entity_type": r.get::<_, Option<String>>(2)?, "entity_ids": r.get::<_, Option<String>>(3)?, "status": r.get::<_, Option<String>>(4)?, "output_path": r.get::<_, Option<String>>(5)?, "approved_at": r.get::<_, Option<String>>(6)?, "approved_by_name": r.get::<_, Option<String>>(7)?, "created_at": r.get::<_, String>(8)? }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"jobs": rows, "total": total}))
+}
+
+fn design_job_create(state: &AppState, user_id: i64, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let entity_ids = v["entity_ids"].to_string();
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO design_jobs(job_type, entity_type, entity_ids, status, created_by) VALUES(?1,?2,?3,'pending',?4)",
+        params![v["job_type"].as_str().unwrap_or("batch"), v["entity_type"].as_str().unwrap_or("students"), entity_ids, user_id],
+    ) {
+        Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn design_job_approve(state: &AppState, user_id: i64, job_id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "UPDATE design_jobs SET status='approved', approved_by=?1, approved_at=datetime('now') WHERE id=?2",
+        params![user_id, job_id],
+    ) {
+        Ok(0) => (404, json!({"error": "job not found"})),
+        Ok(_) => (200, json!({"ok": true})),
         Err(e) => (500, json!({"error": format!("{e}")})),
     }
 }

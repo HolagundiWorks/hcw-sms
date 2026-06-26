@@ -2,7 +2,9 @@ import {
   ArrowRightLeft,
   ArrowDownToLine,
   Cpu,
+  Image as ImageIcon,
   Nfc,
+  Palette,
   ScanLine,
   ArrowUp,
   Banknote,
@@ -285,6 +287,15 @@ export const modules: ModuleDef[] = [
     ],
   },
   {
+    key: 'design',
+    label: 'Design Connect',
+    icon: Palette,
+    actions: [
+      { key: 'templates', label: 'Templates', icon: ImageIcon },
+      { key: 'batch', label: 'Batch Generate', icon: Play },
+    ],
+  },
+  {
     key: 'hardware',
     label: 'Hardware',
     icon: Cpu,
@@ -338,5 +349,5 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
   { label: 'Schedule', keys: ['timetable', 'substitution', 'timings'] },
   { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport', 'payroll', 'events', 'activities'] },
-  { label: 'System', keys: ['academic-year', 'import', 'hardware', 'security', 'backup', 'settings'] },
+  { label: 'System', keys: ['academic-year', 'import', 'hardware', 'design', 'security', 'backup', 'settings'] },
 ];
