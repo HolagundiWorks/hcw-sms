@@ -242,6 +242,15 @@ export const modules: ModuleDef[] = [
     ],
   },
   {
+    key: 'activities',
+    label: 'Activities',
+    icon: Bus,
+    actions: [
+      { key: 'new', label: 'New Activity', icon: Plus, shortcut: 'Ctrl N' },
+      { key: 'guide', label: 'Field Guide', icon: FileText },
+    ],
+  },
+  {
     key: 'events',
     label: 'Events',
     icon: Bell,
@@ -287,6 +296,6 @@ export const moduleGroups: ModuleGroup[] = [
   { label: 'People', keys: ['students', 'staff', 'staff-os'] },
   { label: 'Academics', keys: ['classes', 'teacher-subjects', 'courses', 'subjects', 'classrooms', 'floorplan'] },
   { label: 'Schedule', keys: ['timetable', 'substitution', 'timings'] },
-  { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport', 'payroll', 'events'] },
+  { label: 'Operations', keys: ['attendance', 'fees', 'exams', 'library', 'transport', 'payroll', 'events', 'activities'] },
   { label: 'System', keys: ['academic-year', 'settings'] },
 ];

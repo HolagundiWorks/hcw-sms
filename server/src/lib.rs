@@ -262,6 +262,55 @@ fn dispatch(
     if method == &Method::Post && path == "/substitutions/resolve" {
         return with_auth(state, token, |_| substitution_resolve(state, body));
     }
+    // Activity Scheduler OS (P8)
+    if method == &Method::Get && path == "/activities" {
+        return with_auth(state, token, |_| activities_list(state, url));
+    }
+    if method == &Method::Post && path == "/activities" {
+        return with_auth(state, token, |u| activity_create(state, body, u));
+    }
+    if method == &Method::Post && path.starts_with("/activities/") && path.ends_with("/update") {
+        let id_str = &path["/activities/".len()..path.len() - "/update".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| activity_update(state, id, body));
+        }
+    }
+    if method == &Method::Post && path.starts_with("/activities/") && path.ends_with("/delete") {
+        let id_str = &path["/activities/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| activity_delete(state, id));
+        }
+    }
+    if method == &Method::Get && path.starts_with("/activities/") && path.ends_with("/detail") {
+        let id_str = &path["/activities/".len()..path.len() - "/detail".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| activity_detail(state, id));
+        }
+    }
+    if method == &Method::Post && path == "/activity-staff" {
+        return with_auth(state, token, |_| activity_staff_save(state, body));
+    }
+    if method == &Method::Post && path == "/activity-staff/remove" {
+        return with_auth(state, token, |_| activity_staff_remove(state, body));
+    }
+    if method == &Method::Post && path == "/activity-sections" {
+        return with_auth(state, token, |_| activity_sections_save(state, body));
+    }
+    if method == &Method::Post && path == "/activity-sections/remove" {
+        return with_auth(state, token, |_| activity_sections_remove(state, body));
+    }
+    if method == &Method::Get && path == "/activity-expenses" {
+        return with_auth(state, token, |_| activity_expenses_list(state, url));
+    }
+    if method == &Method::Post && path == "/activity-expenses" {
+        return with_auth(state, token, |_| activity_expense_add(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/activity-expenses/") && path.ends_with("/delete") {
+        let id_str = &path["/activity-expenses/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| activity_expense_delete(state, id));
+        }
+    }
     // Event Management OS (P7)
     if method == &Method::Get && path == "/announcements" {
         return with_auth(state, token, |_| announcements_list(state, url));
@@ -911,6 +960,10 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS exam_marks(id INTEGER PRIMARY KEY AUTOINCREMENT, exam_id INTEGER NOT NULL, student_id INTEGER NOT NULL, subject_id INTEGER NOT NULL, marks_obtained REAL, max_marks REAL DEFAULT 100, grade TEXT, remarks TEXT, UNIQUE(exam_id, student_id, subject_id));
          CREATE TABLE IF NOT EXISTS salary_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL UNIQUE, basic REAL DEFAULT 0, hra REAL DEFAULT 0, da REAL DEFAULT 0, ta REAL DEFAULT 0, other_allowances REAL DEFAULT 0, pf_deduction REAL DEFAULT 0, pt_deduction REAL DEFAULT 0, other_deductions REAL DEFAULT 0, effective_from TEXT, updated_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS payslips(id INTEGER PRIMARY KEY AUTOINCREMENT, staff_id INTEGER NOT NULL, month TEXT NOT NULL, basic REAL, hra REAL, da REAL, ta REAL, other_allowances REAL, pf_deduction REAL, pt_deduction REAL, other_deductions REAL, gross REAL, net REAL, working_days INTEGER, paid_days INTEGER, generated_at TEXT DEFAULT (datetime('now')), UNIQUE(staff_id, month));
+         CREATE TABLE IF NOT EXISTS activities(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, activity_type TEXT DEFAULT 'field_visit', date TEXT, end_date TEXT, venue TEXT, description TEXT, status TEXT DEFAULT 'planned', created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS activity_staff(id INTEGER PRIMARY KEY AUTOINCREMENT, activity_id INTEGER NOT NULL, staff_id INTEGER NOT NULL, role TEXT DEFAULT 'in_charge', UNIQUE(activity_id, staff_id));
+         CREATE TABLE IF NOT EXISTS activity_sections(id INTEGER PRIMARY KEY AUTOINCREMENT, activity_id INTEGER NOT NULL, section_id INTEGER NOT NULL, student_count INTEGER, UNIQUE(activity_id, section_id));
+         CREATE TABLE IF NOT EXISTS activity_expenses(id INTEGER PRIMARY KEY AUTOINCREMENT, activity_id INTEGER NOT NULL, head TEXT NOT NULL, amount REAL NOT NULL, notes TEXT);
          CREATE TABLE IF NOT EXISTS announcements(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, body TEXT, audience TEXT DEFAULT 'internal', is_draft INTEGER DEFAULT 0, published_at TEXT, created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS meetings(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, meeting_type TEXT DEFAULT 'staff', date TEXT NOT NULL, start_time TEXT, end_time TEXT, venue TEXT, agenda TEXT, minutes TEXT, status TEXT DEFAULT 'scheduled', created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS meeting_attendees(id INTEGER PRIMARY KEY AUTOINCREMENT, meeting_id INTEGER NOT NULL, staff_id INTEGER, UNIQUE(meeting_id, staff_id));
@@ -1228,6 +1281,228 @@ fn substitution_resolve(state: &AppState, body: &str) -> (u16, Value) {
         Ok(_) => (404, json!({"error": "substitution not found"})),
         Err(e) => (500, json!({"error": format!("{e}")})),
     }
+}
+
+// ---- Activity Scheduler OS (P8) ----
+
+fn activities_list(state: &AppState, url: &str) -> (u16, Value) {
+    let atype = q_param(url, "type");
+    let status = q_param(url, "status");
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT id, title, activity_type, date, end_date, venue, description, status, created_by, created_at
+         FROM activities WHERE (?1 IS NULL OR activity_type=?1) AND (?2 IS NULL OR status=?2)
+         ORDER BY date DESC, created_at DESC LIMIT 200",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![atype, status], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "title": r.get::<_, String>(1)?,
+            "activity_type": r.get::<_, Option<String>>(2)?,
+            "date": r.get::<_, Option<String>>(3)?,
+            "end_date": r.get::<_, Option<String>>(4)?,
+            "venue": r.get::<_, Option<String>>(5)?,
+            "description": r.get::<_, Option<String>>(6)?,
+            "status": r.get::<_, Option<String>>(7)?,
+            "created_by": r.get::<_, Option<i64>>(8)?,
+            "created_at": r.get::<_, String>(9)?,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"activities": rows, "total": total}))
+}
+
+fn activity_create(state: &AppState, body: &str, uid: i64) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let title = match v["title"].as_str() { Some(t) if !t.is_empty() => t.to_string(), _ => return (422, json!({"error": "title required"})) };
+    let atype = v["activity_type"].as_str().unwrap_or("field_visit").to_string();
+    let date = v["date"].as_str().map(|s| s.to_string());
+    let end_date = v["end_date"].as_str().map(|s| s.to_string());
+    let venue = v["venue"].as_str().map(|s| s.to_string());
+    let desc = v["description"].as_str().map(|s| s.to_string());
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO activities(title, activity_type, date, end_date, venue, description, created_by) VALUES(?1,?2,?3,?4,?5,?6,?7)",
+        params![title, atype, date, end_date, venue, desc, uid],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn activity_update(state: &AppState, id: i64, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute(
+        "UPDATE activities SET title=COALESCE(?1,title), activity_type=COALESCE(?2,activity_type),
+         date=?3, end_date=?4, venue=?5, description=?6, status=COALESCE(?7,status) WHERE id=?8",
+        params![
+            v["title"].as_str().filter(|s| !s.is_empty()),
+            v["activity_type"].as_str().filter(|s| !s.is_empty()),
+            v["date"].as_str().map(|s| s.to_string()),
+            v["end_date"].as_str().map(|s| s.to_string()),
+            v["venue"].as_str().map(|s| s.to_string()),
+            v["description"].as_str().map(|s| s.to_string()),
+            v["status"].as_str().filter(|s| !s.is_empty()),
+            id
+        ],
+    );
+    (200, json!({"ok": true}))
+}
+
+fn activity_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM activity_expenses WHERE activity_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM activity_sections WHERE activity_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM activity_staff WHERE activity_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM activities WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+fn activity_detail(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let act: Value = match conn.query_row(
+        "SELECT id, title, activity_type, date, end_date, venue, description, status FROM activities WHERE id=?1",
+        params![id],
+        |r| Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "title": r.get::<_, String>(1)?,
+            "activity_type": r.get::<_, Option<String>>(2)?,
+            "date": r.get::<_, Option<String>>(3)?,
+            "end_date": r.get::<_, Option<String>>(4)?,
+            "venue": r.get::<_, Option<String>>(5)?,
+            "description": r.get::<_, Option<String>>(6)?,
+            "status": r.get::<_, Option<String>>(7)?,
+        })),
+    ) {
+        Ok(v) => v,
+        Err(_) => return (404, json!({"error": "not found"})),
+    };
+
+    // Staff
+    let mut st_stmt = match conn.prepare(
+        "SELECT ac.staff_id, st.first_name, st.last_name, ac.role FROM activity_staff ac JOIN staff st ON st.id=ac.staff_id WHERE ac.activity_id=?1"
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    let staff_rows: Vec<Value> = match st_stmt.query_map(params![id], |r| {
+        let fn_: Option<String> = r.get(1)?;
+        let ln: Option<String> = r.get(2)?;
+        Ok(json!({ "staff_id": r.get::<_, i64>(0)?, "name": format!("{} {}", fn_.unwrap_or_default(), ln.unwrap_or_default()).trim().to_string(), "role": r.get::<_, Option<String>>(3)? }))
+    }) { Ok(m) => m.filter_map(|r| r.ok()).collect(), Err(e) => return (500, json!({"error": format!("{e}")})) };
+
+    // Sections
+    let mut sec_stmt = match conn.prepare(
+        "SELECT ac.section_id, s.name, c.name, ac.student_count FROM activity_sections ac JOIN sections s ON s.id=ac.section_id JOIN classes c ON c.id=s.class_id WHERE ac.activity_id=?1"
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    let sec_rows: Vec<Value> = match sec_stmt.query_map(params![id], |r| {
+        Ok(json!({ "section_id": r.get::<_, i64>(0)?, "section_name": r.get::<_, Option<String>>(1)?, "class_name": r.get::<_, Option<String>>(2)?, "student_count": r.get::<_, Option<i64>>(3)? }))
+    }) { Ok(m) => m.filter_map(|r| r.ok()).collect(), Err(e) => return (500, json!({"error": format!("{e}")})) };
+
+    // Expenses
+    let mut exp_stmt = match conn.prepare(
+        "SELECT id, head, amount, notes FROM activity_expenses WHERE activity_id=?1 ORDER BY head"
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    let exp_rows: Vec<Value> = match exp_stmt.query_map(params![id], |r| {
+        Ok(json!({ "id": r.get::<_, i64>(0)?, "head": r.get::<_, String>(1)?, "amount": r.get::<_, f64>(2)?, "notes": r.get::<_, Option<String>>(3)? }))
+    }) { Ok(m) => m.filter_map(|r| r.ok()).collect(), Err(e) => return (500, json!({"error": format!("{e}")})) };
+
+    let total_expense: f64 = exp_rows.iter().filter_map(|e| e["amount"].as_f64()).sum();
+    (200, json!({"activity": act, "staff": staff_rows, "sections": sec_rows, "expenses": exp_rows, "total_expense": total_expense}))
+}
+
+fn activity_staff_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let act_id = match v["activity_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "activity_id required"})) };
+    let staff_id = match v["staff_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "staff_id required"})) };
+    let role = v["role"].as_str().unwrap_or("in_charge").to_string();
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT OR REPLACE INTO activity_staff(activity_id, staff_id, role) VALUES(?1,?2,?3)",
+        params![act_id, staff_id, role],
+    ) {
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn activity_staff_remove(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let act_id = match v["activity_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "activity_id required"})) };
+    let staff_id = match v["staff_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "staff_id required"})) };
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM activity_staff WHERE activity_id=?1 AND staff_id=?2", params![act_id, staff_id]);
+    (200, json!({"ok": true}))
+}
+
+fn activity_sections_save(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let act_id = match v["activity_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "activity_id required"})) };
+    let section_id = match v["section_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "section_id required"})) };
+    let count = v["student_count"].as_i64();
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT OR REPLACE INTO activity_sections(activity_id, section_id, student_count) VALUES(?1,?2,?3)",
+        params![act_id, section_id, count],
+    ) {
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn activity_sections_remove(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let act_id = match v["activity_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "activity_id required"})) };
+    let section_id = match v["section_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "section_id required"})) };
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM activity_sections WHERE activity_id=?1 AND section_id=?2", params![act_id, section_id]);
+    (200, json!({"ok": true}))
+}
+
+fn activity_expenses_list(state: &AppState, url: &str) -> (u16, Value) {
+    let act_id: i64 = match q_param(url, "activity_id").and_then(|v| v.parse().ok()) {
+        Some(id) => id,
+        None => return (422, json!({"error": "activity_id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare("SELECT id, head, amount, notes FROM activity_expenses WHERE activity_id=?1 ORDER BY head") {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![act_id], |r| {
+        Ok(json!({ "id": r.get::<_, i64>(0)?, "head": r.get::<_, String>(1)?, "amount": r.get::<_, f64>(2)?, "notes": r.get::<_, Option<String>>(3)? }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total: f64 = rows.iter().filter_map(|e| e["amount"].as_f64()).sum();
+    (200, json!({"expenses": rows, "total_expense": total}))
+}
+
+fn activity_expense_add(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let act_id = match v["activity_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "activity_id required"})) };
+    let head = match v["head"].as_str() { Some(h) if !h.is_empty() => h.to_string(), _ => return (422, json!({"error": "head required"})) };
+    let amount = v["amount"].as_f64().unwrap_or(0.0);
+    let notes = v["notes"].as_str().map(|s| s.to_string());
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO activity_expenses(activity_id, head, amount, notes) VALUES(?1,?2,?3,?4)",
+        params![act_id, head, amount, notes],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn activity_expense_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM activity_expenses WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
 }
 
 // ---- Event Management OS (P7) ----
