@@ -43,6 +43,7 @@ import {
   CreditCard,
   PenLine,
   Home,
+  AlarmClock,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -243,6 +244,7 @@ export const ribbonTabs: RibbonTab[] = [
         label: 'Communication',
         actions: [
           { key: 'events', label: 'Announcements', icon: Bell, accessLevel: 3 },
+          { key: 'reminders', label: 'Reminders', icon: AlarmClock, accessLevel: 3 },
         ],
       },
       {

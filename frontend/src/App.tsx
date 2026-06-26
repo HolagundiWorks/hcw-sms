@@ -26,6 +26,7 @@ import { PayrollScreen } from './components/PayrollScreen';
 import { ExamScreen } from './components/ExamScreen';
 import { FeeScreen } from './components/FeeScreen';
 import { EventScreen } from './components/EventScreen';
+import { RemindersScreen } from './components/RemindersScreen';
 import { ActivityScreen } from './components/ActivityScreen';
 import { BackupScreen } from './components/BackupScreen';
 import { SecurityScreen } from './components/SecurityScreen';
@@ -106,6 +107,8 @@ export function App() {
     screen = <FeeScreen />;
   } else if (active === 'events') {
     screen = <EventScreen />;
+  } else if (active === 'reminders') {
+    screen = <RemindersScreen />;
   } else if (active === 'activities') {
     screen = <ActivityScreen />;
   } else if (active === 'backup') {

@@ -12,22 +12,24 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CalendarDays, CalendarHeart, ClipboardList, Plus } from 'lucide-react';
+import { AlarmClock, CalendarDays, CalendarHeart, ClipboardList, Plus } from 'lucide-react';
 import { ApiError } from '../api/client';
 import { useStaff } from '../hooks/useStaff';
 import { useAuth } from '../stores/auth';
 
 const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8787';
 
-type Kind = 'event' | 'meeting' | 'task';
+type Kind = 'event' | 'meeting' | 'task' | 'reminder';
 
 const MEETING_TYPES = ['department', 'staff', 'parent', 'government', 'board', 'other'];
-const PRIORITIES = ['low', 'normal', 'high', 'urgent'];
+// Shared tag set used by both tasks and reminders.
+export const TAGS = ['critical', 'urgent', 'normal'];
 
 const KIND_TITLE: Record<Kind, string> = {
   event: 'Create Event',
   meeting: 'Create Meeting',
   task: 'Create Task',
+  reminder: 'Create Reminder',
 };
 
 const blank = {
@@ -39,7 +41,7 @@ const blank = {
   meeting_type: 'staff',
   assigned_to: '',
   due_date: '',
-  priority: 'normal',
+  tag: 'normal',
 };
 
 async function postJSON(token: string, path: string, body: object) {
@@ -52,10 +54,22 @@ async function postJSON(token: string, path: string, body: object) {
   return r.json();
 }
 
+function tagSelect(value: string, onChange: (v: string) => void) {
+  return (
+    <Select
+      label="Tag"
+      data={TAGS.map((t) => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))}
+      value={value}
+      onChange={(v) => onChange(v ?? 'normal')}
+      allowDeselect={false}
+    />
+  );
+}
+
 /**
  * Floating "+" create button (bottom-right). Click opens a category menu —
- * Event · Meeting · Task — and the chosen kind shows its own quick form,
- * then refreshes the dashboard agenda / work queue.
+ * Event · Meeting · Task · Reminder — and the chosen kind shows its own quick
+ * form, then refreshes the dashboard agenda / focus cards / work queue.
  */
 export function EventFab() {
   const token = useAuth((s) => s.token)!;
@@ -90,7 +104,15 @@ export function EventFab() {
           description: form.notes || undefined,
           assigned_to: form.assigned_to ? Number(form.assigned_to) : undefined,
           due_date: form.due_date || undefined,
-          priority: form.priority,
+          priority: form.tag,
+        });
+      }
+      if (kind === 'reminder') {
+        return postJSON(token, '/reminders', {
+          title: form.title,
+          tag: form.tag,
+          due_date: form.due_date || undefined,
+          notes: form.notes || undefined,
         });
       }
       // event
@@ -104,11 +126,13 @@ export function EventFab() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['dashboard-agenda'] });
+      qc.invalidateQueries({ queryKey: ['dashboard-focus'] });
       qc.invalidateQueries({ queryKey: ['dashboard-today'] });
       qc.invalidateQueries({ queryKey: ['dashboard-meetings-today'] });
       qc.invalidateQueries({ queryKey: ['meetings'] });
       qc.invalidateQueries({ queryKey: ['activities'] });
       qc.invalidateQueries({ queryKey: ['tasks'] });
+      qc.invalidateQueries({ queryKey: ['reminders'] });
       close();
       setForm(blank);
     },
@@ -145,6 +169,7 @@ export function EventFab() {
           <Menu.Item leftSection={<CalendarHeart size={16} />} onClick={() => open('event')}>Event</Menu.Item>
           <Menu.Item leftSection={<CalendarDays size={16} />} onClick={() => open('meeting')}>Meeting</Menu.Item>
           <Menu.Item leftSection={<ClipboardList size={16} />} onClick={() => open('task')}>Task</Menu.Item>
+          <Menu.Item leftSection={<AlarmClock size={16} />} onClick={() => open('reminder')}>Reminder</Menu.Item>
         </Menu.Dropdown>
       </Menu>
 
@@ -154,6 +179,7 @@ export function EventFab() {
             label="Title"
             placeholder={
               kind === 'task' ? 'e.g. Submit attendance report'
+                : kind === 'reminder' ? 'e.g. Renew fire-safety certificate'
                 : kind === 'meeting' ? 'e.g. Monthly staff sync'
                 : 'e.g. Annual Sports Day'
             }
@@ -208,15 +234,20 @@ export function EventFab() {
                   searchable
                   clearable
                 />
-                <Select
-                  label="Priority"
-                  data={PRIORITIES.map((p) => ({ value: p, label: p.charAt(0).toUpperCase() + p.slice(1) }))}
-                  value={form.priority}
-                  onChange={(v) => setForm((f) => ({ ...f, priority: v ?? 'normal' }))}
-                  allowDeselect={false}
-                />
+                {tagSelect(form.tag, (v) => setForm((f) => ({ ...f, tag: v })))}
               </Group>
               <TextInput type="date" label="Due date" value={form.due_date} onChange={(e) => setForm((f) => ({ ...f, due_date: e.currentTarget.value }))} />
+            </>
+          )}
+
+          {/* Reminder-specific */}
+          {kind === 'reminder' && (
+            <>
+              <Group grow>
+                {tagSelect(form.tag, (v) => setForm((f) => ({ ...f, tag: v })))}
+                <TextInput type="date" label="Due date" value={form.due_date} onChange={(e) => setForm((f) => ({ ...f, due_date: e.currentTarget.value }))} />
+              </Group>
+              <Textarea label="Notes" autosize minRows={2} value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.currentTarget.value }))} />
             </>
           )}
 

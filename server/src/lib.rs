@@ -141,6 +141,9 @@ fn dispatch(
     if method == &Method::Get && path == "/dashboard/agenda" {
         return with_auth(state, token, |_| dashboard_agenda(state));
     }
+    if method == &Method::Get && path == "/dashboard/focus" {
+        return with_auth(state, token, |_| dashboard_focus(state));
+    }
     if method == &Method::Get && path == "/courses" {
         return with_auth(state, token, |_| courses_list(state));
     }
@@ -476,6 +479,25 @@ fn dispatch(
         let id_str = &path["/tasks/".len()..path.len() - "/delete".len()];
         if let Ok(id) = id_str.parse::<i64>() {
             return with_auth(state, token, |_| task_delete(state, id));
+        }
+    }
+    // Reminders
+    if method == &Method::Get && path == "/reminders" {
+        return with_auth(state, token, |_| reminders_list(state, url));
+    }
+    if method == &Method::Post && path == "/reminders" {
+        return with_auth(state, token, |u| reminder_create(state, body, u));
+    }
+    if method == &Method::Post && path.starts_with("/reminders/") && path.ends_with("/done") {
+        let id_str = &path["/reminders/".len()..path.len() - "/done".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| reminder_done(state, id));
+        }
+    }
+    if method == &Method::Post && path.starts_with("/reminders/") && path.ends_with("/delete") {
+        let id_str = &path["/reminders/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| reminder_delete(state, id));
         }
     }
     // Fee OS (P6)
@@ -1167,6 +1189,52 @@ fn dashboard_agenda(state: &AppState) -> (u16, Value) {
     }))
 }
 
+/// Tag-driven focus cards: everything tagged 'critical', and everything with a
+/// due date — drawn from both reminders and tasks (shared tag set).
+fn dashboard_focus(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+
+    let run = |sql: &str| -> Vec<Value> {
+        let mut stmt = match conn.prepare(sql) { Ok(s) => s, Err(_) => return vec![] };
+        let m = stmt.query_map([], |r| {
+            Ok(json!({
+                "kind": r.get::<_, String>(0)?,
+                "id": r.get::<_, i64>(1)?,
+                "title": r.get::<_, String>(2)?,
+                "tag": r.get::<_, Option<String>>(3)?,
+                "due_date": r.get::<_, Option<String>>(4)?,
+            }))
+        });
+        match m { Ok(it) => it.filter_map(|r| r.ok()).collect(), Err(_) => vec![] }
+    };
+
+    // Critical: reminders tagged critical + tasks at priority critical.
+    // Wrap the UNION in a subquery so the outer ORDER BY can use an expression
+    // (SQLite forbids expression ORDER BY directly on a compound SELECT).
+    let critical = run(
+        "SELECT * FROM (
+            SELECT 'reminder' AS kind, id, title, tag, due_date FROM reminders
+                WHERE done=0 AND tag='critical'
+            UNION ALL
+            SELECT 'task' AS kind, id, title, priority AS tag, due_date FROM tasks
+                WHERE status NOT IN ('completed','cancelled') AND priority='critical'
+         ) ORDER BY (due_date IS NULL), due_date LIMIT 10",
+    );
+
+    // Due: anything with a due date still open, soonest first (overdue included).
+    let due = run(
+        "SELECT * FROM (
+            SELECT 'reminder' AS kind, id, title, tag, due_date FROM reminders
+                WHERE done=0 AND due_date IS NOT NULL
+            UNION ALL
+            SELECT 'task' AS kind, id, title, priority AS tag, due_date FROM tasks
+                WHERE status NOT IN ('completed','cancelled') AND due_date IS NOT NULL
+         ) ORDER BY due_date LIMIT 10",
+    );
+
+    (200, json!({ "critical": critical, "due": due }))
+}
+
 fn dashboard_stats(state: &AppState) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let students = count(&conn, "SELECT COUNT(*) FROM students");
@@ -1276,6 +1344,7 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS meetings(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, meeting_type TEXT DEFAULT 'staff', date TEXT NOT NULL, start_time TEXT, end_time TEXT, venue TEXT, agenda TEXT, minutes TEXT, status TEXT DEFAULT 'scheduled', created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS meeting_attendees(id INTEGER PRIMARY KEY AUTOINCREMENT, meeting_id INTEGER NOT NULL, staff_id INTEGER, UNIQUE(meeting_id, staff_id));
          CREATE TABLE IF NOT EXISTS tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, description TEXT, assigned_to INTEGER, department_id INTEGER, due_date TEXT, priority TEXT DEFAULT 'normal', status TEXT DEFAULT 'pending', created_by INTEGER, completed_at TEXT, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS reminders(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, tag TEXT DEFAULT 'normal', due_date TEXT, notes TEXT, done INTEGER DEFAULT 0, created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS fee_heads(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, is_optional INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS fee_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, academic_year_id INTEGER, class_id INTEGER, fee_head_id INTEGER NOT NULL, amount REAL NOT NULL, due_date TEXT, UNIQUE(academic_year_id, class_id, fee_head_id));
          CREATE TABLE IF NOT EXISTS fee_payments(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, fee_head_id INTEGER NOT NULL, academic_year_id INTEGER, amount_paid REAL NOT NULL, payment_date TEXT DEFAULT (date('now')), payment_mode TEXT DEFAULT 'cash', reference TEXT, receipt_no TEXT, collected_by INTEGER, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
@@ -2689,6 +2758,68 @@ fn task_complete(state: &AppState, id: i64) -> (u16, Value) {
 fn task_delete(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let _ = conn.execute("DELETE FROM tasks WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+// ---- Reminders ----
+
+fn reminders_list(state: &AppState, url: &str) -> (u16, Value) {
+    let tag = q_param(url, "tag");
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT id, title, tag, due_date, notes, done, created_at
+         FROM reminders
+         WHERE done=0 AND (?1 IS NULL OR tag=?1)
+         ORDER BY (due_date IS NULL), due_date,
+                  CASE tag WHEN 'critical' THEN 0 WHEN 'urgent' THEN 1 ELSE 2 END,
+                  created_at DESC LIMIT 200",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = match stmt.query_map(params![tag], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "title": r.get::<_, String>(1)?,
+            "tag": r.get::<_, Option<String>>(2)?,
+            "due_date": r.get::<_, Option<String>>(3)?,
+            "notes": r.get::<_, Option<String>>(4)?,
+            "done": r.get::<_, i64>(5)? != 0,
+            "created_at": r.get::<_, String>(6)?,
+        }))
+    }) {
+        Ok(mapped) => mapped.filter_map(|r| r.ok()).collect(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let total = rows.len();
+    (200, json!({"reminders": rows, "total": total}))
+}
+
+fn reminder_create(state: &AppState, body: &str, uid: i64) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let title = match v["title"].as_str() { Some(t) if !t.is_empty() => t.to_string(), _ => return (422, json!({"error": "title required"})) };
+    let tag = v["tag"].as_str().unwrap_or("normal").to_string();
+    let due = v["due_date"].as_str().filter(|s| !s.is_empty()).map(|s| s.to_string());
+    let notes = v["notes"].as_str().map(|s| s.to_string());
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO reminders(title, tag, due_date, notes, created_by) VALUES(?1,?2,?3,?4,?5)",
+        params![title, tag, due, notes, uid],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn reminder_done(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("UPDATE reminders SET done=1 WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+fn reminder_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM reminders WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
 }
 

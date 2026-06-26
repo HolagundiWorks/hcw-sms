@@ -88,11 +88,13 @@ async function apiTasks(token: string, status?: string): Promise<{ tasks: Task[]
 
 const MEETING_TYPES = ['department', 'staff', 'parent', 'government', 'board', 'other'];
 const AUDIENCES = ['internal', 'all-staff', 'students', 'parents', 'public'];
-const PRIORITIES = ['low', 'normal', 'high', 'urgent'];
+// Shared tag set (matches reminders + the create FAB).
+const PRIORITIES = ['critical', 'urgent', 'normal'];
 const TASK_STATUSES = ['pending', 'in_progress', 'completed', 'cancelled'];
 
 function priorityColor(p: string | null) {
-  if (p === 'urgent') return 'red';
+  if (p === 'critical') return 'red';
+  if (p === 'urgent') return 'orange';
   if (p === 'high') return 'orange';
   if (p === 'normal') return 'brand';
   return 'gray';
