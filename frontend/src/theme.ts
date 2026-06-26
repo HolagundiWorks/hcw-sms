@@ -8,45 +8,46 @@ import {
 } from '@mantine/core';
 
 // ---------------------------------------------------------------------------
-// HCW-SMS "School OS" palette (refreshed per the School OS UI Design Guide).
-// Calm academic colors; neutrals carry the UI, pastels are soft, action colors
-// only when status matters. Each ramp: pastel accent at shade 1, action color
-// at shade 5.
+// IBM Carbon Design System palette. Named ramps map to Carbon hues for a
+// Carbon-consistent UI; neutrals carry the layout. The categorical rotation
+// (accentColors) is the Carbon data-vis set: purple-70, cyan-50, teal-70,
+// magenta-70, red-50, purple-50.
 // ---------------------------------------------------------------------------
 
-// Blue — primary. Sky #DCEEFF (1) -> Info #3B82F6 (5)
+// Carbon Cyan — primary (cyan-50 #1192e8 at shade 5)
 const brand: MantineColorsTuple = [
-  '#f0f7ff', '#DCEEFF', '#b9dcff', '#8fc3fb', '#63a6f5',
-  '#3B82F6', '#2f6fe0', '#2563c4', '#1f54a6', '#1a4488',
+  '#e5f6ff', '#bae6ff', '#82cfff', '#56bdff', '#33b1ff',
+  '#1192e8', '#0f80cc', '#0072c3', '#00539a', '#003a6d',
 ];
+// Carbon Purple (light, purple-50)
 const sky: MantineColorsTuple = [
-  '#eef8ff', '#DCEEFF', '#bfe1ff', '#93c9fb', '#63a6f5',
-  '#3b82f6', '#2f6fe0', '#2563c4', '#1f54a6', '#1a4488',
+  '#f6f2ff', '#ece1ff', '#dcc8ff', '#c9a8ff', '#b88cff',
+  '#a56eff', '#9351ec', '#7d3bd0', '#6929c4', '#4e1f96',
 ];
-// Green — Mint #E6F8EC (1) -> Success #22C55E (5)
+// Carbon Teal (teal-70)
 const mint: MantineColorsTuple = [
-  '#f0fdf4', '#E6F8EC', '#bdeccd', '#86dca5', '#4cce7d',
-  '#22C55E', '#1ba84e', '#158540', '#116a34', '#0d5429',
+  '#d9fbfb', '#9ef0f0', '#3ddbd9', '#08bdba', '#009d9a',
+  '#007d79', '#005d5d', '#004144', '#022b30', '#081a1c',
 ];
 // Amber — Warm Yellow #FFF4CC (1) -> Warning #F59E0B (5)
 const yellow: MantineColorsTuple = [
   '#fffbeb', '#FFF4CC', '#fde58a', '#fcd34d', '#f9bd24',
   '#F59E0B', '#d9870a', '#b66f06', '#925905', '#784a08',
 ];
-// Violet — Lavender #EEE6FF (1)
+// Carbon Purple (purple-70)
 const lavender: MantineColorsTuple = [
-  '#f6f2ff', '#EEE6FF', '#dac9fb', '#bfa3f6', '#a378ef',
-  '#8b5cf6', '#7c45e8', '#6a36cc', '#592ba8', '#492388',
+  '#f6f2ff', '#e8daff', '#d4bbff', '#be95ff', '#a56eff',
+  '#8a3ffc', '#6929c4', '#491d8b', '#31135e', '#1c0f30',
 ];
-// Warm red — Soft Coral #FFE3E3 (1) -> Danger #EF4444 (5)
+// Carbon Red (red-50 / danger)
 const peach: MantineColorsTuple = [
-  '#fff1f1', '#FFE3E3', '#fcbcbc', '#f78f8f', '#f26464',
-  '#EF4444', '#dc3535', '#c02a2a', '#9f2121', '#7f1a1a',
+  '#fff1f1', '#ffd7d9', '#ffb3b8', '#ff8389', '#fa6872',
+  '#fa4d56', '#da1e28', '#a2191f', '#750e13', '#520408',
 ];
-// Pink/red — destructive accents (sign out, delete)
+// Carbon Magenta (magenta-70)
 const rose: MantineColorsTuple = [
-  '#fff1f4', '#ffd6df', '#fbabbd', '#f67f9a', '#ef5a7c',
-  '#e23e64', '#d12d54', '#b02246', '#8f1b39', '#6f142c',
+  '#fff0f7', '#ffd6e8', '#ffafd2', '#ff7eb6', '#ee5396',
+  '#d02670', '#9f1853', '#740937', '#510224', '#2a0a18',
 ];
 // Sand — warm neutral accent
 const sand: MantineColorsTuple = [
@@ -83,8 +84,18 @@ export const theme = createTheme({
   },
 });
 
-export const accentColors = ['brand', 'sky', 'mint', 'peach', 'lavender', 'yellow', 'sand', 'rose'] as const;
-export type AccentColor = (typeof accentColors)[number];
+export type AccentColor =
+  | 'brand'
+  | 'sky'
+  | 'mint'
+  | 'peach'
+  | 'rose'
+  | 'lavender'
+  | 'yellow'
+  | 'sand';
+// Carbon data-vis categorical rotation: purple-70, cyan-50, teal-70, magenta-70,
+// red-50, purple-50 (mapped to the named ramps above).
+export const accentColors: AccentColor[] = ['lavender', 'brand', 'mint', 'rose', 'peach', 'sky'];
 
 export const semantic = {
   success: 'mint',
