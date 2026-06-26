@@ -500,6 +500,52 @@ fn dispatch(
             return with_auth(state, token, |_| reminder_delete(state, id));
         }
     }
+    // Transport OS
+    if method == &Method::Get && path == "/transport/vehicles" {
+        return with_auth(state, token, |_| transport_vehicles_list(state));
+    }
+    if method == &Method::Post && path == "/transport/vehicles" {
+        return with_auth(state, token, |_| transport_vehicle_create(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/transport/vehicles/") && path.ends_with("/delete") {
+        let id_str = &path["/transport/vehicles/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| transport_vehicle_delete(state, id));
+        }
+    }
+    if method == &Method::Get && path == "/transport/routes" {
+        return with_auth(state, token, |_| transport_routes_list(state));
+    }
+    if method == &Method::Post && path == "/transport/routes" {
+        return with_auth(state, token, |_| transport_route_create(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/transport/routes/") && path.ends_with("/delete") {
+        let id_str = &path["/transport/routes/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| transport_route_delete(state, id));
+        }
+    }
+    if method == &Method::Post && path == "/transport/stops" {
+        return with_auth(state, token, |_| transport_stop_create(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/transport/stops/") && path.ends_with("/delete") {
+        let id_str = &path["/transport/stops/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| transport_stop_delete(state, id));
+        }
+    }
+    if method == &Method::Get && path == "/transport/assignments" {
+        return with_auth(state, token, |_| transport_assignments_list(state, url));
+    }
+    if method == &Method::Post && path == "/transport/assignments" {
+        return with_auth(state, token, |_| transport_assign(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/transport/assignments/") && path.ends_with("/delete") {
+        let id_str = &path["/transport/assignments/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| transport_unassign(state, id));
+        }
+    }
     // Fee OS (P6)
     if method == &Method::Get && path == "/fee-heads" {
         return with_auth(state, token, |_| fee_heads_list(state));
@@ -1345,6 +1391,10 @@ fn init_db(conn: &Connection) {
          CREATE TABLE IF NOT EXISTS meeting_attendees(id INTEGER PRIMARY KEY AUTOINCREMENT, meeting_id INTEGER NOT NULL, staff_id INTEGER, UNIQUE(meeting_id, staff_id));
          CREATE TABLE IF NOT EXISTS tasks(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, description TEXT, assigned_to INTEGER, department_id INTEGER, due_date TEXT, priority TEXT DEFAULT 'normal', status TEXT DEFAULT 'pending', created_by INTEGER, completed_at TEXT, created_at TEXT DEFAULT (datetime('now')));
          CREATE TABLE IF NOT EXISTS reminders(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, tag TEXT DEFAULT 'normal', due_date TEXT, notes TEXT, done INTEGER DEFAULT 0, created_by INTEGER, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS transport_vehicles(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, driver_name TEXT, driver_phone TEXT, capacity INTEGER, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS transport_routes(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, vehicle_id INTEGER, fare REAL, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
+         CREATE TABLE IF NOT EXISTS transport_stops(id INTEGER PRIMARY KEY AUTOINCREMENT, route_id INTEGER NOT NULL, name TEXT NOT NULL, pickup_time TEXT, sort_order INTEGER DEFAULT 0);
+         CREATE TABLE IF NOT EXISTS transport_assignments(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, route_id INTEGER NOT NULL, stop_id INTEGER, created_at TEXT DEFAULT (datetime('now')), UNIQUE(student_id));
          CREATE TABLE IF NOT EXISTS fee_heads(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, is_optional INTEGER DEFAULT 0);
          CREATE TABLE IF NOT EXISTS fee_structures(id INTEGER PRIMARY KEY AUTOINCREMENT, academic_year_id INTEGER, class_id INTEGER, fee_head_id INTEGER NOT NULL, amount REAL NOT NULL, due_date TEXT, UNIQUE(academic_year_id, class_id, fee_head_id));
          CREATE TABLE IF NOT EXISTS fee_payments(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, fee_head_id INTEGER NOT NULL, academic_year_id INTEGER, amount_paid REAL NOT NULL, payment_date TEXT DEFAULT (date('now')), payment_mode TEXT DEFAULT 'cash', reference TEXT, receipt_no TEXT, collected_by INTEGER, notes TEXT, created_at TEXT DEFAULT (datetime('now')));
@@ -2820,6 +2870,186 @@ fn reminder_done(state: &AppState, id: i64) -> (u16, Value) {
 fn reminder_delete(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let _ = conn.execute("DELETE FROM reminders WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+// ---- Transport OS ----
+
+fn transport_vehicles_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT id, name, driver_name, driver_phone, capacity, notes FROM transport_vehicles ORDER BY name",
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    let rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "name": r.get::<_, String>(1)?,
+            "driver_name": r.get::<_, Option<String>>(2)?,
+            "driver_phone": r.get::<_, Option<String>>(3)?,
+            "capacity": r.get::<_, Option<i64>>(4)?,
+            "notes": r.get::<_, Option<String>>(5)?,
+        }))
+    }) { Ok(m) => m.filter_map(|r| r.ok()).collect(), Err(e) => return (500, json!({"error": format!("{e}")})) };
+    (200, json!({"vehicles": rows, "total": rows.len()}))
+}
+
+fn transport_vehicle_create(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let name = match v["name"].as_str() { Some(t) if !t.is_empty() => t.to_string(), _ => return (422, json!({"error": "name required"})) };
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO transport_vehicles(name, driver_name, driver_phone, capacity, notes) VALUES(?1,?2,?3,?4,?5)",
+        params![
+            name,
+            v["driver_name"].as_str().map(|s| s.to_string()),
+            v["driver_phone"].as_str().map(|s| s.to_string()),
+            v["capacity"].as_i64(),
+            v["notes"].as_str().map(|s| s.to_string()),
+        ],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn transport_vehicle_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    // Detach from any routes, then delete the vehicle.
+    let _ = conn.execute("UPDATE transport_routes SET vehicle_id=NULL WHERE vehicle_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM transport_vehicles WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+fn transport_routes_list(state: &AppState) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT r.id, r.name, r.vehicle_id, v.name, r.fare, r.notes,
+                (SELECT COUNT(*) FROM transport_assignments a WHERE a.route_id=r.id) AS assigned
+         FROM transport_routes r
+         LEFT JOIN transport_vehicles v ON v.id = r.vehicle_id
+         ORDER BY r.name",
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    let mut rows: Vec<Value> = match stmt.query_map([], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "name": r.get::<_, String>(1)?,
+            "vehicle_id": r.get::<_, Option<i64>>(2)?,
+            "vehicle_name": r.get::<_, Option<String>>(3)?,
+            "fare": r.get::<_, Option<f64>>(4)?,
+            "notes": r.get::<_, Option<String>>(5)?,
+            "assigned": r.get::<_, i64>(6)?,
+        }))
+    }) { Ok(m) => m.filter_map(|r| r.ok()).collect(), Err(e) => return (500, json!({"error": format!("{e}")})) };
+
+    // Attach stops to each route.
+    for route in rows.iter_mut() {
+        let rid = route["id"].as_i64().unwrap_or(0);
+        let mut sstmt = match conn.prepare(
+            "SELECT id, name, pickup_time, sort_order FROM transport_stops WHERE route_id=?1 ORDER BY sort_order, id",
+        ) { Ok(s) => s, Err(_) => continue };
+        let stops: Vec<Value> = sstmt.query_map(params![rid], |r| {
+            Ok(json!({
+                "id": r.get::<_, i64>(0)?,
+                "name": r.get::<_, String>(1)?,
+                "pickup_time": r.get::<_, Option<String>>(2)?,
+                "sort_order": r.get::<_, Option<i64>>(3)?,
+            }))
+        }).map(|m| m.filter_map(|r| r.ok()).collect()).unwrap_or_default();
+        route["stops"] = json!(stops);
+    }
+    let total = rows.len();
+    (200, json!({"routes": rows, "total": total}))
+}
+
+fn transport_route_create(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let name = match v["name"].as_str() { Some(t) if !t.is_empty() => t.to_string(), _ => return (422, json!({"error": "name required"})) };
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO transport_routes(name, vehicle_id, fare, notes) VALUES(?1,?2,?3,?4)",
+        params![name, v["vehicle_id"].as_i64(), v["fare"].as_f64(), v["notes"].as_str().map(|s| s.to_string())],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn transport_route_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM transport_assignments WHERE route_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM transport_stops WHERE route_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM transport_routes WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+fn transport_stop_create(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let route_id = match v["route_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "route_id required"})) };
+    let name = match v["name"].as_str() { Some(t) if !t.is_empty() => t.to_string(), _ => return (422, json!({"error": "name required"})) };
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO transport_stops(route_id, name, pickup_time, sort_order) VALUES(?1,?2,?3,?4)",
+        params![route_id, name, v["pickup_time"].as_str().map(|s| s.to_string()), v["sort_order"].as_i64().unwrap_or(0)],
+    ) {
+        Ok(_) => (200, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn transport_stop_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("UPDATE transport_assignments SET stop_id=NULL WHERE stop_id=?1", params![id]);
+    let _ = conn.execute("DELETE FROM transport_stops WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+fn transport_assignments_list(state: &AppState, url: &str) -> (u16, Value) {
+    let route_id: i64 = match q_param(url, "route_id").and_then(|v| v.parse().ok()) {
+        Some(id) => id,
+        None => return (422, json!({"error": "route_id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT a.id, a.student_id, s.first_name, s.last_name, a.stop_id, st.name
+         FROM transport_assignments a
+         JOIN students s ON s.id = a.student_id
+         LEFT JOIN transport_stops st ON st.id = a.stop_id
+         WHERE a.route_id=?1
+         ORDER BY s.first_name, s.last_name",
+    ) { Ok(s) => s, Err(e) => return (500, json!({"error": format!("{e}")})) };
+    let rows: Vec<Value> = match stmt.query_map(params![route_id], |r| {
+        Ok(json!({
+            "id": r.get::<_, i64>(0)?,
+            "student_id": r.get::<_, i64>(1)?,
+            "first_name": r.get::<_, Option<String>>(2)?,
+            "last_name": r.get::<_, Option<String>>(3)?,
+            "stop_id": r.get::<_, Option<i64>>(4)?,
+            "stop_name": r.get::<_, Option<String>>(5)?,
+        }))
+    }) { Ok(m) => m.filter_map(|r| r.ok()).collect(), Err(e) => return (500, json!({"error": format!("{e}")})) };
+    (200, json!({"assignments": rows, "total": rows.len()}))
+}
+
+fn transport_assign(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let student_id = match v["student_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "student_id required"})) };
+    let route_id = match v["route_id"].as_i64() { Some(x) => x, None => return (422, json!({"error": "route_id required"})) };
+    let stop_id = v["stop_id"].as_i64();
+    let conn = state.conn.lock().unwrap();
+    // One route per student: upsert on student_id.
+    match conn.execute(
+        "INSERT INTO transport_assignments(student_id, route_id, stop_id) VALUES(?1,?2,?3)
+         ON CONFLICT(student_id) DO UPDATE SET route_id=excluded.route_id, stop_id=excluded.stop_id",
+        params![student_id, route_id, stop_id],
+    ) {
+        Ok(_) => (200, json!({"ok": true})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn transport_unassign(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM transport_assignments WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
 }
 

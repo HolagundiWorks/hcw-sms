@@ -194,7 +194,7 @@ export const ribbonTabs: RibbonTab[] = [
         actions: [
           { key: 'attendance', label: 'Attendance', icon: CalendarCheck, accessLevel: 3 },
           { key: 'exams', label: 'Exams', icon: ClipboardList, accessLevel: 2 },
-          { key: 'transport', label: 'Transport', icon: Bus, accessLevel: 3, placeholder: true },
+          { key: 'transport', label: 'Transport', icon: Bus, accessLevel: 3 },
           { key: 'library-ops', label: 'Library', icon: BookOpen, accessLevel: 3, placeholder: true },
         ],
       },
