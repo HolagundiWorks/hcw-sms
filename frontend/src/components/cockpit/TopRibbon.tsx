@@ -1,5 +1,4 @@
 import { Fragment } from 'react';
-import { ScrollArea } from '@mantine/core';
 import { moduleByKey, moduleGroups } from '../../modules';
 import classes from './TopRibbon.module.css';
 
@@ -15,7 +14,7 @@ interface TopRibbonProps {
  */
 export function TopRibbon({ active, onSelect }: TopRibbonProps) {
   return (
-    <ScrollArea type="hover" scrollbarSize={6} className={classes.ribbon}>
+    <div className={classes.ribbon}>
       <div className={classes.inner}>
         {moduleGroups.map((group, gi) => (
           <Fragment key={group.label}>
@@ -46,6 +45,6 @@ export function TopRibbon({ active, onSelect }: TopRibbonProps) {
           </Fragment>
         ))}
       </div>
-    </ScrollArea>
+    </div>
   );
 }

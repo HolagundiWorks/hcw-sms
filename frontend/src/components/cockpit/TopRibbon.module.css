@@ -1,17 +1,27 @@
 .ribbon {
   height: 100%;
   background: var(--mantine-color-white);
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
+.ribbon::-webkit-scrollbar {
+  height: 6px;
+}
+.ribbon::-webkit-scrollbar-thumb {
+  background: var(--mantine-color-gray-3);
+  border-radius: 3px;
+}
+
+/* margin:auto centers the row when it fits, and collapses to 0 (scrollable,
+   no clipping) when it overflows. */
 .inner {
+  margin: auto;
   display: flex;
   align-items: stretch;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  min-width: max-content;
-  padding: 6px 8px 4px;
   gap: 2px;
+  padding: 6px 8px 4px;
 }
 
 .group {
