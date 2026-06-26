@@ -20,7 +20,29 @@ struct AppState {
 
 /// Start the LEOS API server (blocks, serving on :8787). Called by the
 /// standalone binary and by the Tauri app (on a background thread).
+/// Per-user writable data directory (%LOCALAPPDATA%\LEOS on Windows,
+/// ~/.local/share/LEOS elsewhere). Falls back to the current directory.
+fn data_dir() -> std::path::PathBuf {
+    let base = std::env::var_os("LOCALAPPDATA")
+        .map(std::path::PathBuf::from)
+        .or_else(|| std::env::var_os("APPDATA").map(std::path::PathBuf::from))
+        .or_else(|| std::env::var_os("HOME").map(|h| std::path::PathBuf::from(h).join(".local/share")));
+    match base {
+        Some(b) => b.join("LEOS"),
+        None => std::path::PathBuf::from("."),
+    }
+}
+
 pub fn run() {
+    // Keep all data (school.sqlite, school.leosdb, backups with relative paths)
+    // in a writable per-user folder, so the installed app works even when
+    // launched from a read-only location like Program Files.
+    let dir = data_dir();
+    if std::fs::create_dir_all(&dir).is_ok() {
+        let _ = std::env::set_current_dir(&dir);
+        println!("LEOS data directory: {}", dir.display());
+    }
+
     let conn = Connection::open("school.sqlite").expect("open sqlite");
     init_db(&conn);
     drop(conn); // release the file before snapshotting it into the demo archive
