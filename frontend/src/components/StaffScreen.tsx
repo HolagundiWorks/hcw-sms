@@ -45,6 +45,8 @@ function StaffRow({
 
   return (
     <Card
+      data-testid="staff-row"
+      data-staff-id={s.id}
       style={{ cursor: 'pointer' }}
       onClick={() => onEdit(s)}
     >
@@ -97,8 +99,9 @@ export function StaffScreen() {
               placeholder="Search staff"
               value={q}
               onChange={(e) => setQ(e.currentTarget.value)}
+              data-testid="staff-search-input"
             />
-            <Button leftSection={<Plus size={15} />} onClick={() => setAdding(true)}>
+            <Button leftSection={<Plus size={15} />} onClick={() => setAdding(true)} data-testid="staff-add-button">
               Add {terms.educator}
             </Button>
           </Group>
@@ -114,7 +117,7 @@ export function StaffScreen() {
               <StaffRow key={s.id} s={s} terms={terms} onEdit={setEditing} />
             ))
           ) : (
-            <Card>
+            <Card data-testid="staff-empty">
               <Text c="dimmed" ta="center" py="xl">
                 No staff found.
               </Text>

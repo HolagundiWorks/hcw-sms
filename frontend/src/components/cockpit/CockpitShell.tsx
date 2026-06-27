@@ -64,7 +64,7 @@ export function CockpitShell({ user, active, onNavigate, children }: CockpitShel
             </div>
           </div>
         </AppShell.Header>
-        <AppShell.Main>{children}</AppShell.Main>
+        <AppShell.Main data-testid="cockpit-shell">{children}</AppShell.Main>
       </AppShell>
       <BrandWatermark />
     </>

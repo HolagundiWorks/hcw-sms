@@ -153,8 +153,9 @@ export function WelcomeScreen() {
                     <Button size="compact-xs" variant="light" onClick={browseOpen}>Browse…</Button>
                   ) : undefined}
                   autoFocus
+                  data-testid="school-file-input"
                 />
-                <Button disabled={!path.trim()} onClick={() => { setError(null); setStep('key'); }}>Open School File</Button>
+                <Button data-testid="open-school-file-button" disabled={!path.trim()} onClick={() => { setError(null); setStep('key'); }}>Open School File</Button>
                 <Anchor size="xs" ta="center" onClick={() => { setError(null); setMode('create'); }}>
                   <Group gap={4} justify="center"><FilePlus2 size={12} /> Set up a new school instead</Group>
                 </Anchor>
@@ -166,10 +167,11 @@ export function WelcomeScreen() {
                   label="Master key" description="Database password for this school file" placeholder="Master key"
                   value={masterKey} onChange={(e) => setMasterKey(e.currentTarget.value)} leftSection={<KeyRound size={15} />}
                   autoFocus onKeyDown={(e) => { if (e.key === 'Enter' && masterKey) openSchool(path, masterKey); }}
+                  data-testid="master-key-input"
                 />
                 <Group grow>
                   <Button variant="subtle" color="gray" onClick={() => { setError(null); setStep('file'); }}>Back</Button>
-                  <Button onClick={() => openSchool(path, masterKey)} loading={busy} disabled={!masterKey}>Unlock &amp; Continue</Button>
+                  <Button data-testid="unlock-continue-button" onClick={() => openSchool(path, masterKey)} loading={busy} disabled={!masterKey}>Unlock &amp; Continue</Button>
                 </Group>
               </Stack>
             )

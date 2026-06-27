@@ -23,6 +23,11 @@ struct AppState {
 /// Per-user writable data directory (%LOCALAPPDATA%\LEOS on Windows,
 /// ~/.local/share/LEOS elsewhere). Falls back to the current directory.
 fn data_dir() -> std::path::PathBuf {
+    // Test/automation override: point the whole data directory somewhere
+    // disposable so the suite never touches the real %LOCALAPPDATA%\LEOS data.
+    if let Some(d) = std::env::var_os("LEOS_DATA_DIR") {
+        return std::path::PathBuf::from(d);
+    }
     let base = std::env::var_os("LOCALAPPDATA")
         .map(std::path::PathBuf::from)
         .or_else(|| std::env::var_os("APPDATA").map(std::path::PathBuf::from))
@@ -31,6 +36,15 @@ fn data_dir() -> std::path::PathBuf {
         Some(b) => b.join("LEOS"),
         None => std::path::PathBuf::from("."),
     }
+}
+
+/// Port the API server binds to. Defaults to 8787; override with LEOS_PORT so a
+/// test instance can run alongside (or instead of) a dev server without a clash.
+fn server_port() -> u16 {
+    std::env::var("LEOS_PORT")
+        .ok()
+        .and_then(|p| p.trim().parse::<u16>().ok())
+        .unwrap_or(8787)
 }
 
 pub fn run() {
@@ -62,9 +76,10 @@ pub fn run() {
         sessions: Mutex::new(HashMap::new()),
     });
 
-    let addr = "0.0.0.0:8787";
-    let server = Server::http(addr).expect("bind 8787");
-    println!("leos-server listening on http://localhost:8787 (SQLite: school.sqlite)");
+    let port = server_port();
+    let addr = format!("0.0.0.0:{port}");
+    let server = Server::http(&addr).unwrap_or_else(|_| panic!("bind {port}"));
+    println!("leos-server listening on http://localhost:{port} (SQLite: school.sqlite)");
     for req in server.incoming_requests() {
         let st = state.clone();
         thread::spawn(move || handle(st, req));
@@ -995,7 +1010,7 @@ fn student_update(state: &AppState, id: i64, body: &str) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     match conn.execute(
         "UPDATE students SET first_name=COALESCE(?1,first_name), middle_name=?2, last_name=COALESCE(?3,last_name),
-         email=?4, phone=?5, gender=?6, birthdate=?7, alt_id=?8, enrolled=?9,
+         email=?4, phone=?5, gender=?6, birthdate=?7, alt_id=?8, enrolled=COALESCE(?9,enrolled),
          guardian_name=?10, guardian_phone=?11, guardian_relation=?12, address=?13, card_uid=COALESCE(?15,card_uid)
          WHERE id=?14",
         params![
@@ -1054,7 +1069,7 @@ fn student_detail(state: &AppState, id: i64) -> (u16, Value) {
                 "gender": r.get::<_, Option<String>>(6)?,
                 "birthdate": r.get::<_, Option<String>>(7)?,
                 "alt_id": r.get::<_, Option<String>>(8)?,
-                "enrolled": r.get::<_, i64>(9)? == 1,
+                "enrolled": r.get::<_, Option<i64>>(9)?.unwrap_or(0) == 1,
                 "guardian_name": r.get::<_, Option<String>>(10)?,
                 "guardian_phone": r.get::<_, Option<String>>(11)?,
                 "guardian_relation": r.get::<_, Option<String>>(12)?,

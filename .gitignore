@@ -18,6 +18,13 @@
 *.sqlite-*
 *.leosdb
 
+# Test harness — deps, runner artifacts, reports, and the temp server-info file.
+/node_modules/
+/test-results/
+/tests/reports/
+/tests/.tmp/
+/playwright-report/
+
 # Tooling / local
 /.claude/
 

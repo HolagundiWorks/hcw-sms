@@ -94,8 +94,8 @@ function SubjectFormModal({
     <Modal opened onClose={onClose} title={isEdit ? `Edit — ${initial?.name}` : 'New Subject'} centered size="sm">
       <Stack gap="md">
         <Group grow>
-          <TextInput label="Subject name" placeholder="Mathematics" value={name} onChange={(e) => setName(e.currentTarget.value)} required />
-          <TextInput label="Code" placeholder="MATH" value={code} onChange={(e) => setCode(e.currentTarget.value)} />
+          <TextInput label="Subject name" placeholder="Mathematics" value={name} onChange={(e) => setName(e.currentTarget.value)} required data-testid="subject-name-input" />
+          <TextInput label="Code" placeholder="MATH" value={code} onChange={(e) => setCode(e.currentTarget.value)} data-testid="subject-code-input" />
         </Group>
 
         <Group grow>
@@ -133,8 +133,8 @@ function SubjectFormModal({
         </Group>
 
         <Group justify="flex-end">
-          <Button variant="subtle" onClick={onClose}>Cancel</Button>
-          <Button onClick={save} loading={busy} disabled={!name.trim()}>
+          <Button variant="subtle" onClick={onClose} data-testid="subject-form-cancel-button">Cancel</Button>
+          <Button onClick={save} loading={busy} disabled={!name.trim()} data-testid="subject-form-save-button">
             {isEdit ? 'Save changes' : 'Create subject'}
           </Button>
         </Group>
@@ -159,7 +159,7 @@ function SubjectRow({
 }) {
   const color: AccentColor = (s.type && TYPE_COLOR[s.type]) || 'sky';
   return (
-    <Card>
+    <Card data-testid="subject-row" data-subject-id={s.id}>
       <Group justify="space-between" wrap="nowrap">
         <Group gap="md" wrap="nowrap" style={{ minWidth: 0 }}>
           <ThemeIcon size={40} radius="md" variant="light" color={color}>
@@ -173,8 +173,8 @@ function SubjectRow({
         <Group gap="lg" wrap="nowrap" visibleFrom="sm">
           {s.type && <Badge variant="light" color={color}>{s.type}</Badge>}
           <Text size="sm" c="dimmed">{s.weekly_periods}/week</Text>
-          <ActionIcon size="sm" variant="subtle" onClick={onEdit}><Pencil size={13} /></ActionIcon>
-          <ActionIcon size="sm" variant="subtle" color="red" onClick={onDelete}><Trash2 size={13} /></ActionIcon>
+          <ActionIcon size="sm" variant="subtle" onClick={onEdit} data-testid="subject-edit-button"><Pencil size={13} /></ActionIcon>
+          <ActionIcon size="sm" variant="subtle" color="red" onClick={onDelete} data-testid="subject-delete-button"><Trash2 size={13} /></ActionIcon>
         </Group>
       </Group>
     </Card>
@@ -213,8 +213,9 @@ export function SubjectsScreen() {
               placeholder="Search subjects"
               value={q}
               onChange={(e) => setQ(e.currentTarget.value)}
+              data-testid="subject-search-input"
             />
-            <Button leftSection={<Plus size={15} />} onClick={() => setCreating(true)}>
+            <Button leftSection={<Plus size={15} />} onClick={() => setCreating(true)} data-testid="subject-new-button">
               New Subject
             </Button>
           </Group>

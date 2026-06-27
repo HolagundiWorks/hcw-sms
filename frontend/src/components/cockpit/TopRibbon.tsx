@@ -60,6 +60,7 @@ export function TopRibbon({ active, onSelect, onTabChange }: TopRibbonProps) {
             aria-selected={tab.id === activeTab}
             aria-controls={`ribbon-panel-${tab.id}`}
             className={classes.tabBtn}
+            data-testid={`ribbon-tab-${tab.id}`}
             data-active={tab.id === activeTab}
             onClick={() => {
               setActiveTab(tab.id);
@@ -100,6 +101,7 @@ export function TopRibbon({ active, onSelect, onTabChange }: TopRibbonProps) {
                         key={action.key}
                         type="button"
                         className={classes.actionBtn}
+                        data-testid={`nav-${action.key}`}
                         data-active={isActive}
                         data-placeholder={action.placeholder ?? false}
                         disabled={action.placeholder}

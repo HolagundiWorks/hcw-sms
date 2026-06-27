@@ -36,6 +36,8 @@ function StudentRow({
   const name = `${s.first_name} ${s.last_name}`;
   return (
     <Card
+      data-testid="student-row"
+      data-student-id={s.id}
       onClick={() => onSelect(s.id, name)}
       style={{
         cursor: 'pointer',
@@ -96,8 +98,9 @@ export function StudentsScreen() {
               placeholder="Search students"
               value={q}
               onChange={(e) => setQ(e.currentTarget.value)}
+              data-testid="students-search-input"
             />
-            <Button leftSection={<Plus size={15} />} onClick={() => setAdmitting(true)}>
+            <Button leftSection={<Plus size={15} />} onClick={() => setAdmitting(true)} data-testid="student-admit-button">
               Admit
             </Button>
           </Group>
@@ -118,7 +121,7 @@ export function StudentsScreen() {
               />
             ))
           ) : (
-            <Card>
+            <Card data-testid="students-empty">
               <Text c="dimmed" ta="center" py="xl">
                 No students found.
               </Text>

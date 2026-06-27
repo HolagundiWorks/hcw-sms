@@ -108,9 +108,9 @@ export function StudentFormModal({ onClose, initial }: Props) {
       <Stack gap="md">
         {/* Name */}
         <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
-          <TextInput label="First name" placeholder="First" value={firstName} onChange={(e) => setFirstName(e.currentTarget.value)} required />
-          <TextInput label="Middle name" placeholder="Middle" value={middleName} onChange={(e) => setMiddleName(e.currentTarget.value)} />
-          <TextInput label="Last name" placeholder="Last" value={lastName} onChange={(e) => setLastName(e.currentTarget.value)} required />
+          <TextInput label="First name" placeholder="First" value={firstName} onChange={(e) => setFirstName(e.currentTarget.value)} required data-testid="student-first-name-input" />
+          <TextInput label="Middle name" placeholder="Middle" value={middleName} onChange={(e) => setMiddleName(e.currentTarget.value)} data-testid="student-middle-name-input" />
+          <TextInput label="Last name" placeholder="Last" value={lastName} onChange={(e) => setLastName(e.currentTarget.value)} required data-testid="student-last-name-input" />
         </SimpleGrid>
 
         {/* Demographics */}
@@ -139,8 +139,8 @@ export function StudentFormModal({ onClose, initial }: Props) {
 
         {/* Contact */}
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
-          <TextInput label="Email" type="email" placeholder="student@school.edu" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
-          <TextInput label="Phone" placeholder="+91 90000 XXXXX" value={phone} onChange={(e) => setPhone(e.currentTarget.value)} />
+          <TextInput label="Email" type="email" placeholder="student@school.edu" value={email} onChange={(e) => setEmail(e.currentTarget.value)} data-testid="student-email-input" />
+          <TextInput label="Phone" placeholder="+91 90000 XXXXX" value={phone} onChange={(e) => setPhone(e.currentTarget.value)} data-testid="student-phone-input" />
         </SimpleGrid>
 
         <Divider label="Guardian" labelPosition="left" />
@@ -174,8 +174,8 @@ export function StudentFormModal({ onClose, initial }: Props) {
         />
 
         <Group justify="flex-end" mt="sm">
-          <Button variant="subtle" onClick={onClose}>Cancel</Button>
-          <Button onClick={save} loading={busy} disabled={!canSave}>
+          <Button variant="subtle" onClick={onClose} data-testid="student-form-cancel-button">Cancel</Button>
+          <Button onClick={save} loading={busy} disabled={!canSave} data-testid="student-form-save-button">
             {isEdit ? 'Save changes' : 'Admit student'}
           </Button>
         </Group>

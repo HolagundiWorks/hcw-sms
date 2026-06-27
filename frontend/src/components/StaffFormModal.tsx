@@ -121,6 +121,7 @@ export function StaffFormModal({ onClose, initial }: Props) {
             value={firstName}
             onChange={(e) => setFirstName(e.currentTarget.value)}
             required
+            data-testid="staff-first-name-input"
           />
           <TextInput
             label="Last name"
@@ -128,6 +129,7 @@ export function StaffFormModal({ onClose, initial }: Props) {
             value={lastName}
             onChange={(e) => setLastName(e.currentTarget.value)}
             required
+            data-testid="staff-last-name-input"
           />
         </SimpleGrid>
 
@@ -138,12 +140,14 @@ export function StaffFormModal({ onClose, initial }: Props) {
             placeholder="staff@school.edu"
             value={email}
             onChange={(e) => setEmail(e.currentTarget.value)}
+            data-testid="staff-email-input"
           />
           <TextInput
             label="Phone"
             placeholder="+91 90000 XXXXX"
             value={phone}
             onChange={(e) => setPhone(e.currentTarget.value)}
+            data-testid="staff-phone-input"
           />
         </SimpleGrid>
 
@@ -169,8 +173,8 @@ export function StaffFormModal({ onClose, initial }: Props) {
         </SimpleGrid>
 
         <Group justify="flex-end" mt="sm">
-          <Button variant="subtle" onClick={onClose}>Cancel</Button>
-          <Button onClick={save} loading={busy} disabled={!canSave}>
+          <Button variant="subtle" onClick={onClose} data-testid="staff-form-cancel-button">Cancel</Button>
+          <Button onClick={save} loading={busy} disabled={!canSave} data-testid="staff-form-save-button">
             {isEdit ? 'Save changes' : `Add ${terms.educator}`}
           </Button>
         </Group>

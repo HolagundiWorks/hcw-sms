@@ -54,10 +54,10 @@ export function LoginPage() {
             </Text>
           </Stack>
 
-          <form onSubmit={submit}>
+          <form onSubmit={submit} data-testid="login-form">
             <Stack gap="md">
               {error && (
-                <Alert color="peach" radius="md" icon={<CircleAlert size={16} />}>
+                <Alert color="peach" radius="md" icon={<CircleAlert size={16} />} data-testid="login-error">
                   {error}
                 </Alert>
               )}
@@ -68,6 +68,7 @@ export function LoginPage() {
                 onChange={(e) => setUsername(e.currentTarget.value)}
                 required
                 autoFocus
+                data-testid="login-username-input"
               />
               <PasswordInput
                 label="Password"
@@ -75,8 +76,9 @@ export function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.currentTarget.value)}
                 required
+                data-testid="login-password-input"
               />
-              <Button type="submit" fullWidth loading={loading} mt="xs">
+              <Button type="submit" fullWidth loading={loading} mt="xs" data-testid="login-submit-button">
                 Sign in
               </Button>
             </Stack>
