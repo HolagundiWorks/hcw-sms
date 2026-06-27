@@ -38,6 +38,31 @@ fn data_dir() -> std::path::PathBuf {
     }
 }
 
+/// The port the API server binds to, for callers that supervise it externally
+/// (e.g. the in-app Service Manager). Honors LEOS_PORT, defaults to 8787.
+pub fn configured_port() -> u16 {
+    server_port()
+}
+
+/// Run a SQLite integrity check on the active school database. Used by the
+/// in-app Server Control Panel "Repair" action to detect a corrupt/locked DB.
+/// Opens its own read connection, so it's safe to call while the server runs.
+pub fn check_db_health() -> Result<(), String> {
+    let path = data_dir().join("school.sqlite");
+    if !path.exists() {
+        return Err(format!("database file not found at {}", path.display()));
+    }
+    let conn = Connection::open(&path).map_err(|e| format!("open failed: {e}"))?;
+    let result: String = conn
+        .query_row("PRAGMA integrity_check", [], |r| r.get(0))
+        .map_err(|e| format!("integrity check failed: {e}"))?;
+    if result == "ok" {
+        Ok(())
+    } else {
+        Err(format!("integrity check reported: {result}"))
+    }
+}
+
 /// Port the API server binds to. Defaults to 8787; override with LEOS_PORT so a
 /// test instance can run alongside (or instead of) a dev server without a clash.
 fn server_port() -> u16 {

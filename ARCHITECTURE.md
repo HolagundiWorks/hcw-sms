@@ -26,22 +26,36 @@ Status: ✅ done · 🟡 partial · ⬜ not started
 ## Runtime model
 
 ```
-┌──────────────────────────────────────────────────────┐
-│  LEOS.exe  (Tauri v2 desktop window)                 │
-│                                                      │
-│   React / Mantine cockpit UI                         │
-│        │  fetch http://localhost:8787                │
-│        ▼                                             │
-│   Embedded Rust API server (leos-server, thread)     │
-│        │                                             │
-│        ▼                                             │
-│   SQLite  (school.sqlite)                            │
-│        ▲                                             │
-│        └── open / save ──►  school.leosdb            │
-└──────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  LEOS.exe  (Tauri v2 desktop window)  — ONE user-facing app │
+│                                                            │
+│   React / Mantine cockpit UI                               │
+│     │  fetch http://localhost:8787   │  invoke server_* cmds │
+│     ▼                                ▼                      │
+│   (data)                    Service Manager (server_manager) │
+│     │                                │  supervises           │
+│     │                                ▼                      │
+│     └──────────────►  leos-server  (child process)          │
+│                            │   start · stop · restart ·      │
+│                            ▼   health · logs · repair        │
+│                       SQLite (school.sqlite)                │
+│                            ▲                                 │
+│                            └── open / save ──► school.leosdb │
+└──────────────────────────────────────────────────────────┘
         (development: server runs standalone, Vite on :5174)
         (LAN mode: other machines fetch from IP:8787)
 ```
+
+**Service Manager.** The backend is run as a *supervised child process*, not an
+in-process thread, so the in-app **Server Control Panel** (System → Server) can
+start / stop / restart / repair it, show health + live logs, and auto-restart it
+on crash. It's built behind a `ServerController` trait
+(`src-tauri/src/server_manager.rs`); the current `ChildProcessController` needs
+no elevation. If the standalone `leos-server` binary isn't found, LEOS falls back
+to running the backend embedded in-process (health/logs only — no live control).
+A Windows-Service backend can implement the same trait in phase 2 so the server
+can run headless (auto-start on boot, LAN-always-on) — see
+`docs/server-control.md`.
 
 Login: **`admin` / `admin123`** (change before deployment).
 

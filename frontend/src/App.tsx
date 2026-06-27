@@ -43,6 +43,7 @@ import { ImportScreen } from './components/ImportScreen';
 import { HardwareScreen } from './components/HardwareScreen';
 import { DesignScreen } from './components/DesignScreen';
 import { TechAdminScreen } from './components/TechAdminScreen';
+import { ServerControlScreen } from './components/ServerControlScreen';
 import { RoleDashboard } from './components/RoleDashboard';
 import { Placeholder } from './components/Placeholder';
 
@@ -163,6 +164,8 @@ export function App() {
     screen = <DesignScreen />;
   } else if (active === 'tech-admin') {
     screen = <TechAdminScreen />;
+  } else if (active === 'server-control') {
+    screen = <ServerControlScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'academic-year') {

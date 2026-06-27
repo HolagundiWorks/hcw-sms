@@ -45,6 +45,7 @@ import {
   Home,
   AlarmClock,
   PackageCheck,
+  Server,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -307,6 +308,7 @@ export const ribbonTabs: RibbonTab[] = [
         actions: [
           { key: 'security', label: 'Audit & Roles', icon: Shield, accessLevel: 1 },
           { key: 'tech-admin', label: 'Tech Admin', icon: Wrench, accessLevel: 1 },
+          { key: 'server-control', label: 'Server', icon: Server, accessLevel: 1 },
         ],
       },
     ],
