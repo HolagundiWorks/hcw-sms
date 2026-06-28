@@ -13,7 +13,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { ArrowLeft, Pencil } from 'lucide-react';
+import { ArrowLeft, Pencil, Sparkles } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useStudent } from '../hooks/useStudent';
 import { initials } from '../types';
@@ -22,6 +22,7 @@ import { StudentFormModal } from './StudentFormModal';
 import { StudentDocumentsTab } from './StudentDocumentsTab';
 import { StudentAcademicsTab } from './StudentAcademicsTab';
 import { StudentCommsTab } from './StudentCommsTab';
+import { StudentInsightsTab } from './StudentInsightsTab';
 
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
@@ -98,6 +99,7 @@ export function StudentProfileScreen({ id, onBack }: { id: number; onBack: () =>
               <Tabs.Tab value="admission">Admission</Tabs.Tab>
               <Tabs.Tab value="health">Health</Tabs.Tab>
               <Tabs.Tab value="academics">Academics</Tabs.Tab>
+              <Tabs.Tab value="insights" leftSection={<Sparkles size={13} />}>Insights</Tabs.Tab>
               <Tabs.Tab value="cocurricular">Co-curricular</Tabs.Tab>
               <Tabs.Tab value="comms">Comms</Tabs.Tab>
               <Tabs.Tab value="documents">Documents</Tabs.Tab>
@@ -155,6 +157,7 @@ export function StudentProfileScreen({ id, onBack }: { id: number; onBack: () =>
             </Tabs.Panel>
 
             <Tabs.Panel value="academics" p="lg"><StudentAcademicsTab studentId={id} /></Tabs.Panel>
+            <Tabs.Panel value="insights" p="lg"><StudentInsightsTab studentId={id} /></Tabs.Panel>
             <Tabs.Panel value="cocurricular" p="lg"><Text c="dimmed" ta="center" py="xl">Club memberships and sports participation will appear here.</Text></Tabs.Panel>
             <Tabs.Panel value="comms" p="lg"><StudentCommsTab studentId={id} /></Tabs.Panel>
             <Tabs.Panel value="documents" p="lg"><StudentDocumentsTab studentId={id} /></Tabs.Panel>

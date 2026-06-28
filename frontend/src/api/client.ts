@@ -652,6 +652,20 @@ export function deleteStudentMessage(token: string, id: number) {
   return req<{ ok: boolean }>(`/student-communications/${id}/delete`, { method: 'POST', token, body: {} });
 }
 
+// ─── Learning analytics (derived from recorded scores) ──────────────────────
+export interface StudentAnalytics {
+  name: string;
+  overall_pct: number | null;
+  subjects: { subject: string; avg_pct: number; count: number; trend: 'improving' | 'declining' | 'steady'; delta: number }[];
+  strengths: string[];
+  weaknesses: string[];
+  recommendations: string[];
+  summary: string;
+}
+export function fetchStudentAnalytics(token: string, studentId: number) {
+  return req<StudentAnalytics>(`/students/${studentId}/analytics`, { token });
+}
+
 export interface Section {
   id: number;
   name: string | null;

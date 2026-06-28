@@ -177,6 +177,12 @@ fn dispatch(
     if method == &Method::Post && path == "/students" {
         return with_auth(state, token, |_| student_create(state, body));
     }
+    if method == &Method::Get && path.starts_with("/students/") && path.ends_with("/analytics") {
+        let id_str = &path["/students/".len()..path.len() - "/analytics".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| student_analytics(state, id));
+        }
+    }
     if method == &Method::Get && path.starts_with("/students/") {
         if let Ok(id) = path["/students/".len()..].parse::<i64>() {
             return with_auth(state, token, |_| student_detail(state, id));
@@ -7411,6 +7417,109 @@ fn student_comm_delete(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let _ = conn.execute("DELETE FROM student_communications WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
+}
+
+// ---- Learning analytics (derived from recorded scores; offline, rule-based) ----
+
+fn student_analytics(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let name: String = conn
+        .query_row("SELECT first_name || ' ' || last_name FROM students WHERE id=?1", params![id], |r| r.get(0))
+        .unwrap_or_else(|_| "This student".to_string());
+
+    // Collect (subject, pct) in chronological order for trend detection.
+    let mut stmt = match conn.prepare(
+        "SELECT subject, max_marks, marks FROM student_marks WHERE student_id=?1 AND subject IS NOT NULL AND marks IS NOT NULL AND max_marks > 0 ORDER BY id ASC",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<(String, f64)> = stmt
+        .query_map(params![id], |r| {
+            let subject: String = r.get(0)?;
+            let max: f64 = r.get(1)?;
+            let marks: f64 = r.get(2)?;
+            Ok((subject, marks / max * 100.0))
+        })
+        .map(|m| m.filter_map(|r| r.ok()).collect())
+        .unwrap_or_default();
+
+    if rows.is_empty() {
+        return (200, json!({
+            "name": name, "overall_pct": null, "subjects": [], "strengths": [], "weaknesses": [],
+            "recommendations": [], "summary": format!("No scores recorded yet for {name}. Record assessment scores in the Academics tab to unlock learning insights."),
+        }));
+    }
+
+    // Aggregate by subject: average, count, and first→last delta (trend).
+    let mut order: Vec<String> = Vec::new();
+    let mut agg: HashMap<String, (f64, u32, f64, f64)> = HashMap::new(); // sum, count, first, last
+    for (subj, pct) in &rows {
+        let e = agg.entry(subj.clone()).or_insert_with(|| {
+            order.push(subj.clone());
+            (0.0, 0, *pct, *pct)
+        });
+        e.0 += pct;
+        e.1 += 1;
+        e.3 = *pct; // last seen
+    }
+
+    let round1 = |x: f64| (x * 10.0).round() / 10.0;
+    let mut subjects: Vec<Value> = Vec::new();
+    let mut scored: Vec<(String, f64)> = Vec::new();
+    for subj in &order {
+        let (sum, count, first, last) = agg[subj];
+        let avg = sum / count as f64;
+        let delta = last - first;
+        let trend = if count < 2 || delta.abs() < 4.0 { "steady" } else if delta > 0.0 { "improving" } else { "declining" };
+        scored.push((subj.clone(), avg));
+        subjects.push(json!({"subject": subj, "avg_pct": round1(avg), "count": count, "trend": trend, "delta": round1(delta)}));
+    }
+    // Sort the subject cards strongest-first.
+    subjects.sort_by(|a, b| b["avg_pct"].as_f64().unwrap_or(0.0).partial_cmp(&a["avg_pct"].as_f64().unwrap_or(0.0)).unwrap());
+
+    let overall = scored.iter().map(|(_, a)| a).sum::<f64>() / scored.len() as f64;
+    scored.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+    let strengths: Vec<String> = scored.iter().filter(|(_, a)| *a >= 75.0).map(|(s, _)| s.clone()).collect();
+    let weaknesses: Vec<String> = scored.iter().rev().filter(|(_, a)| *a < 50.0).map(|(s, _)| s.clone()).collect();
+
+    // Rule-based recommendations + narrative ("AI-style", but deterministic/offline).
+    let mut recs: Vec<String> = Vec::new();
+    for (subj, avg) in scored.iter().rev().filter(|(_, a)| *a < 50.0) {
+        recs.push(format!("Provide targeted support in {subj} (currently {}%) — consider remedial practice and a parent check-in.", round1(*avg)));
+    }
+    for s in subjects.iter().filter(|s| s["trend"] == "declining") {
+        recs.push(format!("{}’s scores are trending down ({}%); review recent topics before the next assessment.", s["subject"].as_str().unwrap_or(""), s["delta"].as_f64().unwrap_or(0.0)));
+    }
+    if !strengths.is_empty() {
+        recs.push(format!("Offer enrichment / olympiad practice to build on strengths: {}.", strengths.join(", ")));
+    }
+    if overall < 33.0 {
+        recs.push("Overall average is below the 33% pass line — flag for academic intervention and attendance review.".to_string());
+    }
+    if recs.is_empty() {
+        recs.push("Performance is balanced across subjects — maintain the current study plan.".to_string());
+    }
+
+    let best = scored.first().map(|(s, _)| s.clone()).unwrap_or_default();
+    let worst = scored.last().map(|(s, _)| s.clone()).unwrap_or_default();
+    let summary = format!(
+        "{name} is averaging {}% across {} subject(s). Strongest in {best}; {}. {}",
+        round1(overall),
+        scored.len(),
+        if scored.len() > 1 { format!("most room to grow in {worst}") } else { "more data will sharpen this picture".to_string() },
+        if overall >= 75.0 { "Overall a strong, consistent performer." } else if overall >= 50.0 { "A steady performer with clear areas to target." } else { "Needs focused academic support." },
+    );
+
+    (200, json!({
+        "name": name,
+        "overall_pct": round1(overall),
+        "subjects": subjects,
+        "strengths": strengths,
+        "weaknesses": weaknesses,
+        "recommendations": recs,
+        "summary": summary,
+    }))
 }
 
 // ---- floor plan (canvas layout persisted as JSON) ----
