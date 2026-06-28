@@ -377,6 +377,10 @@ export interface SportsEvent {
   venue: string | null;
   notes: string | null;
   result_count: number;
+  home_club_id: number | null;
+  home_club: string | null;
+  away_club_id: number | null;
+  away_club: string | null;
 }
 export interface SportsResult {
   id: number;
@@ -385,9 +389,13 @@ export interface SportsResult {
   position: number | null;
   points: number | null;
   note: string | null;
+  club_id: number | null;
+  club: string | null;
 }
 export interface LeaderRow {
-  house?: string;
+  club_id?: number;
+  club?: string;
+  logo?: string | null;
   participant?: string;
   points: number;
   entries: number;
@@ -397,7 +405,10 @@ export function fetchSportsEvents(token: string) {
 }
 export function createSportsEvent(
   token: string,
-  data: { name: string; sport?: string; event_date?: string; event_time?: string; venue?: string; notes?: string },
+  data: {
+    name: string; sport?: string; event_date?: string; event_time?: string; venue?: string; notes?: string;
+    home_club_id?: number | null; away_club_id?: number | null;
+  },
 ) {
   return req<{ ok: boolean; id: number }>('/sports/events', { method: 'POST', token, body: data });
 }
@@ -409,7 +420,7 @@ export function fetchSportsResults(token: string, eventId: number) {
 }
 export function createSportsResult(
   token: string,
-  data: { event_id: number; participant: string; house?: string; position?: number | null; points?: number; note?: string },
+  data: { event_id: number; participant: string; club_id?: number | null; position?: number | null; points?: number; note?: string },
 ) {
   return req<{ ok: boolean; id: number }>('/sports/results', { method: 'POST', token, body: data });
 }
@@ -417,7 +428,7 @@ export function deleteSportsResult(token: string, id: number) {
   return req<{ ok: boolean }>(`/sports/results/${id}/delete`, { method: 'POST', token, body: {} });
 }
 export function fetchLeaderboard(token: string) {
-  return req<{ houses: LeaderRow[]; participants: LeaderRow[] }>('/sports/leaderboard', { token });
+  return req<{ clubs: LeaderRow[]; participants: LeaderRow[] }>('/sports/leaderboard', { token });
 }
 
 // ─── Clubs OS: clubs + member roster ────────────────────────────────────────

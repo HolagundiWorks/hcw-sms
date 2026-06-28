@@ -1758,6 +1758,11 @@ fn migrate_schema(conn: &Connection) {
         "CREATE TABLE IF NOT EXISTS club_members(id INTEGER PRIMARY KEY AUTOINCREMENT, club_id INTEGER, student_id INTEGER, student_name TEXT, role TEXT, joined_at TEXT DEFAULT (datetime('now')))",
         [],
     );
+    // Sports are inter-club matches: events are between two clubs; result lines
+    // (and the leaderboard) are tied to a club.
+    let _ = conn.execute("ALTER TABLE sports_events ADD COLUMN home_club_id INTEGER", []);
+    let _ = conn.execute("ALTER TABLE sports_events ADD COLUMN away_club_id INTEGER", []);
+    let _ = conn.execute("ALTER TABLE sports_results ADD COLUMN club_id INTEGER", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN guardian_name TEXT", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN guardian_phone TEXT", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN guardian_relation TEXT", []);
@@ -6764,8 +6769,12 @@ fn sports_events_list(state: &AppState) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let mut stmt = match conn.prepare(
         "SELECT e.id, e.name, e.sport, e.event_date, e.event_time, e.venue, e.notes,
-                (SELECT COUNT(*) FROM sports_results r WHERE r.event_id = e.id)
-         FROM sports_events e ORDER BY e.event_date DESC, e.event_time",
+                (SELECT COUNT(*) FROM sports_results r WHERE r.event_id = e.id),
+                e.home_club_id, hc.name, e.away_club_id, ac.name
+         FROM sports_events e
+         LEFT JOIN clubs hc ON hc.id = e.home_club_id
+         LEFT JOIN clubs ac ON ac.id = e.away_club_id
+         ORDER BY e.event_date DESC, e.event_time",
     ) {
         Ok(s) => s,
         Err(e) => return (500, json!({"error": format!("{e}")})),
@@ -6781,6 +6790,10 @@ fn sports_events_list(state: &AppState) -> (u16, Value) {
                 "venue": r.get::<_, Option<String>>(5)?,
                 "notes": r.get::<_, Option<String>>(6)?,
                 "result_count": r.get::<_, i64>(7)?,
+                "home_club_id": r.get::<_, Option<i64>>(8)?,
+                "home_club": r.get::<_, Option<String>>(9)?,
+                "away_club_id": r.get::<_, Option<i64>>(10)?,
+                "away_club": r.get::<_, Option<String>>(11)?,
             }))
         })
         .map(|m| m.filter_map(|r| r.ok()).collect())
@@ -6796,7 +6809,7 @@ fn sports_event_create(state: &AppState, body: &str) -> (u16, Value) {
     };
     let conn = state.conn.lock().unwrap();
     match conn.execute(
-        "INSERT INTO sports_events(name, sport, event_date, event_time, venue, notes) VALUES(?1,?2,?3,?4,?5,?6)",
+        "INSERT INTO sports_events(name, sport, event_date, event_time, venue, notes, home_club_id, away_club_id) VALUES(?1,?2,?3,?4,?5,?6,?7,?8)",
         params![
             name,
             v["sport"].as_str().filter(|s| !s.is_empty()),
@@ -6804,6 +6817,8 @@ fn sports_event_create(state: &AppState, body: &str) -> (u16, Value) {
             v["event_time"].as_str().filter(|s| !s.is_empty()),
             v["venue"].as_str().filter(|s| !s.is_empty()),
             v["notes"].as_str().filter(|s| !s.is_empty()),
+            v["home_club_id"].as_i64(),
+            v["away_club_id"].as_i64(),
         ],
     ) {
         Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
@@ -6825,7 +6840,9 @@ fn sports_results_list(state: &AppState, url: &str) -> (u16, Value) {
     };
     let conn = state.conn.lock().unwrap();
     let mut stmt = match conn.prepare(
-        "SELECT id, participant, house, position, points, note FROM sports_results WHERE event_id=?1 ORDER BY position, points DESC",
+        "SELECT r.id, r.participant, r.house, r.position, r.points, r.note, r.club_id, c.name
+         FROM sports_results r LEFT JOIN clubs c ON c.id = r.club_id
+         WHERE r.event_id=?1 ORDER BY r.position, r.points DESC",
     ) {
         Ok(s) => s,
         Err(e) => return (500, json!({"error": format!("{e}")})),
@@ -6839,6 +6856,8 @@ fn sports_results_list(state: &AppState, url: &str) -> (u16, Value) {
                 "position": r.get::<_, Option<i64>>(3)?,
                 "points": r.get::<_, Option<i64>>(4)?,
                 "note": r.get::<_, Option<String>>(5)?,
+                "club_id": r.get::<_, Option<i64>>(6)?,
+                "club": r.get::<_, Option<String>>(7)?,
             }))
         })
         .map(|m| m.filter_map(|r| r.ok()).collect())
@@ -6858,7 +6877,7 @@ fn sports_result_create(state: &AppState, body: &str) -> (u16, Value) {
     };
     let conn = state.conn.lock().unwrap();
     match conn.execute(
-        "INSERT INTO sports_results(event_id, participant, house, position, points, note) VALUES(?1,?2,?3,?4,?5,?6)",
+        "INSERT INTO sports_results(event_id, participant, house, position, points, note, club_id) VALUES(?1,?2,?3,?4,?5,?6,?7)",
         params![
             event_id,
             participant,
@@ -6866,6 +6885,7 @@ fn sports_result_create(state: &AppState, body: &str) -> (u16, Value) {
             v["position"].as_i64(),
             v["points"].as_i64().unwrap_or(0),
             v["note"].as_str().filter(|s| !s.is_empty()),
+            v["club_id"].as_i64(),
         ],
     ) {
         Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
@@ -6879,17 +6899,24 @@ fn sports_result_delete(state: &AppState, id: i64) -> (u16, Value) {
     (200, json!({"ok": true}))
 }
 
-/// Leaderboard: total points per house, and the top participants.
+/// Leaderboard: total points per CLUB (inter-club standings), and top participants.
 fn sports_leaderboard(state: &AppState) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
-    let houses: Vec<Value> = conn
+    let clubs: Vec<Value> = conn
         .prepare(
-            "SELECT house, SUM(points) AS pts, COUNT(*) AS n FROM sports_results
-             WHERE house IS NOT NULL AND house != '' GROUP BY house ORDER BY pts DESC",
+            "SELECT c.id, c.name, c.logo, SUM(r.points) AS pts, COUNT(*) AS n
+             FROM sports_results r JOIN clubs c ON c.id = r.club_id
+             WHERE r.club_id IS NOT NULL GROUP BY c.id ORDER BY pts DESC",
         )
         .and_then(|mut s| {
             s.query_map([], |r| {
-                Ok(json!({"house": r.get::<_, String>(0)?, "points": r.get::<_, i64>(1)?, "entries": r.get::<_, i64>(2)?}))
+                Ok(json!({
+                    "club_id": r.get::<_, i64>(0)?,
+                    "club": r.get::<_, Option<String>>(1)?,
+                    "logo": r.get::<_, Option<String>>(2)?,
+                    "points": r.get::<_, i64>(3)?,
+                    "entries": r.get::<_, i64>(4)?,
+                }))
             })
             .map(|m| m.filter_map(|x| x.ok()).collect())
         })
@@ -6906,7 +6933,7 @@ fn sports_leaderboard(state: &AppState) -> (u16, Value) {
             .map(|m| m.filter_map(|x| x.ok()).collect())
         })
         .unwrap_or_default();
-    (200, json!({"houses": houses, "participants": participants}))
+    (200, json!({"clubs": clubs, "participants": participants}))
 }
 
 // ---- Clubs OS: clubs + member roster ----

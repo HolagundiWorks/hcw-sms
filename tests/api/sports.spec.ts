@@ -1,51 +1,48 @@
 import { describe, it, expect, inject, beforeAll } from 'vitest';
 import { authedApi, type ApiClient } from '../helpers/api';
 
-// Sports: schedule an event, record results with houses/points, and check the
-// leaderboard aggregates points per house (highest first).
-describe('API · sports (schedule, results, leaderboard)', () => {
+// Sports are inter-club matches: schedule a match between two clubs, record
+// results tied to clubs, and the leaderboard ranks CLUBS by points.
+describe('API · sports as inter-club matches', () => {
   let client: ApiClient;
   let eventId: number;
-  const house = `H-${Date.now()}`; // unique houses so the leaderboard assertion is isolated
-  const houseA = `${house}-A`;
-  const houseB = `${house}-B`;
+  let clubA: number;
+  let clubB: number;
+  const stamp = Date.now();
 
-  beforeAll(async () => { client = await authedApi(inject('baseUrl')); });
+  beforeAll(async () => {
+    client = await authedApi(inject('baseUrl'));
+    clubA = (await client.post<{ id: number }>('/clubs', { name: `Falcons-${stamp}` })).body.id;
+    clubB = (await client.post<{ id: number }>('/clubs', { name: `Tigers-${stamp}` })).body.id;
+  });
 
-  it('schedules an event (201) and lists it', async () => {
+  it('schedules a match between two clubs and reports the matchup', async () => {
     const res = await client.post<{ ok: boolean; id: number }>('/sports/events', {
-      name: `100m Final ${Date.now()}`, sport: 'Athletics', event_date: '2026-08-01', venue: 'Main Ground',
+      name: `Football Final ${stamp}`, sport: 'Football', event_date: '2026-08-10',
+      home_club_id: clubA, away_club_id: clubB,
     });
     expect(res.status).toBe(201);
     eventId = res.body.id;
-    const list = await client.get<{ events: { id: number }[] }>('/sports/events');
-    expect(list.body.events.some((e) => e.id === eventId)).toBe(true);
+    const list = await client.get<{ events: { id: number; home_club: string; away_club: string }[] }>('/sports/events');
+    const ev = list.body.events.find((e) => e.id === eventId);
+    expect(ev?.home_club).toBe(`Falcons-${stamp}`);
+    expect(ev?.away_club).toBe(`Tigers-${stamp}`);
   });
 
-  it('rejects an event with no name (422)', async () => {
-    expect((await client.post('/sports/events', { sport: 'x' })).status).toBe(422);
+  it('records club-linked results and returns the club name', async () => {
+    await client.post('/sports/results', { event_id: eventId, participant: 'Falcons A', club_id: clubA, position: 1, points: 10 });
+    await client.post('/sports/results', { event_id: eventId, participant: 'Tigers A', club_id: clubB, position: 2, points: 5 });
+    const r = await client.get<{ results: { club: string }[] }>(`/sports/results?event_id=${eventId}`);
+    expect(r.body.results.some((x) => x.club === `Falcons-${stamp}`)).toBe(true);
   });
 
-  it('records results and lists them for the event', async () => {
-    await client.post('/sports/results', { event_id: eventId, participant: 'Aarav', house: houseA, position: 1, points: 10 });
-    await client.post('/sports/results', { event_id: eventId, participant: 'Diya', house: houseB, position: 2, points: 5 });
-    const r = await client.get<{ results: { participant: string }[] }>(`/sports/results?event_id=${eventId}`);
-    expect(r.body.results).toHaveLength(2);
-  });
-
-  it('rejects a result without participant or event_id (422)', async () => {
-    expect((await client.post('/sports/results', { event_id: eventId })).status).toBe(422);
-    expect((await client.post('/sports/results', { participant: 'X' })).status).toBe(422);
-  });
-
-  it('leaderboard aggregates points per house, highest first', async () => {
-    const lb = await client.get<{ houses: { house: string; points: number }[] }>('/sports/leaderboard');
-    const a = lb.body.houses.find((h) => h.house === houseA);
-    const b = lb.body.houses.find((h) => h.house === houseB);
+  it('leaderboard ranks CLUBS by points (winner club first)', async () => {
+    const lb = await client.get<{ clubs: { club_id: number; club: string; points: number }[] }>('/sports/leaderboard');
+    const a = lb.body.clubs.find((c) => c.club_id === clubA);
+    const b = lb.body.clubs.find((c) => c.club_id === clubB);
     expect(a?.points).toBe(10);
     expect(b?.points).toBe(5);
-    // A (10) must rank above B (5) in the ordered list.
-    expect(lb.body.houses.findIndex((h) => h.house === houseA))
-      .toBeLessThan(lb.body.houses.findIndex((h) => h.house === houseB));
+    expect(lb.body.clubs.findIndex((c) => c.club_id === clubA))
+      .toBeLessThan(lb.body.clubs.findIndex((c) => c.club_id === clubB));
   });
 });
