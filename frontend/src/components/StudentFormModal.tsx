@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   Button,
   Checkbox,
@@ -8,222 +8,197 @@ import {
   Select,
   SimpleGrid,
   Stack,
+  Tabs,
   Text,
   TextInput,
   Textarea,
 } from '@mantine/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { BadgeCheck, GraduationCap, HeartPulse, Users } from 'lucide-react';
 import type { StudentDetail, StudentFormData } from '../api/client';
 import { createStudent, updateStudent } from '../api/client';
 import { useAuth } from '../stores/auth';
+import { ImageUpload } from './ImageUpload';
 
 interface Props {
   onClose: () => void;
   initial?: StudentDetail | null;
 }
 
+type FormState = Record<string, string | boolean | null | undefined>;
+
+const GENDERS = ['Male', 'Female', 'Other'];
+const CATEGORIES = ['General', 'OBC', 'SC', 'ST', 'EWS'];
 const RELATIONS = ['Father', 'Mother', 'Guardian', 'Grandparent', 'Sibling', 'Other'];
+const BOARDS = ['CBSE', 'ICSE', 'State Board', 'IGCSE', 'IB', 'Other'];
+const VERIFY = ['Pending', 'Submitted', 'Verified', 'Discrepancy'];
+const LIFECYCLE = ['Inquiry', 'Applied', 'Admitted', 'Active', 'On Leave', 'Suspended', 'Transfer Requested', 'Graduated', 'Alumni'];
+const BLOOD = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
 
 export function StudentFormModal({ onClose, initial }: Props) {
   const token = useAuth((s) => s.token)!;
   const qc = useQueryClient();
   const isEdit = !!initial;
 
-  const [firstName, setFirstName] = useState(initial?.first_name ?? '');
-  const [middleName, setMiddleName] = useState(initial?.middle_name ?? '');
-  const [lastName, setLastName] = useState(initial?.last_name ?? '');
-  const [gender, setGender] = useState<string | null>(initial?.gender ?? null);
-  const [birthdate, setBirthdate] = useState(initial?.birthdate ?? '');
-  const [email, setEmail] = useState(initial?.email ?? '');
-  const [phone, setPhone] = useState(initial?.phone ?? '');
-  const [altId, setAltId] = useState(initial?.alt_id ?? '');
-  const [enrolled, setEnrolled] = useState(initial?.enrolled ?? false);
-  const [guardianName, setGuardianName] = useState(initial?.guardian_name ?? '');
-  const [guardianPhone, setGuardianPhone] = useState(initial?.guardian_phone ?? '');
-  const [guardianRelation, setGuardianRelation] = useState<string | null>(initial?.guardian_relation ?? null);
-  const [address, setAddress] = useState(initial?.address ?? '');
-  const [fatherName, setFatherName] = useState(initial?.father_name ?? '');
-  const [motherName, setMotherName] = useState(initial?.mother_name ?? '');
-  const [bloodGroup, setBloodGroup] = useState<string | null>(initial?.blood_group ?? null);
-  const [admissionDate, setAdmissionDate] = useState(initial?.admission_date ?? '');
-  const [nationality, setNationality] = useState(initial?.nationality ?? '');
-  const [category, setCategory] = useState(initial?.category ?? '');
-  const [emergencyContact, setEmergencyContact] = useState(initial?.emergency_contact ?? '');
-  const [medicalNotes, setMedicalNotes] = useState(initial?.medical_notes ?? '');
+  const [f, setF] = useState<FormState>(() =>
+    initial
+      ? ({ ...(initial as unknown as FormState) })
+      : ({ enrolled: false, status: 'Active', nationality: 'Indian', verification_status: 'Pending' }),
+  );
+  const up = (k: string, v: string | boolean | null) => setF((s) => ({ ...s, [k]: v }));
 
-  useEffect(() => {
-    if (initial) {
-      setFirstName(initial.first_name ?? '');
-      setMiddleName(initial.middle_name ?? '');
-      setLastName(initial.last_name ?? '');
-      setGender(initial.gender ?? null);
-      setBirthdate(initial.birthdate ?? '');
-      setEmail(initial.email ?? '');
-      setPhone(initial.phone ?? '');
-      setAltId(initial.alt_id ?? '');
-      setEnrolled(initial.enrolled ?? false);
-      setGuardianName(initial.guardian_name ?? '');
-      setGuardianPhone(initial.guardian_phone ?? '');
-      setGuardianRelation(initial.guardian_relation ?? null);
-      setAddress(initial.address ?? '');
-      setFatherName(initial.father_name ?? '');
-      setMotherName(initial.mother_name ?? '');
-      setBloodGroup(initial.blood_group ?? null);
-      setAdmissionDate(initial.admission_date ?? '');
-      setNationality(initial.nationality ?? '');
-      setCategory(initial.category ?? '');
-      setEmergencyContact(initial.emergency_contact ?? '');
-      setMedicalNotes(initial.medical_notes ?? '');
+  // Plain helpers (return elements, not components → no focus loss on re-render).
+  const txt = (label: string, key: string, o?: { placeholder?: string; type?: string }): ReactNode => (
+    <TextInput label={label} placeholder={o?.placeholder} type={o?.type} value={(f[key] as string) ?? ''} onChange={(e) => up(key, e.currentTarget.value)} data-testid={`student-${key}`} />
+  );
+  const sel = (label: string, key: string, data: string[], clearable = true): ReactNode => (
+    <Select label={label} data={data} value={(f[key] as string) ?? null} onChange={(v) => up(key, v)} clearable={clearable} searchable allowDeselect={!clearable ? false : undefined} />
+  );
+
+  const payload = (): StudentFormData => {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(f)) {
+      if (k === 'id') continue;
+      out[k] = v === '' ? undefined : v;
     }
-  }, [initial]);
-
-  const payload = (): StudentFormData => ({
-    first_name: firstName,
-    middle_name: middleName || undefined,
-    last_name: lastName,
-    gender: gender || undefined,
-    birthdate: birthdate || undefined,
-    email: email || undefined,
-    phone: phone || undefined,
-    alt_id: altId || undefined,
-    enrolled,
-    guardian_name: guardianName || undefined,
-    guardian_phone: guardianPhone || undefined,
-    guardian_relation: guardianRelation || undefined,
-    address: address || undefined,
-    father_name: fatherName || undefined,
-    mother_name: motherName || undefined,
-    blood_group: bloodGroup || undefined,
-    admission_date: admissionDate || undefined,
-    nationality: nationality || undefined,
-    category: category || undefined,
-    emergency_contact: emergencyContact || undefined,
-    medical_notes: medicalNotes || undefined,
-  });
+    out.first_name = (f.first_name as string) ?? '';
+    out.last_name = (f.last_name as string) ?? '';
+    out.enrolled = !!f.enrolled;
+    return out as unknown as StudentFormData;
+  };
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['students'] });
     if (isEdit && initial) qc.invalidateQueries({ queryKey: ['student', initial.id] });
   };
-
-  const create = useMutation({
-    mutationFn: () => createStudent(token, payload()),
-    onSuccess: () => { invalidate(); onClose(); },
-  });
-
-  const update = useMutation({
-    mutationFn: () => updateStudent(token, initial!.id, payload()),
-    onSuccess: () => { invalidate(); onClose(); },
-  });
-
+  const create = useMutation({ mutationFn: () => createStudent(token, payload()), onSuccess: () => { invalidate(); onClose(); } });
+  const update = useMutation({ mutationFn: () => updateStudent(token, initial!.id, payload()), onSuccess: () => { invalidate(); onClose(); } });
   const save = () => (isEdit ? update.mutate() : create.mutate());
   const busy = create.isPending || update.isPending;
-  const canSave = firstName.trim() !== '' && lastName.trim() !== '';
+  const canSave = ((f.first_name as string) ?? '').trim() !== '' && ((f.last_name as string) ?? '').trim() !== '';
 
   return (
-    <Modal
-      opened
-      onClose={onClose}
-      title={isEdit ? `Edit — ${initial?.first_name} ${initial?.last_name}` : 'Admit New Student'}
-      centered
-      size="lg"
-      styles={{ body: { overflowY: 'auto', maxHeight: '75vh' } }}
-    >
-      <Stack gap="md">
-        {/* Name */}
-        <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
-          <TextInput label="First name" placeholder="First" value={firstName} onChange={(e) => setFirstName(e.currentTarget.value)} required data-testid="student-first-name-input" />
-          <TextInput label="Middle name" placeholder="Middle" value={middleName} onChange={(e) => setMiddleName(e.currentTarget.value)} data-testid="student-middle-name-input" />
-          <TextInput label="Last name" placeholder="Last" value={lastName} onChange={(e) => setLastName(e.currentTarget.value)} required data-testid="student-last-name-input" />
-        </SimpleGrid>
+    <Modal opened onClose={onClose} title={isEdit ? `Edit — ${initial?.first_name} ${initial?.last_name}` : 'Admit New Student'} centered size="xl" styles={{ body: { maxHeight: '78vh', overflowY: 'auto' } }}>
+      <Tabs defaultValue="identity">
+        <Tabs.List mb="md">
+          <Tabs.Tab value="identity" leftSection={<BadgeCheck size={14} />}>Identity</Tabs.Tab>
+          <Tabs.Tab value="parents" leftSection={<Users size={14} />}>Parents</Tabs.Tab>
+          <Tabs.Tab value="admission" leftSection={<GraduationCap size={14} />}>Admission</Tabs.Tab>
+          <Tabs.Tab value="health" leftSection={<HeartPulse size={14} />}>Health</Tabs.Tab>
+        </Tabs.List>
 
-        {/* Demographics */}
-        <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
-          <Select
-            label="Gender"
-            placeholder="Select…"
-            data={['Male', 'Female', 'Other']}
-            value={gender}
-            onChange={setGender}
-            clearable
-          />
-          <TextInput
-            type="date"
-            label="Date of birth"
-            value={birthdate}
-            onChange={(e) => setBirthdate(e.currentTarget.value)}
-          />
-          <TextInput
-            label="Admission / Roll No"
-            placeholder="ALT-001"
-            value={altId}
-            onChange={(e) => setAltId(e.currentTarget.value)}
-          />
-        </SimpleGrid>
+        {/* ── Identity (CBSE-mandatory) ── */}
+        <Tabs.Panel value="identity">
+          <Stack gap="sm">
+            <Group align="flex-start" gap="lg" wrap="nowrap">
+              <ImageUpload label="Photograph" guideline="Passport photo, ~300×400 px, JPEG" value={(f.photo as string) ?? null} onChange={(v) => up('photo', v)} maxDim={400} output="jpeg" height={96} />
+              <div style={{ flex: 1 }}>
+                <SimpleGrid cols={3} spacing="sm">
+                  {txt('First name', 'first_name')}
+                  {txt('Middle name', 'middle_name')}
+                  {txt('Last name', 'last_name')}
+                </SimpleGrid>
+              </div>
+            </Group>
+            <SimpleGrid cols={{ base: 1, sm: 4 }} spacing="sm">
+              {sel('Gender', 'gender', GENDERS)}
+              {txt('Date of birth', 'birthdate', { type: 'date' })}
+              {sel('Blood group', 'blood_group', BLOOD)}
+              {sel('Category', 'category', CATEGORIES)}
+            </SimpleGrid>
+            <Divider label="Government / board IDs" labelPosition="left" />
+            <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
+              {txt('Admission / Roll No', 'alt_id', { placeholder: 'ADM-001' })}
+              {txt('APAAR ID (Academic ID)', 'apaar_id')}
+              {txt('PEN (if applicable)', 'pen')}
+              {txt('Aadhaar number', 'aadhaar')}
+              {txt('Nationality', 'nationality')}
+              {txt('Religion', 'religion')}
+              {txt('Mother tongue', 'mother_tongue')}
+              {txt('Email', 'email', { type: 'email' })}
+              {txt('Mobile', 'phone')}
+            </SimpleGrid>
+            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+              <Textarea label="Residential address" autosize minRows={2} value={(f.address as string) ?? ''} onChange={(e) => up('address', e.currentTarget.value)} />
+              <Textarea label="Permanent address" autosize minRows={2} value={(f.permanent_address as string) ?? ''} onChange={(e) => up('permanent_address', e.currentTarget.value)} />
+            </SimpleGrid>
+          </Stack>
+        </Tabs.Panel>
 
-        {/* Contact */}
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
-          <TextInput label="Email" type="email" placeholder="student@school.edu" value={email} onChange={(e) => setEmail(e.currentTarget.value)} data-testid="student-email-input" />
-          <TextInput label="Phone" placeholder="+91 90000 XXXXX" value={phone} onChange={(e) => setPhone(e.currentTarget.value)} data-testid="student-phone-input" />
-        </SimpleGrid>
+        {/* ── Parents / Guardian ── */}
+        <Tabs.Panel value="parents">
+          <Stack gap="sm">
+            <Divider label="Father" labelPosition="left" />
+            <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
+              {txt('Name', 'father_name')}
+              {txt('Occupation', 'father_occupation')}
+              {txt('Employer', 'father_employer')}
+              {txt('Annual income', 'father_income')}
+              {txt('Phone', 'father_phone')}
+              {txt('Email', 'father_email', { type: 'email' })}
+              {txt('Aadhaar', 'father_aadhaar')}
+            </SimpleGrid>
+            <Divider label="Mother" labelPosition="left" />
+            <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
+              {txt('Name', 'mother_name')}
+              {txt('Occupation', 'mother_occupation')}
+              {txt('Employer', 'mother_employer')}
+              {txt('Annual income', 'mother_income')}
+              {txt('Phone', 'mother_phone')}
+              {txt('Email', 'mother_email', { type: 'email' })}
+              {txt('Aadhaar', 'mother_aadhaar')}
+            </SimpleGrid>
+            <Divider label="Guardian (if applicable)" labelPosition="left" />
+            <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
+              {txt('Name', 'guardian_name')}
+              {sel('Relationship', 'guardian_relation', RELATIONS)}
+              {txt('Phone', 'guardian_phone')}
+              {txt('Email', 'guardian_email', { type: 'email' })}
+              {txt('Aadhaar', 'guardian_aadhaar')}
+            </SimpleGrid>
+          </Stack>
+        </Tabs.Panel>
 
-        <Divider label="Guardian" labelPosition="left" />
+        {/* ── Admission & lifecycle ── */}
+        <Tabs.Panel value="admission">
+          <Stack gap="sm">
+            <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
+              {txt('Admission date', 'admission_date', { type: 'date' })}
+              {txt('Admission class', 'admission_class', { placeholder: 'e.g. Class 8' })}
+              {sel('Document verification', 'verification_status', VERIFY, false)}
+              {txt('Previous school', 'previous_school')}
+              {sel('Previous board', 'previous_board', BOARDS)}
+              {txt('Transfer Certificate No.', 'tc_number')}
+              {txt('Migration Certificate No.', 'migration_number')}
+              {sel('Lifecycle status', 'status', LIFECYCLE, false)}
+            </SimpleGrid>
+            <Checkbox label="Mark as enrolled (counts toward class strength)" checked={!!f.enrolled} onChange={(e) => up('enrolled', e.currentTarget.checked)} />
+          </Stack>
+        </Tabs.Panel>
 
-        <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
-          <TextInput label="Guardian name" placeholder="Full name" value={guardianName} onChange={(e) => setGuardianName(e.currentTarget.value)} />
-          <TextInput label="Guardian phone" placeholder="+91 90000 XXXXX" value={guardianPhone} onChange={(e) => setGuardianPhone(e.currentTarget.value)} />
-          <Select
-            label="Relation"
-            placeholder="Select…"
-            data={RELATIONS}
-            value={guardianRelation}
-            onChange={setGuardianRelation}
-            clearable
-          />
-        </SimpleGrid>
+        {/* ── Health ── */}
+        <Tabs.Panel value="health">
+          <Stack gap="sm">
+            <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
+              {txt('Emergency contact', 'emergency_contact', { placeholder: '+91 90000 XXXXX' })}
+              {sel('Blood group', 'blood_group', BLOOD)}
+            </SimpleGrid>
+            <Textarea label="Medical conditions / allergies / accommodations" autosize minRows={3} value={(f.medical_notes as string) ?? ''} onChange={(e) => up('medical_notes', e.currentTarget.value)} />
+          </Stack>
+        </Tabs.Panel>
+      </Tabs>
 
-        <Textarea
-          label="Address"
-          placeholder="Home address"
-          value={address}
-          onChange={(e) => setAddress(e.currentTarget.value)}
-          autosize
-          minRows={2}
-        />
-
-        <Divider label="Parents & additional details" labelPosition="left" />
-        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
-          <TextInput label="Father's name" value={fatherName} onChange={(e) => setFatherName(e.currentTarget.value)} />
-          <TextInput label="Mother's name" value={motherName} onChange={(e) => setMotherName(e.currentTarget.value)} />
-          <TextInput label="Emergency contact" placeholder="+91 90000 XXXXX" value={emergencyContact} onChange={(e) => setEmergencyContact(e.currentTarget.value)} />
-          <Select label="Blood group" placeholder="Select…" data={['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']} value={bloodGroup} onChange={setBloodGroup} clearable />
-        </SimpleGrid>
-        <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="sm">
-          <TextInput type="date" label="Admission date" value={admissionDate} onChange={(e) => setAdmissionDate(e.currentTarget.value)} />
-          <TextInput label="Nationality" placeholder="Indian" value={nationality} onChange={(e) => setNationality(e.currentTarget.value)} />
-          <TextInput label="Category" placeholder="General / OBC / SC / ST" value={category} onChange={(e) => setCategory(e.currentTarget.value)} />
-        </SimpleGrid>
-        <Textarea label="Medical notes" placeholder="Allergies, conditions, medication…" value={medicalNotes} onChange={(e) => setMedicalNotes(e.currentTarget.value)} autosize minRows={2} />
-
-        <Checkbox
-          label="Mark as enrolled"
-          checked={enrolled}
-          onChange={(e) => setEnrolled(e.currentTarget.checked)}
-        />
-
-        <Group justify="flex-end" mt="sm">
-          <Button variant="subtle" onClick={onClose} data-testid="student-form-cancel-button">Cancel</Button>
-          <Button onClick={save} loading={busy} disabled={!canSave} data-testid="student-form-save-button">
-            {isEdit ? 'Save changes' : 'Admit student'}
-          </Button>
-        </Group>
-
-        {(create.isError || update.isError) && (
-          <Text size="xs" c="red" ta="center">
-            {(create.error as Error)?.message ?? (update.error as Error)?.message ?? 'Save failed'}
-          </Text>
-        )}
-      </Stack>
+      <Group justify="flex-end" mt="md">
+        <Button variant="subtle" onClick={onClose} data-testid="student-form-cancel-button">Cancel</Button>
+        <Button onClick={save} loading={busy} disabled={!canSave} data-testid="student-form-save-button">
+          {isEdit ? 'Save changes' : 'Admit student'}
+        </Button>
+      </Group>
+      {(create.isError || update.isError) && (
+        <Text size="xs" c="red" ta="center" mt="xs">
+          {(create.error as Error)?.message ?? (update.error as Error)?.message ?? 'Save failed'}
+        </Text>
+      )}
     </Modal>
   );
 }

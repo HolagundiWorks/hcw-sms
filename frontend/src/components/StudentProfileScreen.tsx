@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Container,
+  Divider,
   Group,
   SimpleGrid,
   Stack,
@@ -16,128 +17,147 @@ import { ArrowLeft, Pencil } from 'lucide-react';
 import dayjs from 'dayjs';
 import { useStudent } from '../hooks/useStudent';
 import { initials } from '../types';
+import type { StudentDetail } from '../api/client';
 import { StudentFormModal } from './StudentFormModal';
 
 function Field({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <Text size="xs" c="dimmed" fw={600} tt="uppercase">
-        {label}
-      </Text>
+      <Text size="xs" c="dimmed" fw={600} tt="uppercase">{label}</Text>
       <Text>{value || '—'}</Text>
     </div>
   );
 }
 
-const SECONDARY_TABS = ['attendance', 'fees', 'academics', 'documents'] as const;
+const STATUS_COLOR: Record<string, string> = {
+  Active: 'mint', Admitted: 'mint', Applied: 'sky', Inquiry: 'gray',
+  'On Leave': 'yellow', Suspended: 'red', 'Transfer Requested': 'orange',
+  Graduated: 'blue', Alumni: 'grape',
+};
+
+function PersonBlock({ label, p }: { label: string; p: { name?: string | null; occupation?: string | null; employer?: string | null; income?: string | null; phone?: string | null; email?: string | null; aadhaar?: string | null; relation?: string | null } }) {
+  return (
+    <div>
+      <Divider label={label} labelPosition="left" mb="sm" />
+      <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
+        <Field label="Name" value={p.name} />
+        {p.relation !== undefined && <Field label="Relationship" value={p.relation} />}
+        {p.occupation !== undefined && <Field label="Occupation" value={p.occupation} />}
+        {p.employer !== undefined && <Field label="Employer" value={p.employer} />}
+        {p.income !== undefined && <Field label="Annual income" value={p.income} />}
+        <Field label="Phone" value={p.phone} />
+        <Field label="Email" value={p.email} />
+        <Field label="Aadhaar" value={p.aadhaar} />
+      </SimpleGrid>
+    </div>
+  );
+}
 
 export function StudentProfileScreen({ id, onBack }: { id: number; onBack: () => void }) {
-  const { data: s, isLoading } = useStudent(id);
+  const { data: s, isLoading } = useStudent(id) as { data: StudentDetail | undefined; isLoading: boolean };
   const [editing, setEditing] = useState(false);
-  const name = s
-    ? `${s.first_name} ${s.middle_name ? s.middle_name + ' ' : ''}${s.last_name}`
-        .replace(/\s+/g, ' ')
-        .trim()
-    : '';
+  const name = s ? `${s.first_name} ${s.middle_name ? s.middle_name + ' ' : ''}${s.last_name}`.replace(/\s+/g, ' ').trim() : '';
   const admission = s?.alt_id || `ID ${id}`;
+  const status = s?.status || 'Active';
 
   return (
     <Container size="xl" px={0}>
       <Stack gap="md">
-        <Button
-          variant="subtle"
-          color="gray"
-          size="compact-sm"
-          leftSection={<ArrowLeft size={16} />}
-          onClick={onBack}
-          w="fit-content"
-        >
+        <Button variant="subtle" color="gray" size="compact-sm" leftSection={<ArrowLeft size={16} />} onClick={onBack} w="fit-content">
           Back to students
         </Button>
 
-        {/* Top-left context + top-right alert chips (guide §7). */}
         <Card>
           <Group justify="space-between" align="flex-start" wrap="nowrap">
             <Group wrap="nowrap" gap="md">
-              <Avatar size={56} radius="xl" color="brand" variant="light">
+              <Avatar size={64} radius="xl" color="brand" variant="light" src={s?.photo ?? undefined}>
                 {initials(name || 'S')}
               </Avatar>
               <div>
                 <Title order={3}>{isLoading ? 'Loading…' : name}</Title>
-                <Text c="dimmed" size="sm">
-                  {(s?.gender ?? '—') + ' · Admission ' + admission}
-                </Text>
+                <Text c="dimmed" size="sm">{(s?.gender ?? '—') + ' · Admission ' + admission}{s?.admission_class ? ` · ${s.admission_class}` : ''}</Text>
               </div>
             </Group>
             <Group gap="xs">
-              {s && !s.email && (
-                <Badge color="peach" variant="light">
-                  Missing email
-                </Badge>
-              )}
-              {s && !s.phone && (
-                <Badge color="yellow" variant="light">
-                  Missing phone
-                </Badge>
-              )}
-              <Badge color="mint" variant="light">
-                Active
-              </Badge>
-              <Button
-                size="xs"
-                variant="light"
-                leftSection={<Pencil size={13} />}
-                onClick={() => setEditing(true)}
-                disabled={!s}
-              >
-                Edit
-              </Button>
+              {s && !s.aadhaar && <Badge color="yellow" variant="light">Aadhaar missing</Badge>}
+              {s && !s.apaar_id && <Badge color="peach" variant="light">APAAR missing</Badge>}
+              <Badge color={STATUS_COLOR[status] ?? 'gray'} variant="light" data-testid="student-status">{status}</Badge>
+              <Button size="xs" variant="light" leftSection={<Pencil size={13} />} onClick={() => setEditing(true)} disabled={!s}>Edit</Button>
             </Group>
           </Group>
         </Card>
 
         <Card p={0}>
-          <Tabs defaultValue="profile">
+          <Tabs defaultValue="identity">
             <Tabs.List>
-              <Tabs.Tab value="profile">Profile</Tabs.Tab>
-              <Tabs.Tab value="attendance">Attendance</Tabs.Tab>
-              <Tabs.Tab value="fees">Fees</Tabs.Tab>
+              <Tabs.Tab value="identity">Identity</Tabs.Tab>
+              <Tabs.Tab value="parents">Parents</Tabs.Tab>
+              <Tabs.Tab value="admission">Admission</Tabs.Tab>
+              <Tabs.Tab value="health">Health</Tabs.Tab>
               <Tabs.Tab value="academics">Academics</Tabs.Tab>
+              <Tabs.Tab value="cocurricular">Co-curricular</Tabs.Tab>
               <Tabs.Tab value="documents">Documents</Tabs.Tab>
             </Tabs.List>
 
-            <Tabs.Panel value="profile" p="lg">
+            <Tabs.Panel value="identity" p="lg">
               <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
                 <Field label="Full name" value={name} />
-                <Field label="Email" value={s?.email} />
-                <Field label="Phone" value={s?.phone} />
                 <Field label="Gender" value={s?.gender} />
-                <Field
-                  label="Date of birth"
-                  value={s?.birthdate ? dayjs(s.birthdate).format('D MMM YYYY') : null}
-                />
-                <Field label="Admission ID" value={admission} />
-                <Field label="Guardian" value={s?.guardian_name} />
-                <Field label="Guardian phone" value={s?.guardian_phone} />
-                <Field label="Relation" value={s?.guardian_relation} />
-                {s?.address && <Field label="Address" value={s.address} />}
+                <Field label="Date of birth" value={s?.birthdate ? dayjs(s.birthdate).format('D MMM YYYY') : null} />
+                <Field label="Blood group" value={s?.blood_group} />
+                <Field label="Category" value={s?.category} />
+                <Field label="Nationality" value={s?.nationality} />
+                <Field label="Religion" value={s?.religion} />
+                <Field label="Mother tongue" value={s?.mother_tongue} />
+                <Field label="Admission / Roll No" value={s?.alt_id} />
+                <Field label="APAAR ID" value={s?.apaar_id} />
+                <Field label="PEN" value={s?.pen} />
+                <Field label="Aadhaar" value={s?.aadhaar} />
+                <Field label="Email" value={s?.email} />
+                <Field label="Mobile" value={s?.phone} />
+                <Field label="Residential address" value={s?.address} />
+                <Field label="Permanent address" value={s?.permanent_address} />
               </SimpleGrid>
             </Tabs.Panel>
 
-            {SECONDARY_TABS.map((t) => (
-              <Tabs.Panel key={t} value={t} p="lg">
-                <Text c="dimmed" ta="center" py="xl">
-                  No {t} records yet.
-                </Text>
-              </Tabs.Panel>
-            ))}
+            <Tabs.Panel value="parents" p="lg">
+              <Stack gap="lg">
+                <PersonBlock label="Father" p={{ name: s?.father_name, occupation: s?.father_occupation, employer: s?.father_employer, income: s?.father_income, phone: s?.father_phone, email: s?.father_email, aadhaar: s?.father_aadhaar }} />
+                <PersonBlock label="Mother" p={{ name: s?.mother_name, occupation: s?.mother_occupation, employer: s?.mother_employer, income: s?.mother_income, phone: s?.mother_phone, email: s?.mother_email, aadhaar: s?.mother_aadhaar }} />
+                <PersonBlock label="Guardian" p={{ name: s?.guardian_name, relation: s?.guardian_relation, phone: s?.guardian_phone, email: s?.guardian_email, aadhaar: s?.guardian_aadhaar }} />
+              </Stack>
+            </Tabs.Panel>
+
+            <Tabs.Panel value="admission" p="lg">
+              <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
+                <Field label="Admission date" value={s?.admission_date ? dayjs(s.admission_date).format('D MMM YYYY') : null} />
+                <Field label="Admission class" value={s?.admission_class} />
+                <Field label="Lifecycle status" value={status} />
+                <Field label="Previous school" value={s?.previous_school} />
+                <Field label="Previous board" value={s?.previous_board} />
+                <Field label="Document verification" value={s?.verification_status} />
+                <Field label="Transfer Certificate No." value={s?.tc_number} />
+                <Field label="Migration Certificate No." value={s?.migration_number} />
+                <Field label="Enrolled in a class" value={s?.enrolled ? 'Yes' : 'No'} />
+              </SimpleGrid>
+            </Tabs.Panel>
+
+            <Tabs.Panel value="health" p="lg">
+              <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+                <Field label="Blood group" value={s?.blood_group} />
+                <Field label="Emergency contact" value={s?.emergency_contact} />
+                <div style={{ gridColumn: '1 / -1' }}><Field label="Medical conditions / allergies / accommodations" value={s?.medical_notes} /></div>
+              </SimpleGrid>
+            </Tabs.Panel>
+
+            <Tabs.Panel value="academics" p="lg"><Text c="dimmed" ta="center" py="xl">Exam scores, grades and promotion history will appear here.</Text></Tabs.Panel>
+            <Tabs.Panel value="cocurricular" p="lg"><Text c="dimmed" ta="center" py="xl">Club memberships and sports participation will appear here.</Text></Tabs.Panel>
+            <Tabs.Panel value="documents" p="lg"><Text c="dimmed" ta="center" py="xl">Document repository (Birth Certificate, Aadhaar, TC, Migration…) coming in a later phase.</Text></Tabs.Panel>
           </Tabs>
         </Card>
       </Stack>
 
-      {editing && s && (
-        <StudentFormModal initial={s} onClose={() => setEditing(false)} />
-      )}
+      {editing && s && <StudentFormModal initial={s} onClose={() => setEditing(false)} />}
     </Container>
   );
 }

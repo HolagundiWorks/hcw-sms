@@ -132,6 +132,35 @@ export interface StudentDetail extends Student {
   category: string | null;
   emergency_contact: string | null;
   medical_notes: string | null;
+  // CBSE-compliance core (Mandatory layer).
+  apaar_id: string | null;
+  pen: string | null;
+  aadhaar: string | null;
+  religion: string | null;
+  mother_tongue: string | null;
+  permanent_address: string | null;
+  photo: string | null;
+  father_occupation: string | null;
+  father_employer: string | null;
+  father_income: string | null;
+  father_phone: string | null;
+  father_email: string | null;
+  father_aadhaar: string | null;
+  mother_occupation: string | null;
+  mother_employer: string | null;
+  mother_income: string | null;
+  mother_phone: string | null;
+  mother_email: string | null;
+  mother_aadhaar: string | null;
+  guardian_email: string | null;
+  guardian_aadhaar: string | null;
+  admission_class: string | null;
+  previous_school: string | null;
+  previous_board: string | null;
+  tc_number: string | null;
+  migration_number: string | null;
+  verification_status: string | null;
+  status: string | null;
 }
 
 export interface StudentFormData {
@@ -147,15 +176,43 @@ export interface StudentFormData {
   guardian_name?: string;
   guardian_phone?: string;
   guardian_relation?: string;
+  guardian_email?: string;
+  guardian_aadhaar?: string;
   address?: string;
   father_name?: string;
+  father_occupation?: string;
+  father_employer?: string;
+  father_income?: string;
+  father_phone?: string;
+  father_email?: string;
+  father_aadhaar?: string;
   mother_name?: string;
+  mother_occupation?: string;
+  mother_employer?: string;
+  mother_income?: string;
+  mother_phone?: string;
+  mother_email?: string;
+  mother_aadhaar?: string;
   blood_group?: string;
-  admission_date?: string;
   nationality?: string;
+  religion?: string;
   category?: string;
+  mother_tongue?: string;
+  aadhaar?: string;
+  apaar_id?: string;
+  pen?: string;
+  permanent_address?: string;
+  photo?: string | null;
   emergency_contact?: string;
   medical_notes?: string;
+  admission_date?: string;
+  admission_class?: string;
+  previous_school?: string;
+  previous_board?: string;
+  tc_number?: string;
+  migration_number?: string;
+  verification_status?: string;
+  status?: string;
 }
 
 export function createStudent(token: string, data: StudentFormData) {

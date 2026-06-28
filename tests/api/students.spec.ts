@@ -65,6 +65,29 @@ describe('API · students CRUD', () => {
     expect(res.body.student.phone).toBe('+91 90000 99999');
   });
 
+  it('stores CBSE-core fields and a partial update only touches sent fields', async () => {
+    const create = await client.post<{ id: number }>('/students', {
+      first_name: 'Cbse', last_name: `Core-${stamp}`,
+      apaar_id: 'APAAR123456', aadhaar: '1234 5678 9012', pen: 'PEN-99',
+      religion: 'NA', mother_tongue: 'Kannada', permanent_address: 'Perm Addr',
+      father_occupation: 'Engineer', father_income: '900000', status: 'Admitted',
+    });
+    const id = create.body.id;
+    let res = await client.get<{ student: Record<string, string> }>(`/students/${id}`);
+    expect(res.body.student.apaar_id).toBe('APAAR123456');
+    expect(res.body.student.father_occupation).toBe('Engineer');
+    expect(res.body.student.status).toBe('Admitted');
+    expect(res.body.student.permanent_address).toBe('Perm Addr');
+
+    // Partial update (status only) must NOT wipe apaar_id / father_occupation.
+    const upd = await client.post(`/students/${id}/update`, { status: 'Active' });
+    expect(upd.status).toBe(200);
+    res = await client.get<{ student: Record<string, string> }>(`/students/${id}`);
+    expect(res.body.student.status).toBe('Active');
+    expect(res.body.student.apaar_id).toBe('APAAR123456');
+    expect(res.body.student.father_occupation).toBe('Engineer');
+  });
+
   it('stores and returns the richer profile fields', async () => {
     const create = await client.post<{ id: number }>('/students', {
       first_name: 'Rich', last_name: `Fields-${stamp}`,

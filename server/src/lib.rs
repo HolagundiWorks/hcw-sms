@@ -1118,45 +1118,38 @@ fn students_list(state: &AppState, url: &str) -> (u16, Value) {
     }
 }
 
+// All updatable student columns. Used for dynamic create/update/detail so the
+// (large, CBSE-compliance) field set stays maintainable.
+const STUDENT_COLS: &[&str] = &[
+    "first_name", "middle_name", "last_name", "email", "phone", "gender", "birthdate", "alt_id", "enrolled",
+    "guardian_name", "guardian_phone", "guardian_relation", "guardian_email", "guardian_aadhaar", "address",
+    "father_name", "father_occupation", "father_employer", "father_income", "father_phone", "father_email", "father_aadhaar",
+    "mother_name", "mother_occupation", "mother_employer", "mother_income", "mother_phone", "mother_email", "mother_aadhaar",
+    "blood_group", "nationality", "religion", "category", "mother_tongue", "aadhaar", "apaar_id", "pen",
+    "permanent_address", "photo", "emergency_contact", "medical_notes", "card_uid",
+    "admission_date", "admission_class", "previous_school", "previous_board", "tc_number", "migration_number", "verification_status",
+    "status",
+];
+
 fn student_create(state: &AppState, body: &str) -> (u16, Value) {
     let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
-    let first = match v["first_name"].as_str().filter(|s| !s.is_empty()) {
-        Some(n) => n.to_string(),
-        None => return (422, json!({"error": "first_name required"})),
-    };
-    let last = match v["last_name"].as_str().filter(|s| !s.is_empty()) {
-        Some(n) => n.to_string(),
-        None => return (422, json!({"error": "last_name required"})),
-    };
+    if v["first_name"].as_str().filter(|s| !s.is_empty()).is_none() {
+        return (422, json!({"error": "first_name required"}));
+    }
+    if v["last_name"].as_str().filter(|s| !s.is_empty()).is_none() {
+        return (422, json!({"error": "last_name required"}));
+    }
+    // Insert only the columns present in the body (plus the required names).
+    let cols: Vec<&str> = STUDENT_COLS
+        .iter()
+        .copied()
+        .filter(|c| !v[*c].is_null() || *c == "first_name" || *c == "last_name")
+        .collect();
+    let collist = cols.join(", ");
+    let ph: String = (1..=cols.len()).map(|i| format!("?{i}")).collect::<Vec<_>>().join(", ");
+    let vals: Vec<rusqlite::types::Value> = cols.iter().map(|c| json_to_sqlite(&v[*c], c)).collect();
     let conn = state.conn.lock().unwrap();
-    match conn.execute(
-        "INSERT INTO students(first_name, middle_name, last_name, email, phone, gender, birthdate, alt_id, enrolled, guardian_name, guardian_phone, guardian_relation, address,
-         father_name, mother_name, blood_group, admission_date, nationality, category, emergency_contact, medical_notes)
-         VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,?16,?17,?18,?19,?20,?21)",
-        params![
-            first,
-            v["middle_name"].as_str().filter(|s| !s.is_empty()),
-            last,
-            v["email"].as_str().filter(|s| !s.is_empty()),
-            v["phone"].as_str().filter(|s| !s.is_empty()),
-            v["gender"].as_str().filter(|s| !s.is_empty()),
-            v["birthdate"].as_str().filter(|s| !s.is_empty()),
-            v["alt_id"].as_str().filter(|s| !s.is_empty()),
-            v["enrolled"].as_bool().unwrap_or(false) as i64,
-            v["guardian_name"].as_str().filter(|s| !s.is_empty()),
-            v["guardian_phone"].as_str().filter(|s| !s.is_empty()),
-            v["guardian_relation"].as_str().filter(|s| !s.is_empty()),
-            v["address"].as_str().filter(|s| !s.is_empty()),
-            v["father_name"].as_str().filter(|s| !s.is_empty()),
-            v["mother_name"].as_str().filter(|s| !s.is_empty()),
-            v["blood_group"].as_str().filter(|s| !s.is_empty()),
-            v["admission_date"].as_str().filter(|s| !s.is_empty()),
-            v["nationality"].as_str().filter(|s| !s.is_empty()),
-            v["category"].as_str().filter(|s| !s.is_empty()),
-            v["emergency_contact"].as_str().filter(|s| !s.is_empty()),
-            v["medical_notes"].as_str().filter(|s| !s.is_empty()),
-        ],
-    ) {
+    match conn.execute(&format!("INSERT INTO students ({collist}) VALUES ({ph})"), rusqlite::params_from_iter(vals)) {
         Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
         Err(e) => (500, json!({"error": format!("{e}")})),
     }
@@ -1164,39 +1157,17 @@ fn student_create(state: &AppState, body: &str) -> (u16, Value) {
 
 fn student_update(state: &AppState, id: i64, body: &str) -> (u16, Value) {
     let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    // Partial-safe: only touch columns actually present in the body (a missing
+    // key is left unchanged; an explicit "" clears the field).
+    let cols: Vec<&str> = STUDENT_COLS.iter().copied().filter(|c| !v[*c].is_null()).collect();
+    if cols.is_empty() {
+        return (200, json!({"ok": true}));
+    }
+    let set: String = cols.iter().enumerate().map(|(i, c)| format!("{c}=?{}", i + 1)).collect::<Vec<_>>().join(", ");
+    let mut vals: Vec<rusqlite::types::Value> = cols.iter().map(|c| json_to_sqlite(&v[*c], c)).collect();
+    vals.push(rusqlite::types::Value::Integer(id));
     let conn = state.conn.lock().unwrap();
-    match conn.execute(
-        "UPDATE students SET first_name=COALESCE(?1,first_name), middle_name=?2, last_name=COALESCE(?3,last_name),
-         email=?4, phone=?5, gender=?6, birthdate=?7, alt_id=?8, enrolled=COALESCE(?9,enrolled),
-         guardian_name=?10, guardian_phone=?11, guardian_relation=?12, address=?13, card_uid=COALESCE(?14,card_uid),
-         father_name=?15, mother_name=?16, blood_group=?17, admission_date=?18, nationality=?19, category=?20, emergency_contact=?21, medical_notes=?22
-         WHERE id=?23",
-        params![
-            v["first_name"].as_str().filter(|s| !s.is_empty()),
-            v["middle_name"].as_str().map(str::to_string),
-            v["last_name"].as_str().filter(|s| !s.is_empty()),
-            v["email"].as_str().map(str::to_string),
-            v["phone"].as_str().map(str::to_string),
-            v["gender"].as_str().map(str::to_string),
-            v["birthdate"].as_str().map(str::to_string),
-            v["alt_id"].as_str().map(str::to_string),
-            v["enrolled"].as_bool().map(|b| b as i64),
-            v["guardian_name"].as_str().map(str::to_string),
-            v["guardian_phone"].as_str().map(str::to_string),
-            v["guardian_relation"].as_str().map(str::to_string),
-            v["address"].as_str().map(str::to_string),
-            v["card_uid"].as_str().filter(|s| !s.is_empty()),
-            v["father_name"].as_str().map(str::to_string),
-            v["mother_name"].as_str().map(str::to_string),
-            v["blood_group"].as_str().map(str::to_string),
-            v["admission_date"].as_str().map(str::to_string),
-            v["nationality"].as_str().map(str::to_string),
-            v["category"].as_str().map(str::to_string),
-            v["emergency_contact"].as_str().map(str::to_string),
-            v["medical_notes"].as_str().map(str::to_string),
-            id,
-        ],
-    ) {
+    match conn.execute(&format!("UPDATE students SET {set} WHERE id=?{}", cols.len() + 1), rusqlite::params_from_iter(vals)) {
         Ok(0) => (404, json!({"error": "student not found"})),
         Ok(_) => (200, json!({"ok": true})),
         Err(e) => (500, json!({"error": format!("{e}")})),
@@ -1219,39 +1190,22 @@ fn student_by_card(state: &AppState, url: &str) -> (u16, Value) {
 
 fn student_detail(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
-    let r = conn.query_row(
-        "SELECT id, first_name, middle_name, last_name, email, phone, gender, birthdate, alt_id, enrolled,
-                guardian_name, guardian_phone, guardian_relation, address,
-                father_name, mother_name, blood_group, admission_date, nationality, category, emergency_contact, medical_notes
-         FROM students WHERE id = ?1",
-        params![id],
-        |r| {
-            Ok(json!({
-                "id": r.get::<_, i64>(0)?,
-                "first_name": r.get::<_, Option<String>>(1)?,
-                "middle_name": r.get::<_, Option<String>>(2)?,
-                "last_name": r.get::<_, Option<String>>(3)?,
-                "email": r.get::<_, Option<String>>(4)?,
-                "phone": r.get::<_, Option<String>>(5)?,
-                "gender": r.get::<_, Option<String>>(6)?,
-                "birthdate": r.get::<_, Option<String>>(7)?,
-                "alt_id": r.get::<_, Option<String>>(8)?,
-                "enrolled": r.get::<_, Option<i64>>(9)?.unwrap_or(0) == 1,
-                "guardian_name": r.get::<_, Option<String>>(10)?,
-                "guardian_phone": r.get::<_, Option<String>>(11)?,
-                "guardian_relation": r.get::<_, Option<String>>(12)?,
-                "address": r.get::<_, Option<String>>(13)?,
-                "father_name": r.get::<_, Option<String>>(14)?,
-                "mother_name": r.get::<_, Option<String>>(15)?,
-                "blood_group": r.get::<_, Option<String>>(16)?,
-                "admission_date": r.get::<_, Option<String>>(17)?,
-                "nationality": r.get::<_, Option<String>>(18)?,
-                "category": r.get::<_, Option<String>>(19)?,
-                "emergency_contact": r.get::<_, Option<String>>(20)?,
-                "medical_notes": r.get::<_, Option<String>>(21)?,
-            }))
-        },
-    );
+    let collist: String =
+        std::iter::once("id").chain(STUDENT_COLS.iter().copied()).collect::<Vec<_>>().join(", ");
+    let r = conn.query_row(&format!("SELECT {collist} FROM students WHERE id = ?1"), params![id], |row| {
+        let mut obj = serde_json::Map::new();
+        obj.insert("id".into(), json!(row.get::<_, i64>(0)?));
+        for (i, c) in STUDENT_COLS.iter().enumerate() {
+            let val: rusqlite::types::Value = row.get(i + 1)?;
+            if *c == "enrolled" {
+                let n = if let rusqlite::types::Value::Integer(x) = val { x } else { 0 };
+                obj.insert((*c).into(), json!(n == 1));
+            } else {
+                obj.insert((*c).into(), sqlite_to_json(val));
+            }
+        }
+        Ok(Value::Object(obj))
+    });
     match r {
         Ok(s) => (200, json!({"student": s})),
         Err(_) => (404, json!({"error": "student not found"})),
@@ -1781,6 +1735,17 @@ fn migrate_schema(conn: &Connection) {
     let _ = conn.execute("ALTER TABLE students ADD COLUMN category TEXT", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN emergency_contact TEXT", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN medical_notes TEXT", []);
+    // CBSE-compliance core: identity, full parents/guardian, admission, lifecycle.
+    for col in [
+        "apaar_id", "pen", "aadhaar", "religion", "mother_tongue", "permanent_address", "photo",
+        "father_occupation", "father_employer", "father_income", "father_phone", "father_email", "father_aadhaar",
+        "mother_occupation", "mother_employer", "mother_income", "mother_phone", "mother_email", "mother_aadhaar",
+        "guardian_email", "guardian_aadhaar",
+        "admission_class", "previous_school", "previous_board", "tc_number", "migration_number", "verification_status",
+    ] {
+        let _ = conn.execute(&format!("ALTER TABLE students ADD COLUMN {col} TEXT"), []);
+    }
+    let _ = conn.execute("ALTER TABLE students ADD COLUMN status TEXT DEFAULT 'Active'", []);
     let _ = conn.execute("ALTER TABLE users ADD COLUMN role_id INTEGER", []);
     let _ = conn.execute("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 3", []);
 }
