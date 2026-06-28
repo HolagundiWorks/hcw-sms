@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   GraduationCap,
   FileSpreadsheet,
+  Archive,
   Users,
   Building2,
   Banknote,
@@ -318,6 +319,7 @@ export const ribbonTabs: RibbonTab[] = [
           { key: 'compliance-certs', label: 'Certificates & Safety', icon: ShieldCheck, accessLevel: 2 },
           { key: 'board-eligibility', label: 'Board Eligibility', icon: GraduationCap, accessLevel: 2 },
           { key: 'statutory-returns', label: 'OASIS / UDISE', icon: FileSpreadsheet, accessLevel: 2 },
+          { key: 'exam-archive', label: 'Exam Archive', icon: Archive, accessLevel: 2 },
         ],
       },
       {

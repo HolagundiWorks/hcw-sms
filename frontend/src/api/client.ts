@@ -404,6 +404,49 @@ export function fetchStatutoryReport(token: string) {
   return req<StatutoryReport>('/compliance/statutory-report', { token });
 }
 
+// ─── Exam archive + retention ───────────────────────────────────────────────
+export interface ExamArchive {
+  id: number;
+  academic_year: string | null;
+  exam_name: string | null;
+  material_type: string | null;
+  subject: string | null;
+  class_name: string | null;
+  retention_until: string | null;
+  disposed: boolean;
+  disposed_at: string | null;
+  notes: string | null;
+  days_left: number | null;
+  status: 'Retained' | 'Due for disposal' | 'Disposed';
+  has_document: boolean;
+}
+export interface ExamArchiveInput {
+  academic_year: string;
+  exam_name: string;
+  material_type: string;
+  subject?: string;
+  class_name?: string;
+  document?: string;
+  retention_until?: string;
+  notes?: string;
+}
+export function fetchExamArchives(token: string, year?: string) {
+  const q = year ? `?year=${encodeURIComponent(year)}` : '';
+  return req<{ archives: ExamArchive[]; total: number; due: number }>(`/exam-archives${q}`, { token });
+}
+export function fetchExamArchiveDoc(token: string, id: number) {
+  return req<{ archive: { id: number; exam_name: string | null; document: string | null } }>(`/exam-archives/${id}`, { token }).then((r) => r.archive);
+}
+export function addExamArchive(token: string, data: ExamArchiveInput) {
+  return req<{ ok: boolean; id: number }>('/exam-archives', { method: 'POST', token, body: data });
+}
+export function disposeExamArchive(token: string, id: number) {
+  return req<{ ok: boolean }>(`/exam-archives/${id}/dispose`, { method: 'POST', token, body: {} });
+}
+export function deleteExamArchive(token: string, id: number) {
+  return req<{ ok: boolean }>(`/exam-archives/${id}/delete`, { method: 'POST', token, body: {} });
+}
+
 // ─── Letters & Certificates (document generation) ───────────────────────────
 export interface Letter {
   id: number;

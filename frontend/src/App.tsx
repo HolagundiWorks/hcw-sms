@@ -53,6 +53,7 @@ import { ReceiptsScreen } from './components/ReceiptsScreen';
 import { ComplianceCertsScreen } from './components/ComplianceCertsScreen';
 import { BoardEligibilityScreen } from './components/BoardEligibilityScreen';
 import { StatutoryReturnsScreen } from './components/StatutoryReturnsScreen';
+import { ExamArchiveScreen } from './components/ExamArchiveScreen';
 import { RoleDashboard } from './components/RoleDashboard';
 import { Placeholder } from './components/Placeholder';
 
@@ -205,6 +206,8 @@ export function App() {
     screen = <BoardEligibilityScreen onViewStudent={setStudentId} />;
   } else if (active === 'statutory-returns') {
     screen = <StatutoryReturnsScreen />;
+  } else if (active === 'exam-archive') {
+    screen = <ExamArchiveScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'academic-year') {

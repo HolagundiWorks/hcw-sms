@@ -489,6 +489,30 @@ fn dispatch(
     if method == &Method::Get && path == "/compliance/statutory-report" {
         return require_level(state, token, 2, |_| statutory_report(state));
     }
+    // Exam archive + retention tracking.
+    if method == &Method::Get && path == "/exam-archives" {
+        return with_auth(state, token, |_| exam_archives_list(state, url));
+    }
+    if method == &Method::Post && path == "/exam-archives" {
+        return require_level(state, token, 2, |_| exam_archive_add(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/exam-archives/") && path.ends_with("/dispose") {
+        let id_str = &path["/exam-archives/".len()..path.len() - "/dispose".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return require_level(state, token, 1, |uid| exam_archive_dispose(state, id, uid));
+        }
+    }
+    if method == &Method::Post && path.starts_with("/exam-archives/") && path.ends_with("/delete") {
+        let id_str = &path["/exam-archives/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return require_level(state, token, 1, |_| exam_archive_delete(state, id));
+        }
+    }
+    if method == &Method::Get && path.starts_with("/exam-archives/") {
+        if let Ok(id) = path["/exam-archives/".len()..].parse::<i64>() {
+            return with_auth(state, token, |_| exam_archive_get(state, id));
+        }
+    }
     // Compliance certificates (school safety + staff) with expiry tracking.
     if method == &Method::Get && path == "/compliance-certs" {
         return with_auth(state, token, |_| compliance_certs_list(state, url));
@@ -2065,6 +2089,11 @@ fn migrate_schema(conn: &Connection) {
     // Compliance certificates (school safety + staff) with expiry tracking.
     let _ = conn.execute(
         "CREATE TABLE IF NOT EXISTS compliance_certificates(id INTEGER PRIMARY KEY AUTOINCREMENT, scope TEXT, staff_id INTEGER, cert_type TEXT, authority TEXT, reference_no TEXT, issue_date TEXT, expiry_date TEXT, document TEXT, notes TEXT, created_at TEXT DEFAULT (datetime('now')))",
+        [],
+    );
+    // Exam archive with CBSE retention policy (retain till Sept of next AY).
+    let _ = conn.execute(
+        "CREATE TABLE IF NOT EXISTS exam_archives(id INTEGER PRIMARY KEY AUTOINCREMENT, academic_year TEXT, exam_name TEXT, material_type TEXT, subject TEXT, class_name TEXT, document TEXT, retention_until TEXT, disposed INTEGER DEFAULT 0, disposed_at TEXT, notes TEXT, created_at TEXT DEFAULT (datetime('now')))",
         [],
     );
     let _ = conn.execute("ALTER TABLE students ADD COLUMN guardian_name TEXT", []);
@@ -7849,6 +7878,117 @@ fn compliance_cert_save(state: &AppState, body: &str, id: Option<i64>) -> (u16, 
 fn compliance_cert_delete(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let _ = conn.execute("DELETE FROM compliance_certificates WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+// ---- Exam archive with CBSE retention / auto-disposal tracking ----
+
+fn archive_status(disposed: bool, days: Option<i64>) -> &'static str {
+    if disposed {
+        "Disposed"
+    } else {
+        match days {
+            None => "Retained",
+            Some(d) if d < 0 => "Due for disposal",
+            Some(_) => "Retained",
+        }
+    }
+}
+
+fn exam_archives_list(state: &AppState, url: &str) -> (u16, Value) {
+    let year = q_param(url, "year");
+    let conn = state.conn.lock().unwrap();
+    let mut stmt = match conn.prepare(
+        "SELECT id, academic_year, exam_name, material_type, subject, class_name, retention_until, disposed, disposed_at, notes,
+                CASE WHEN retention_until IS NULL OR retention_until='' THEN NULL
+                     ELSE CAST(julianday(retention_until) - julianday('now') AS INTEGER) END AS days_left,
+                CASE WHEN document IS NULL OR document='' THEN 0 ELSE 1 END AS has_doc
+         FROM exam_archives
+         WHERE (?1 IS NULL OR academic_year = ?1)
+         ORDER BY (retention_until IS NULL), retention_until ASC",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = stmt
+        .query_map(params![year], |r| {
+            let disposed = r.get::<_, Option<i64>>(7)?.unwrap_or(0) == 1;
+            let days: Option<i64> = r.get(10)?;
+            Ok(json!({
+                "id": r.get::<_, i64>(0)?,
+                "academic_year": r.get::<_, Option<String>>(1)?,
+                "exam_name": r.get::<_, Option<String>>(2)?,
+                "material_type": r.get::<_, Option<String>>(3)?,
+                "subject": r.get::<_, Option<String>>(4)?,
+                "class_name": r.get::<_, Option<String>>(5)?,
+                "retention_until": r.get::<_, Option<String>>(6)?,
+                "disposed": disposed,
+                "disposed_at": r.get::<_, Option<String>>(8)?,
+                "notes": r.get::<_, Option<String>>(9)?,
+                "days_left": days,
+                "status": archive_status(disposed, days),
+                "has_document": r.get::<_, i64>(11)? == 1,
+            }))
+        })
+        .map(|m| m.filter_map(|r| r.ok()).collect())
+        .unwrap_or_default();
+    let mut due = 0;
+    for row in &rows {
+        if row["status"].as_str() == Some("Due for disposal") {
+            due += 1;
+        }
+    }
+    (200, json!({"archives": rows, "total": rows.len(), "due": due}))
+}
+
+fn exam_archive_get(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let r = conn.query_row(
+        "SELECT id, exam_name, document FROM exam_archives WHERE id=?1",
+        params![id],
+        |r| Ok(json!({"id": r.get::<_, i64>(0)?, "exam_name": r.get::<_, Option<String>>(1)?, "document": r.get::<_, Option<String>>(2)?})),
+    );
+    match r {
+        Ok(d) => (200, json!({"archive": d})),
+        Err(_) => (404, json!({"error": "archive not found"})),
+    }
+}
+
+fn exam_archive_add(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO exam_archives(academic_year, exam_name, material_type, subject, class_name, document, retention_until, notes) VALUES(?1,?2,?3,?4,?5,?6,?7,?8)",
+        params![
+            v["academic_year"].as_str().filter(|s| !s.is_empty()),
+            v["exam_name"].as_str().filter(|s| !s.is_empty()),
+            v["material_type"].as_str().filter(|s| !s.is_empty()),
+            v["subject"].as_str().filter(|s| !s.is_empty()),
+            v["class_name"].as_str().filter(|s| !s.is_empty()),
+            v["document"].as_str().filter(|s| !s.is_empty()),
+            v["retention_until"].as_str().filter(|s| !s.is_empty()),
+            v["notes"].as_str().filter(|s| !s.is_empty()),
+        ],
+    ) {
+        Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn exam_archive_dispose(state: &AppState, id: i64, actor: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    // Drop the (large) stored document on disposal but keep the metadata as a record.
+    let _ = conn.execute(
+        "UPDATE exam_archives SET disposed=1, disposed_at=datetime('now'), document=NULL WHERE id=?1",
+        params![id],
+    );
+    audit_write(&conn, actor, "archive.dispose", "exam_archive", Some(id), None);
+    (200, json!({"ok": true}))
+}
+
+fn exam_archive_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM exam_archives WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
 }
 
