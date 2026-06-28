@@ -1,0 +1,51 @@
+name: tests
+
+# Full automated-test suite: builds the Rust API server, then runs the API
+# (Vitest), DB (better-sqlite3) and E2E (Playwright, browser-mode) tiers.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── Rust: build the leos-server binary the test harness spawns ──
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: server
+      - name: Build leos-server
+        run: cargo build --manifest-path server/Cargo.toml
+
+      # ── Node: root (test runners) + frontend (Vite dev server) deps ──
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install root deps
+        run: npm ci
+      - name: Install frontend deps
+        run: npm ci
+        working-directory: frontend
+
+      # ── Playwright browser for the E2E tier ──
+      - name: Install Playwright (chromium)
+        run: npx playwright install --with-deps chromium
+
+      # ── Run everything: API + DB + E2E ──
+      - name: Run test suite
+        run: npm test
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tests/reports/playwright
+          retention-days: 7
