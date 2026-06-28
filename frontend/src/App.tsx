@@ -54,6 +54,7 @@ import { ComplianceCertsScreen } from './components/ComplianceCertsScreen';
 import { BoardEligibilityScreen } from './components/BoardEligibilityScreen';
 import { StatutoryReturnsScreen } from './components/StatutoryReturnsScreen';
 import { ExamArchiveScreen } from './components/ExamArchiveScreen';
+import { PublicDisclosureScreen } from './components/PublicDisclosureScreen';
 import { RoleDashboard } from './components/RoleDashboard';
 import { Placeholder } from './components/Placeholder';
 
@@ -208,6 +209,8 @@ export function App() {
     screen = <StatutoryReturnsScreen />;
   } else if (active === 'exam-archive') {
     screen = <ExamArchiveScreen />;
+  } else if (active === 'public-disclosure') {
+    screen = <PublicDisclosureScreen />;
   } else if (active === 'floorplan') {
     screen = <FloorPlanScreen />;
   } else if (active === 'academic-year') {

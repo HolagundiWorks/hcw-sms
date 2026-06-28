@@ -13,6 +13,7 @@ import {
   GraduationCap,
   FileSpreadsheet,
   Archive,
+  Globe,
   Users,
   Building2,
   Banknote,
@@ -320,6 +321,7 @@ export const ribbonTabs: RibbonTab[] = [
           { key: 'board-eligibility', label: 'Board Eligibility', icon: GraduationCap, accessLevel: 2 },
           { key: 'statutory-returns', label: 'OASIS / UDISE', icon: FileSpreadsheet, accessLevel: 2 },
           { key: 'exam-archive', label: 'Exam Archive', icon: Archive, accessLevel: 2 },
+          { key: 'public-disclosure', label: 'Public Disclosure', icon: Globe, accessLevel: 2 },
         ],
       },
       {

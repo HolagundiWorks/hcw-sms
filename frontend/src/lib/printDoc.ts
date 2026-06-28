@@ -28,6 +28,57 @@ export interface Letterhead {
   certBg?: string | null;
 }
 
+export interface DisclosureData {
+  school: {
+    name?: string | null; academic_year?: string | null; address?: string | null;
+    principal_name?: string | null; affiliation_no?: string | null;
+    school_code?: string | null; udise_code?: string | null;
+  };
+  logo?: string | null;
+  general: [string, string][];
+  documents: { cert_type: string; authority: string; reference_no: string; validity: string; status: string }[];
+  staffStudents: [string, string | number][];
+}
+
+/** CBSE-style Mandatory Public Disclosure document (A4, printable). */
+export function publicDisclosureHtml(d: DisclosureData): string {
+  const s = d.school;
+  const row = (k: string, v: string | number) =>
+    `<tr><td class="k">${esc(k)}</td><td>${esc(String(v ?? '—')) || '—'}</td></tr>`;
+  const docRows = d.documents.length
+    ? d.documents.map((c, i) => `<tr><td>${i + 1}</td><td>${esc(c.cert_type)}</td><td>${esc(c.authority) || '—'}</td><td>${esc(c.reference_no) || '—'}</td><td>${esc(c.validity) || '—'}</td><td>${esc(c.status)}</td></tr>`).join('')
+    : `<tr><td colspan="6" style="text-align:center;color:#888">No certificates recorded yet — add them under Compliance → Certificates &amp; Safety.</td></tr>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Mandatory Public Disclosure</title>
+  <style>
+    @page { size: A4; margin: 16mm; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; font-size: 12px; }
+    .head { display:flex; align-items:center; gap:14px; border-bottom:3px solid #11365f; padding-bottom:10px; }
+    .head img { height:54px; }
+    .head h1 { margin:0; font-size:20px; color:#11365f; }
+    .head .sub { color:#555; font-size:12px; }
+    h2 { font-size:13px; color:#11365f; margin:18px 0 6px; text-transform:uppercase; letter-spacing:.3px; border-left:4px solid #9a7b1f; padding-left:8px; }
+    table { width:100%; border-collapse:collapse; margin-bottom:6px; }
+    td, th { border:1px solid #ccc; padding:5px 8px; text-align:left; vertical-align:top; }
+    th { background:#f0f3f7; font-size:11px; }
+    td.k { width:38%; font-weight:600; background:#fafbfc; }
+    .note { color:#888; font-size:10px; margin-top:14px; }
+    .foot { margin-top:26px; display:flex; justify-content:space-between; font-size:11px; color:#555; }
+  </style></head><body>
+    <div class="head">${d.logo ? `<img src="${d.logo}" alt="logo"/>` : ''}
+      <div><h1>${esc(s.name ?? 'School')}</h1><div class="sub">${esc(s.address ?? '')}</div>
+      <div class="sub"><b>Mandatory Public Disclosure</b> · ${esc(s.academic_year ?? '')}</div></div>
+    </div>
+    <h2>A — General Information</h2>
+    <table>${d.general.map(([k, v]) => row(k, v)).join('')}</table>
+    <h2>B — Documents &amp; Statutory Certificates</h2>
+    <table><tr><th>#</th><th>Certificate</th><th>Issuing authority</th><th>Reference</th><th>Valid upto</th><th>Status</th></tr>${docRows}</table>
+    <h2>C — Staff &amp; Students</h2>
+    <table>${d.staffStudents.map(([k, v]) => row(k, v)).join('')}</table>
+    <div class="note">Generated from the LEOS school database. Figures are live as of generation; verify against source records before publication on the school website (CBSE Mandatory Public Disclosure requirement).</div>
+    <div class="foot"><span>Principal: ${esc(s.principal_name ?? '')}</span><span>Affiliation No: ${esc(s.affiliation_no ?? '—')}</span></div>
+  </body></html>`;
+}
+
 /** A4 letter on the principal's letterhead. */
 export function letterHtml(
   s: Letterhead,
