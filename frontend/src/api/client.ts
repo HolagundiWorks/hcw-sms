@@ -553,6 +553,38 @@ export function fetchReceipts(token: string) {
   return req<{ payments: Receipt[]; total: number }>('/fee-payments', { token });
 }
 
+// ─── Student documents repository ───────────────────────────────────────────
+export interface StudentDocument {
+  id: number;
+  doc_type: string | null;
+  file_name: string | null;
+  mime: string | null;
+  verified: boolean;
+  uploaded_at: string | null;
+}
+export interface StudentDocumentFull extends StudentDocument {
+  data: string | null;
+}
+export function fetchStudentDocuments(token: string, studentId: number) {
+  return req<{ documents: StudentDocument[]; total: number }>(`/student-documents?student_id=${studentId}`, { token });
+}
+export async function fetchStudentDocument(token: string, id: number) {
+  const { document } = await req<{ document: StudentDocumentFull }>(`/student-documents/${id}`, { token });
+  return document;
+}
+export function addStudentDocument(
+  token: string,
+  data: { student_id: number; doc_type: string; file_name: string; mime: string; data: string },
+) {
+  return req<{ ok: boolean; id: number }>('/student-documents', { method: 'POST', token, body: data });
+}
+export function verifyStudentDocument(token: string, id: number, verified: boolean) {
+  return req<{ ok: boolean }>(`/student-documents/${id}/verify`, { method: 'POST', token, body: { verified } });
+}
+export function deleteStudentDocument(token: string, id: number) {
+  return req<{ ok: boolean }>(`/student-documents/${id}/delete`, { method: 'POST', token, body: {} });
+}
+
 export interface Section {
   id: number;
   name: string | null;

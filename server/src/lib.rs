@@ -404,6 +404,30 @@ fn dispatch(
             return with_auth(state, token, |_| club_member_remove(state, id));
         }
     }
+    // Student documents repository.
+    if method == &Method::Get && path == "/student-documents" {
+        return with_auth(state, token, |_| student_documents_list(state, url));
+    }
+    if method == &Method::Post && path == "/student-documents" {
+        return with_auth(state, token, |_| student_document_add(state, body));
+    }
+    if method == &Method::Post && path.starts_with("/student-documents/") && path.ends_with("/verify") {
+        let id_str = &path["/student-documents/".len()..path.len() - "/verify".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| student_document_verify(state, id, body));
+        }
+    }
+    if method == &Method::Post && path.starts_with("/student-documents/") && path.ends_with("/delete") {
+        let id_str = &path["/student-documents/".len()..path.len() - "/delete".len()];
+        if let Ok(id) = id_str.parse::<i64>() {
+            return with_auth(state, token, |_| student_document_delete(state, id));
+        }
+    }
+    if method == &Method::Get && path.starts_with("/student-documents/") {
+        if let Ok(id) = path["/student-documents/".len()..].parse::<i64>() {
+            return with_auth(state, token, |_| student_document_get(state, id));
+        }
+    }
     if method == &Method::Get && path == "/floorplan" {
         return with_auth(state, token, |_| floorplan_get(state));
     }
@@ -1717,6 +1741,11 @@ fn migrate_schema(conn: &Connection) {
     let _ = conn.execute("ALTER TABLE sports_events ADD COLUMN home_club_id INTEGER", []);
     let _ = conn.execute("ALTER TABLE sports_events ADD COLUMN away_club_id INTEGER", []);
     let _ = conn.execute("ALTER TABLE sports_results ADD COLUMN club_id INTEGER", []);
+    // Per-student documents repository (base64 file blobs: PDF / image).
+    let _ = conn.execute(
+        "CREATE TABLE IF NOT EXISTS student_documents(id INTEGER PRIMARY KEY AUTOINCREMENT, student_id INTEGER NOT NULL, doc_type TEXT, file_name TEXT, mime TEXT, data TEXT, verified INTEGER DEFAULT 0, uploaded_at TEXT DEFAULT (datetime('now')))",
+        [],
+    );
     let _ = conn.execute("ALTER TABLE students ADD COLUMN guardian_name TEXT", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN guardian_phone TEXT", []);
     let _ = conn.execute("ALTER TABLE students ADD COLUMN guardian_relation TEXT", []);
@@ -7025,6 +7054,99 @@ fn club_member_add(state: &AppState, body: &str) -> (u16, Value) {
 fn club_member_remove(state: &AppState, id: i64) -> (u16, Value) {
     let conn = state.conn.lock().unwrap();
     let _ = conn.execute("DELETE FROM club_members WHERE id=?1", params![id]);
+    (200, json!({"ok": true}))
+}
+
+// ---- Student documents repository ----
+
+fn student_documents_list(state: &AppState, url: &str) -> (u16, Value) {
+    let student_id: i64 = match q_param(url, "student_id").and_then(|v| v.parse().ok()) {
+        Some(id) => id,
+        None => return (422, json!({"error": "student_id required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    // Metadata only — the (large) base64 data is fetched per-document on demand.
+    let mut stmt = match conn.prepare(
+        "SELECT id, doc_type, file_name, mime, verified, uploaded_at FROM student_documents WHERE student_id=?1 ORDER BY id DESC",
+    ) {
+        Ok(s) => s,
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+    let rows: Vec<Value> = stmt
+        .query_map(params![student_id], |r| {
+            Ok(json!({
+                "id": r.get::<_, i64>(0)?,
+                "doc_type": r.get::<_, Option<String>>(1)?,
+                "file_name": r.get::<_, Option<String>>(2)?,
+                "mime": r.get::<_, Option<String>>(3)?,
+                "verified": r.get::<_, Option<i64>>(4)?.unwrap_or(0) == 1,
+                "uploaded_at": r.get::<_, Option<String>>(5)?,
+            }))
+        })
+        .map(|m| m.filter_map(|r| r.ok()).collect())
+        .unwrap_or_default();
+    (200, json!({"documents": rows, "total": rows.len()}))
+}
+
+fn student_document_get(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let r = conn.query_row(
+        "SELECT id, doc_type, file_name, mime, data, verified FROM student_documents WHERE id=?1",
+        params![id],
+        |r| {
+            Ok(json!({
+                "id": r.get::<_, i64>(0)?,
+                "doc_type": r.get::<_, Option<String>>(1)?,
+                "file_name": r.get::<_, Option<String>>(2)?,
+                "mime": r.get::<_, Option<String>>(3)?,
+                "data": r.get::<_, Option<String>>(4)?,
+                "verified": r.get::<_, Option<i64>>(5)?.unwrap_or(0) == 1,
+            }))
+        },
+    );
+    match r {
+        Ok(d) => (200, json!({"document": d})),
+        Err(_) => (404, json!({"error": "document not found"})),
+    }
+}
+
+fn student_document_add(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let student_id = match v["student_id"].as_i64() {
+        Some(x) => x,
+        None => return (422, json!({"error": "student_id required"})),
+    };
+    let data = match v["data"].as_str().filter(|s| !s.is_empty()) {
+        Some(d) => d.to_string(),
+        None => return (422, json!({"error": "data required"})),
+    };
+    let conn = state.conn.lock().unwrap();
+    match conn.execute(
+        "INSERT INTO student_documents(student_id, doc_type, file_name, mime, data) VALUES(?1,?2,?3,?4,?5)",
+        params![
+            student_id,
+            v["doc_type"].as_str().filter(|s| !s.is_empty()),
+            v["file_name"].as_str().filter(|s| !s.is_empty()),
+            v["mime"].as_str().filter(|s| !s.is_empty()),
+            data,
+        ],
+    ) {
+        Ok(_) => (201, json!({"ok": true, "id": conn.last_insert_rowid()})),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+fn student_document_verify(state: &AppState, id: i64, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let verified = v["verified"].as_bool().unwrap_or(true) as i64;
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("UPDATE student_documents SET verified=?1 WHERE id=?2", params![verified, id]);
+    (200, json!({"ok": true}))
+}
+
+fn student_document_delete(state: &AppState, id: i64) -> (u16, Value) {
+    let conn = state.conn.lock().unwrap();
+    let _ = conn.execute("DELETE FROM student_documents WHERE id=?1", params![id]);
     (200, json!({"ok": true}))
 }
 
