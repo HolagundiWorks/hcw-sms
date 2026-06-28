@@ -1568,7 +1568,10 @@ fn percent_decode(s: &str) -> String {
 
 // ---- schema + seed ----
 
-fn init_db(conn: &Connection) {
+// Idempotent schema creation + column migrations. Safe to run on ANY database
+// (a fresh one or an existing school file being opened) — it never seeds data,
+// so opening an older .leosdb upgrades its schema without injecting demo data.
+fn migrate_schema(conn: &Connection) {
     conn.execute_batch(
         "CREATE TABLE IF NOT EXISTS schools(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, academic_year TEXT, type TEXT);
          CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password_hash TEXT, role TEXT, name TEXT);
@@ -1657,6 +1660,10 @@ fn init_db(conn: &Connection) {
     let _ = conn.execute("ALTER TABLE students ADD COLUMN card_uid TEXT", []);
     let _ = conn.execute("ALTER TABLE users ADD COLUMN role_id INTEGER", []);
     let _ = conn.execute("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 3", []);
+}
+
+fn init_db(conn: &Connection) {
+    migrate_schema(conn);
 
     // Seed module settings (idempotent)
     let modules_seed = [
@@ -5269,6 +5276,9 @@ fn swap_active_db(state: &AppState, sqlite_bytes: &[u8]) -> Result<(), Box<dyn s
     drop(old);
     std::fs::write("school.sqlite", sqlite_bytes)?;
     *g = Connection::open("school.sqlite")?;
+    // Upgrade the opened file's schema (new tables/columns) without seeding, so
+    // an older .leosdb gains features like letters/certificates on open.
+    migrate_schema(&g);
     Ok(())
 }
 

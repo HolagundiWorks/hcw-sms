@@ -49,6 +49,8 @@ create / read / update / delete-or-archive.
 | Events | `EventScreen`, `EventFab` | event routes | C R U D | ⬜ |
 | Activities | `ActivityScreen` | activity routes | C R U | ⬜ |
 | Reminders | `RemindersScreen` | reminder routes | C R U D | ⬜ |
+| Letters | `LetterScreen` | `GET/POST /letters` | C R + print | ✅ A |
+| Certificates | `CertificateScreen` | `GET/POST /certificates` | C R + print | ✅ A |
 | ID Cards | `IdCardScreen` | `GET /students/by-card` + card routes | R | ⬜ |
 | Transport | `TransportScreen` | vehicles/routes/stops/assignments | C R U D | ⬜ |
 | Issued items | `IssuedItemsScreen` | issued-item markers | C R U | ⬜ |
