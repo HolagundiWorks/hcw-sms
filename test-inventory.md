@@ -57,7 +57,7 @@ create / read / update / delete-or-archive.
 | Schedule view | `ScheduleViewScreen` | timetable read | read | ⬜ |
 | Backup | `BackupScreen` | `GET /schooldb/save`, `POST /schooldb/open`, backup routes | run/restore | ⬜ |
 | Security | `SecurityScreen` | audit/security routes | R | ⬜ |
-| Import | `ImportScreen` | import routes | import | ⬜ |
+| Import / Merge | `ImportScreen`, `MergePanel` | `/import/csv`, `/import/sqlite`, `/import/merge/preview`, `/import/merge/apply` | import + merge | ✅ A (merge preview/apply + reconcile) |
 | Hardware | `HardwareScreen` | device routes | R | ⬜ |
 | Design | `DesignScreen` | theme/design routes | R U | ⬜ |
 | Tech Admin | `TechAdminScreen` | `GET /admin/system-info`, `/admin/modules`, `/admin/users/levels`, toggles | R U | ⬜ |
