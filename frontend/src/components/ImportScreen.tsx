@@ -18,6 +18,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AlertCircle, CheckCircle, Database, FileSpreadsheet, Upload } from 'lucide-react';
 import { useAuth } from '../stores/auth';
+import { MergePanel } from './MergePanel';
 
 const BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:8787';
 
@@ -217,7 +218,7 @@ function JobHistoryPanel({ token }: { token: string }) {
 // ─── Main screen ──────────────────────────────────────────────────────────────
 export function ImportScreen() {
   const token = useAuth((s) => s.token)!;
-  const [tab, setTab] = useState('csv');
+  const [tab, setTab] = useState('merge');
 
   return (
     <Container size="xl" px={0}>
@@ -230,10 +231,12 @@ export function ImportScreen() {
         <Card>
           <Tabs value={tab} onChange={(v) => setTab(v ?? 'csv')}>
             <Tabs.List mb="md">
+              <Tabs.Tab value="merge">Merge School File</Tabs.Tab>
               <Tabs.Tab value="csv">CSV Import</Tabs.Tab>
               <Tabs.Tab value="sqlite">SQLite Import</Tabs.Tab>
               <Tabs.Tab value="history">Job History</Tabs.Tab>
             </Tabs.List>
+            <Tabs.Panel value="merge"><MergePanel token={token} /></Tabs.Panel>
             <Tabs.Panel value="csv"><CsvPanel token={token} /></Tabs.Panel>
             <Tabs.Panel value="sqlite"><SqlitePanel token={token} /></Tabs.Panel>
             <Tabs.Panel value="history"><JobHistoryPanel token={token} /></Tabs.Panel>

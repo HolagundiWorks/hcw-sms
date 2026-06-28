@@ -419,6 +419,13 @@ fn dispatch(
     if method == &Method::Post && path == "/import/sqlite" {
         return with_auth(state, token, |_| import_sqlite(state, body));
     }
+    // Merge / reconcile another school file (concurrent offline edits).
+    if method == &Method::Post && path == "/import/merge/preview" {
+        return require_level(state, token, 2, |_| merge_preview(state, body));
+    }
+    if method == &Method::Post && path == "/import/merge/apply" {
+        return require_level(state, token, 1, |uid| merge_apply(state, uid, body));
+    }
     // Security & Audit (P11)
     if method == &Method::Get && path == "/audit-log" {
         return require_level(state, token, 1, |_| audit_log_list(state, url));
@@ -2373,6 +2380,294 @@ fn import_sqlite(state: &AppState, body: &str) -> (u16, Value) {
         total_imported = count_imported;
     }
     (200, json!({"ok": true, "job_id": job_id, "rows_imported": total_imported}))
+}
+
+// ---- Merge / reconcile two school files (concurrent offline edits) ----
+//
+// import_sqlite above does a naive `INSERT OR IGNORE ... SELECT *`, which matches
+// on the autoincrement id and silently drops real records when two files were
+// edited separately. These endpoints instead match on a NATURAL key, classify
+// each incoming record as new / duplicate / conflict, and let the user reconcile
+// before anything is written (then audit-log every change).
+
+const STUDENT_WANTED: &[&str] = &[
+    "first_name", "middle_name", "last_name", "email", "phone", "gender", "birthdate",
+    "alt_id", "enrolled", "guardian_name", "guardian_phone", "guardian_relation", "address",
+];
+const STAFF_WANTED: &[&str] = &[
+    "first_name", "last_name", "email", "phone", "profile", "title",
+    "department", "join_date", "employee_id",
+];
+
+fn sqlite_to_json(v: rusqlite::types::Value) -> Value {
+    use rusqlite::types::Value as V;
+    match v {
+        V::Null => Value::Null,
+        V::Integer(i) => json!(i),
+        V::Real(f) => json!(f),
+        V::Text(s) => json!(s),
+        V::Blob(_) => Value::Null,
+    }
+}
+
+fn json_to_sqlite(v: &Value, col: &str) -> rusqlite::types::Value {
+    use rusqlite::types::Value as V;
+    if col == "enrolled" {
+        return V::Integer(v.as_i64().or_else(|| v.as_bool().map(|b| b as i64)).unwrap_or(0));
+    }
+    match v {
+        Value::Null => V::Null,
+        Value::String(s) if s.is_empty() => V::Null,
+        Value::String(s) => V::Text(s.clone()),
+        Value::Number(n) => n.as_i64().map(V::Integer).unwrap_or(V::Null),
+        Value::Bool(b) => V::Integer(*b as i64),
+        _ => V::Null,
+    }
+}
+
+/// Columns from `wanted` that actually exist in `schema.table` (handles schema
+/// skew between two files). `schema` is "" for the main DB or "ext" for attached.
+fn cols_present(conn: &Connection, schema: &str, table: &str, wanted: &[&str]) -> Vec<String> {
+    let pragma = if schema.is_empty() {
+        format!("PRAGMA table_info({table})")
+    } else {
+        format!("PRAGMA {schema}.table_info({table})")
+    };
+    let mut have = std::collections::HashSet::new();
+    if let Ok(mut stmt) = conn.prepare(&pragma) {
+        if let Ok(rows) = stmt.query_map([], |r| r.get::<_, String>(1)) {
+            for n in rows.flatten() {
+                have.insert(n);
+            }
+        }
+    }
+    wanted.iter().filter(|w| have.contains(**w)).map(|w| w.to_string()).collect()
+}
+
+fn read_table_rows(conn: &Connection, schema: &str, table: &str, cols: &[String]) -> rusqlite::Result<Vec<Value>> {
+    let collist: String =
+        std::iter::once("id".to_string()).chain(cols.iter().cloned()).collect::<Vec<_>>().join(", ");
+    let qualified = if schema.is_empty() { table.to_string() } else { format!("{schema}.{table}") };
+    let sql = format!("SELECT {collist} FROM {qualified}");
+    let mut stmt = conn.prepare(&sql)?;
+    let n = cols.len();
+    let rows = stmt.query_map([], |r| {
+        let mut obj = serde_json::Map::new();
+        obj.insert("id".into(), json!(r.get::<_, i64>(0)?));
+        for (i, c) in cols.iter().enumerate() {
+            let v: rusqlite::types::Value = r.get(i + 1)?;
+            obj.insert(c.clone(), sqlite_to_json(v));
+        }
+        let _ = n;
+        Ok(Value::Object(obj))
+    })?;
+    rows.collect()
+}
+
+fn norm_field(v: &Value) -> String {
+    match v {
+        Value::Null => String::new(),
+        Value::String(s) => s.trim().to_string(),
+        other => other.to_string(),
+    }
+}
+
+fn lower_field(v: &Value, key: &str) -> Option<String> {
+    v[key].as_str().map(|s| s.trim().to_lowercase()).filter(|s| !s.is_empty())
+}
+
+fn student_match_keys(s: &Value) -> Vec<String> {
+    let mut keys = Vec::new();
+    if let Some(a) = lower_field(s, "alt_id") { keys.push(format!("alt:{a}")); }
+    if let Some(e) = lower_field(s, "email") { keys.push(format!("email:{e}")); }
+    let f = lower_field(s, "first_name").unwrap_or_default();
+    let l = lower_field(s, "last_name").unwrap_or_default();
+    let b = s["birthdate"].as_str().unwrap_or("").trim().to_string();
+    keys.push(format!("ndob:{f}|{l}|{b}"));
+    keys
+}
+
+fn staff_match_keys(s: &Value) -> Vec<String> {
+    let mut keys = Vec::new();
+    if let Some(a) = lower_field(s, "employee_id") { keys.push(format!("emp:{a}")); }
+    if let Some(e) = lower_field(s, "email") { keys.push(format!("email:{e}")); }
+    let f = lower_field(s, "first_name").unwrap_or_default();
+    let l = lower_field(s, "last_name").unwrap_or_default();
+    keys.push(format!("name:{f}|{l}"));
+    keys
+}
+
+/// Classify each incoming row against existing rows by natural key.
+fn classify_rows(
+    existing: &[Value],
+    incoming: &[Value],
+    key_fn: fn(&Value) -> Vec<String>,
+    cols: &[String],
+) -> Vec<Value> {
+    let mut index: HashMap<String, usize> = HashMap::new();
+    for (i, e) in existing.iter().enumerate() {
+        for k in key_fn(e) {
+            index.entry(k).or_insert(i);
+        }
+    }
+    let mut report = Vec::new();
+    for inc in incoming {
+        let matched = key_fn(inc).into_iter().find_map(|k| index.get(&k).copied());
+        match matched {
+            None => report.push(json!({"action": "new", "incoming": inc, "existing": Value::Null, "diffs": []})),
+            Some(idx) => {
+                let ex = &existing[idx];
+                let diffs: Vec<String> = cols
+                    .iter()
+                    .filter(|c| norm_field(&inc[c.as_str()]) != norm_field(&ex[c.as_str()]))
+                    .cloned()
+                    .collect();
+                let action = if diffs.is_empty() { "duplicate" } else { "conflict" };
+                report.push(json!({"action": action, "incoming": inc, "existing": ex, "diffs": diffs}));
+            }
+        }
+    }
+    report
+}
+
+fn count_actions(report: &[Value]) -> Value {
+    let c = |a: &str| report.iter().filter(|r| r["action"] == a).count();
+    json!({"new": c("new"), "conflict": c("conflict"), "duplicate": c("duplicate"), "total": report.len()})
+}
+
+/// Stage the external DB to attach: extract .leosdb to a temp sqlite, or use a
+/// raw .sqlite path directly. Returns (path_to_attach, temp_to_cleanup).
+fn stage_external_db(path: &str) -> Result<(String, Option<String>), String> {
+    if path.to_lowercase().ends_with(".leosdb") {
+        let bytes = extract_leosdb_sqlite(path).map_err(|e| format!("read .leosdb: {e}"))?;
+        let tmp = std::env::temp_dir().join(format!("leos-merge-{}.sqlite", std::process::id()));
+        std::fs::write(&tmp, &bytes).map_err(|e| format!("write temp: {e}"))?;
+        Ok((tmp.to_string_lossy().to_string(), Some(tmp.to_string_lossy().to_string())))
+    } else if std::path::Path::new(path).exists() {
+        Ok((path.to_string(), None))
+    } else {
+        Err(format!("file not found: {path}"))
+    }
+}
+
+fn merge_preview(state: &AppState, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let path = match v["path"].as_str().filter(|s| !s.is_empty()) {
+        Some(p) => p.to_string(),
+        None => return (422, json!({"error": "path required"})),
+    };
+    let (attach_path, cleanup) = match stage_external_db(&path) {
+        Ok(x) => x,
+        Err(e) => return (422, json!({"error": e})),
+    };
+    let conn = state.conn.lock().unwrap();
+    let attach = format!("ATTACH DATABASE '{}' AS ext", attach_path.replace('\'', "''"));
+    if let Err(e) = conn.execute_batch(&attach) {
+        if let Some(t) = cleanup { let _ = std::fs::remove_file(t); }
+        return (500, json!({"error": format!("could not open the other school file: {e}")}));
+    }
+    let build = (|| -> rusqlite::Result<Value> {
+        let scommon: Vec<String> = {
+            let main = cols_present(&conn, "", "students", STUDENT_WANTED);
+            let ext = cols_present(&conn, "ext", "students", STUDENT_WANTED);
+            main.into_iter().filter(|c| ext.contains(c)).collect()
+        };
+        let stcommon: Vec<String> = {
+            let main = cols_present(&conn, "", "staff", STAFF_WANTED);
+            let ext = cols_present(&conn, "ext", "staff", STAFF_WANTED);
+            main.into_iter().filter(|c| ext.contains(c)).collect()
+        };
+        let students = classify_rows(
+            &read_table_rows(&conn, "", "students", &scommon)?,
+            &read_table_rows(&conn, "ext", "students", &scommon)?,
+            student_match_keys,
+            &scommon,
+        );
+        let staff = classify_rows(
+            &read_table_rows(&conn, "", "staff", &stcommon)?,
+            &read_table_rows(&conn, "ext", "staff", &stcommon)?,
+            staff_match_keys,
+            &stcommon,
+        );
+        Ok(json!({
+            "students": students,
+            "staff": staff,
+            "summary": {"students": count_actions(&students), "staff": count_actions(&staff)},
+        }))
+    })();
+    let _ = conn.execute_batch("DETACH DATABASE ext");
+    if let Some(t) = cleanup { let _ = std::fs::remove_file(t); }
+    match build {
+        Ok(data) => (200, data),
+        Err(e) => (500, json!({"error": format!("{e}")})),
+    }
+}
+
+/// Apply the user's reconciliation. Body:
+/// { students: [{action:"insert"|"update", id?, data:{...}}], staff: [...] }
+fn merge_apply(state: &AppState, uid: i64, body: &str) -> (u16, Value) {
+    let v: Value = serde_json::from_str(body).unwrap_or(json!({}));
+    let conn = state.conn.lock().unwrap();
+    let job_id = match conn.execute(
+        "INSERT INTO import_jobs(source_type, source_path, status, started_at) VALUES('merge', 'reconcile', 'running', datetime('now'))",
+        [],
+    ) {
+        Ok(_) => conn.last_insert_rowid(),
+        Err(e) => return (500, json!({"error": format!("{e}")})),
+    };
+
+    let apply_table = |table: &str, wanted: &[&str], ops: &Vec<Value>, inserted: &mut i64, updated: &mut i64| {
+        let cols = cols_present(&conn, "", table, wanted);
+        if cols.is_empty() {
+            return;
+        }
+        for op in ops {
+            let data = &op["data"];
+            match op["action"].as_str() {
+                Some("insert") => {
+                    let cl = cols.join(", ");
+                    let ph: String = (1..=cols.len()).map(|i| format!("?{i}")).collect::<Vec<_>>().join(", ");
+                    let sql = format!("INSERT INTO {table} ({cl}) VALUES ({ph})");
+                    let vals: Vec<rusqlite::types::Value> =
+                        cols.iter().map(|c| json_to_sqlite(&data[c.as_str()], c)).collect();
+                    if conn.execute(&sql, rusqlite::params_from_iter(vals)).is_ok() {
+                        let new_id = conn.last_insert_rowid();
+                        *inserted += 1;
+                        audit_write(&conn, uid, "merge_insert", table, Some(new_id), Some("imported from school file"));
+                    }
+                }
+                Some("update") => {
+                    if let Some(id) = op["id"].as_i64() {
+                        let set: String = cols.iter().enumerate().map(|(i, c)| format!("{c}=?{}", i + 1)).collect::<Vec<_>>().join(", ");
+                        let sql = format!("UPDATE {table} SET {set} WHERE id=?{}", cols.len() + 1);
+                        let mut vals: Vec<rusqlite::types::Value> =
+                            cols.iter().map(|c| json_to_sqlite(&data[c.as_str()], c)).collect();
+                        vals.push(rusqlite::types::Value::Integer(id));
+                        if conn.execute(&sql, rusqlite::params_from_iter(vals)).is_ok() {
+                            *updated += 1;
+                            audit_write(&conn, uid, "merge_update", table, Some(id), Some("reconciled from school file"));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    };
+
+    let mut inserted = 0i64;
+    let mut updated = 0i64;
+    if let Some(arr) = v["students"].as_array() {
+        apply_table("students", STUDENT_WANTED, arr, &mut inserted, &mut updated);
+    }
+    if let Some(arr) = v["staff"].as_array() {
+        apply_table("staff", STAFF_WANTED, arr, &mut inserted, &mut updated);
+    }
+
+    let _ = conn.execute(
+        "UPDATE import_jobs SET status='completed', rows_imported=?1, error=?2, completed_at=datetime('now') WHERE id=?3",
+        params![inserted + updated, format!("{inserted} inserted, {updated} updated"), job_id],
+    );
+    (200, json!({"ok": true, "job_id": job_id, "inserted": inserted, "updated": updated}))
 }
 
 // ---- Security & Audit (P11) ----
